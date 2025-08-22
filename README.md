@@ -33,7 +33,7 @@ O **BiBi - Transporte Escolar** será desenvolvido utilizando as seguintes tecno
 
 - [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-06B6D4.svg?style=for-the-badge&logo=TailwindCSS&logoColor=white)](https://tailwindcss.com/)
 - [![React](https://img.shields.io/badge/React-61DAFB.svg?style=for-the-badge&logo=React&logoColor=black)](https://reactjs.org/)
-- [![SailsJS](https://img.shields.io/badge/SailsJS-000000.svg?style=for-the-badge&logo=sails&logoColor=white)](https://sailsjs.com/)
+- [![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
 - [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-000000.svg?style=for-the-badge&logo=PostgreSQL&logoColor=white)](https://www.postgresql.org/)
 
 ### Confluence
@@ -90,7 +90,7 @@ OBS: "*" considered as extra content.
 
 - [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-06B6D4.svg?style=for-the-badge&logo=TailwindCSS&logoColor=white)](https://tailwindcss.com/)
 - [![React](https://img.shields.io/badge/React-61DAFB.svg?style=for-the-badge&logo=React&logoColor=black)](https://reactjs.org/)
-- [![SailsJS](https://img.shields.io/badge/SailsJS-000000.svg?style=for-the-badge&logo=sails&logoColor=white)](https://sailsjs.com/)
+- [![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
 - [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-000000.svg?style=for-the-badge&logo=PostgreSQL&logoColor=white)](https://www.postgresql.org/)
 
 ---

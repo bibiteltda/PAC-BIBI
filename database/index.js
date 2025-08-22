@@ -1,47 +1,60 @@
+require('dotenv').config({ path: __dirname + '/../.env' });
 const { Sequelize, DataTypes } = require('sequelize');
 
-const sequelizeForCreateDB = new Sequelize('postgres://useraq:senhaaq@localhost:5432/postgres', {  // user e senha do postgress
-  logging: false
-});
-
-async function createDatabase() {
-  try {
-    await sequelizeForCreateDB.query(`CREATE DATABASE escola_transportes`);
-    console.log('Banco criado com sucesso!');
-  } catch (error) {
-    if (error.original?.code === '42P04') { 
-      console.log('Banco já existe, seguindo...');
-    } else {
-      throw error;
-    }
+const sequelizeForCreateDB = new Sequelize(
+  process.env.DB_NAME_SUPER,
+  process.env.DB_USER_SUPER,
+  process.env.DB_PASSWORD_SUPER,
+  {
+    host: process.env.DB_HOST_SUPER,
+    port: process.env.DB_PORT_SUPER,
+    dialect: 'postgres',
+    logging: false,
   }
-}
+);
 
-const sequelize = new Sequelize('escola_transportes', 'useraq', 'senhaaq', { // user e senha do postgress
-  host: 'localhost',
-  dialect: 'postgres',
-  logging: false,
-});
-
+const sequelize = new Sequelize(
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASSWORD,
+  {
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    dialect: 'postgres',
+    logging: false,
+  }
+);
 
 const models = require('./models')(sequelize, DataTypes);
 
-async function syncModels() {
-  await sequelize.sync({ alter: true });
-  console.log('Tabelas criadas ou atualizadas');
-}
-
-async function main() {
+async function createDatabase() {
   try {
-    await createDatabase();
-    await sequelize.authenticate();
-    console.log('Conectado ao banco escola_transportes');
-    await syncModels();
-  } catch (err) {
-    console.error('Erro:', err);
+    await sequelizeForCreateDB.query(`CREATE DATABASE ${process.env.DB_NAME}`);
+    console.log(`✅ Banco ${process.env.DB_NAME} criado com sucesso!`);
+  } catch (error) {
+    if (error.original?.code === '42P04') {
+      console.log(`⚠️ Banco ${process.env.DB_NAME} já existe, seguindo...`);
+    } else {
+      throw error;
+    }
   } finally {
-    await sequelize.close();
+    await sequelizeForCreateDB.close();
   }
 }
 
-main();
+async function syncModels() {
+  try {
+    await sequelize.authenticate();
+    await sequelize.sync({ alter: true });
+    console.log('✅ Conectado e tabelas criadas/atualizadas');
+  } catch (err) {
+    console.error('❌ Erro ao conectar/sincronizar:', err);
+  }
+}
+
+(async () => {
+  await createDatabase();
+  await syncModels();
+})();
+
+module.exports = { sequelize, models };
