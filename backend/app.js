@@ -1,11 +1,21 @@
 const express = require('express');
 const cors = require('cors');
-const { sequelize } = require('../database');
+const { sequelize } = require('./database');
 require('dotenv').config({ path: __dirname + '/../.env' });
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Importe e use as rotas de autenticação
+app.use('/api/auth', require('./routes/authRoutes'));
+
+// ==================================================================
+// == ADICIONE A LINHA ABAIXO PARA AS ROTAS DE USUÁRIO             ==
+// ==================================================================
+app.use('/api/user', require('./routes/userRoutes'));
+// ==================================================================
+
 
 // Teste conexão
 app.get('/test-db', async (req, res) => {
