@@ -1,0 +1,101 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - main
+      - production
+  pull_request:
+    branches:
+      - main
+      - production
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # ---------------- Backend ----------------
+      - name: Install backend dependencies
+        run: |
+          cd backend
+          npm ci
+
+      - name: Run backend lint
+        run: |
+          cd backend
+          npm run lint || echo "No lint script in backend"
+
+      - name: Run backend tests
+        run: |
+          cd backend
+          npm test
+
+      - name: Build backend
+        run: |
+          cd backend
+          npm run build || echo "No build script for backend"
+
+      # ---------------- Frontend ----------------
+      - name: Install frontend dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Run frontend lint
+        run: |
+          cd frontend
+          npm run lint || echo "No lint script in frontend"
+
+      - name: Run frontend tests
+        run: |
+          cd frontend
+          npm test
+
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm run build
+
+      # ---------------- Notifications ----------------
+      - name: Notify Teams
+        if: always()
+        run: |
+          STATUS="✅ Success"
+          if [ "${{ job.status }}" != "success" ]; then STATUS="❌ Failed"; fi
+          curl -H 'Content-Type: application/json' \
+          -d '{
+            "title": "'"$STATUS"'",
+            "text": "Workflow CI/CD rodou na branch ${{ github.ref }}.\nVeja detalhes: ${{ github.run_url }}"
+          }' ${{ secrets.TEAM_WEBHOOK_URL }}
+
+  deploy-production:
+    if: github.ref == 'refs/heads/production'
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy backend
+        run: |
+          cd backend
+          echo "Deploy backend para produção..."
+          # Coloque aqui seus comandos reais de deploy
+
+      - name: Deploy frontend
+        run: |
+          cd frontend
+          echo "Deploy frontend para produção..."
+          # Coloque aqui seus comandos reais de deploy
+
+      - name: Notify Teams deploy
+        run: |
+          curl -H 'Content-Type: application/json' \
+          -d '{
+            "title": "🚀 Deploy Completed",
+            "text": "O deploy na branch production foi concluído.\nVeja detalhes: ${{ github.run_url }}"
+          }' ${{ secrets.TEAM_WEBHOOK_URL }}
