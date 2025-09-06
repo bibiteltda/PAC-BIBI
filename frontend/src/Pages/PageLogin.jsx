@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 /* Imports */
-import FormLogin from "../Components/PageLogin/formLogin";
+import FormLogin from "../Components/PageLogin/FormLogin";
 
 /* Icons */
 import { FaCircleArrowLeft } from "react-icons/fa6";
