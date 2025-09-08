@@ -6,7 +6,7 @@ import NavBar from "../Components/PagePainel/NavBar"
 import SideBar from "../Components/PagePainel/SideBar"
 import fotoPerfil from '../assets/linda.jpg';
 import ContratoResponsavel from "../Components/PagePainel/Contrato/ContratoResponsavel";
-import ContratoCondutor from "../Components/PagePainel/Contrato/contratoCondutor";
+import ContratoCondutor from "../Components/PagePainel/Contrato/ContratoCondutor";
 
 /* Icons */
 
