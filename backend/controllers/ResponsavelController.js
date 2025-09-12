@@ -1,4 +1,4 @@
-const { Responsavel } = require("../../database/models.js");
+const { Responsavel, Autenticacao } = require("../../database/models.js");
 
 const ResponsavelController = {
   async create(req, res) {
@@ -10,9 +10,11 @@ const ResponsavelController = {
     }
   },
 
-  async findAll(res) {
+  async findAll(req, res) {
     try {
-      const lista = await Responsavel.findAll();
+      const lista = await Responsavel.findAll({
+        include: [{ model: Autenticacao, as: "autenticacao" }]
+      });
       res.json(lista);
     } catch (err) {
       res.status(500).json({ erro: err.message });
@@ -21,7 +23,9 @@ const ResponsavelController = {
 
   async findOne(req, res) {
     try {
-      const item = await Responsavel.findByPk(req.params.id);
+      const item = await Responsavel.findByPk(req.params.id, {
+        include: [{ model: Autenticacao, as: "autenticacao" }]
+      });
       if (!item) return res.status(404).json({ erro: "Responsável não encontrado" });
       res.json(item);
     } catch (err) {
