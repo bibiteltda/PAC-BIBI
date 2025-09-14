@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 /* Imports */
 import BarraDeProgresso from "../Components/PageCadastro/BarraDeProgresso";
 import InfoLogin from "../Components/PageCadastro/InfoLogin";
-import ValidaEmail from "../Components/PageCadastro/ValidaEmail";
+import ValidaEmail from "../Components/PageCadastro/ValidaEmail.jsx"
 import InfoAdicionais from "../Components/PageCadastro/InfoAdicionais";
 
 /* Icons */

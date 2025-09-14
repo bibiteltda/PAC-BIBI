@@ -2,7 +2,7 @@
 import { useRef } from "react";
 import { Link } from 'react-router-dom';
 
-export default function ValidaEmail({ form, setEtapa }) {
+export default function validaEmail({ setEtapa }) {
   const inputsRef = useRef([]);
 
   /* Função para alterar valor dos inputs */
