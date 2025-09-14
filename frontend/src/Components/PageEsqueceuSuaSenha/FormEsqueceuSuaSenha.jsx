@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { FaCircleArrowLeft } from "react-icons/fa6";
 
 /* Validador de email */
-import validaEmail from "../PageCadastro/validaEmail.jsx";
+import validaEmail from "../PageCadastro/ValidaEmail.jsx";
 
 /* Input animado */
 const InputAnimado = ({ children, delay = 0 }) => {
