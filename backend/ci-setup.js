@@ -36,8 +36,9 @@ async function setupDatabaseForTests() {
       { nome: "Aluno da Escola A", idade: 10, responsavel: responsavel.id_responsavel, escola: escola1.id_escola, motorista: motorista.id_motorista }
     ], { returning: true });
 
-    const today = new Date();
-    const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 15);
+    // Datas fixas para testes previsíveis
+    const today = new Date('2025-09-14'); // mesma data que o teste espera
+    const lastMonth = new Date('2025-08-15');
     
     await models.Pagamento.bulkCreate([
       { valor: 250.00, dta_vcto: today, dta_pgmt: today, status: "PAGO", responsavel: responsavel.id_responsavel, motorista: motorista.id_motorista },
