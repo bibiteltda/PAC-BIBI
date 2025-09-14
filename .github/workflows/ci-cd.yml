@@ -38,9 +38,6 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install dotenv
-        run: npm install dotenv
-
       - name: Set up backend env
         run: |
           echo "DB_NAME=${{ secrets.DB_NAME }}" >> $GITHUB_ENV
@@ -48,7 +45,14 @@ jobs:
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> $GITHUB_ENV
           echo "DB_HOST=localhost" >> $GITHUB_ENV
           echo "DB_PORT=5432" >> $GITHUB_ENV
-      
+
+      - name: Debug env
+        run: |
+          echo "DB_USER=$DB_USER"
+          echo "DB_HOST=$DB_HOST"
+          echo "DB_NAME=$DB_NAME"
+          echo "DB_PASSWORD length=${#DB_PASSWORD}"
+
       # ---------------- Backend ----------------
       - name: Install backend dependencies
         run: |
@@ -58,7 +62,7 @@ jobs:
       - name: Setup database for tests
         run: |
           cd backend
-          node ci-setup.js
+          NODE_ENV=ci node ci-setup.js  # <-- passa NODE_ENV=ci para ignorar dotenv
 
       - name: Run backend tests
         run: |

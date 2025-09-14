@@ -1,10 +1,13 @@
-require('dotenv').config({ path: __dirname + '/../.env' });
 const { Sequelize, DataTypes } = require('sequelize');
+
+if (process.env.NODE_ENV !== 'ci') {
+  require('dotenv').config({ path: __dirname + '/../.env' });
+}
 
 const sequelizeForCreateDB = new Sequelize(
   process.env.DB_NAME_SUPER,
   process.env.DB_USER_SUPER,
-  process.env.DB_PASSWORD_SUPER,
+  String(process.env.DB_PASSWORD_SUPER),
   {
     host: process.env.DB_HOST_SUPER,
     port: process.env.DB_PORT_SUPER,
@@ -16,7 +19,7 @@ const sequelizeForCreateDB = new Sequelize(
 const sequelize = new Sequelize(
   process.env.DB_NAME,
   process.env.DB_USER,
-  process.env.DB_PASSWORD,
+  String(process.env.DB_PASSWORD),
   {
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
