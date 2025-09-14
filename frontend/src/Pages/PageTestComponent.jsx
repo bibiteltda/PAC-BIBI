@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import FiltroTurmas from "../Components/PageTurmas/Filtro/FiltroTurmas";
 import FormCadastroAlunos from "../Components/PageTurmas/FormCadastroAlunos"
 import FormMensalidade from "../Components/PageCondutor/FormMensalidade"
+import CardRoteiro from "../Components/PageTurmas/CardRoteiro";
 
 
 
@@ -20,7 +21,8 @@ export default function PageEsqueceuSenha() {
 
             {/*<FiltroTurmas />*/}
             {/*<FormCadastroAlunos />*/}
-            <FormMensalidade />
+            {/* <FormMensalidade /> */}
+            <CardRoteiro name={"Roteiro 1"} quantAlunos={21} turno={"Matutino"}/>
 
         </section>
     );
