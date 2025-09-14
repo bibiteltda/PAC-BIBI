@@ -1,4 +1,4 @@
-const { models, sequelize, createDatabase, syncModels } = require('./database/index.js');
+const { models, sequelize, createDatabase, syncModels } = require('../database');
 
 async function setupDatabaseForTests() {
   try {
