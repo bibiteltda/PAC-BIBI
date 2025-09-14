@@ -13,6 +13,17 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    env:
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_NAME_SUPER: postgres
+      DB_USER_SUPER: ${{ secrets.DB_USER }}
+      DB_PASSWORD_SUPER: ${{ secrets.DB_PASSWORD }}
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_HOST_SUPER: localhost
+      DB_PORT_SUPER: 5432
 
     services:
       postgres:
@@ -37,14 +48,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-
-      - name: Set up backend env
-        run: |
-          echo "DB_NAME=${{ secrets.DB_NAME }}" >> $GITHUB_ENV
-          echo "DB_USER=${{ secrets.DB_USER }}" >> $GITHUB_ENV
-          echo "DB_PASSWORD=\"${{ secrets.DB_PASSWORD }}\"" >> $GITHUB_ENV
-          echo "DB_HOST=localhost" >> $GITHUB_ENV
-          echo "DB_PORT=5432" >> $GITHUB_ENV
 
       - name: Debug env
         run: |
@@ -73,8 +76,13 @@ jobs:
           DB_NAME: ${{ secrets.DB_NAME }}
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME_SUPER: postgres
+          DB_USER_SUPER: ${{ secrets.DB_USER }}
+          DB_PASSWORD_SUPER: ${{ secrets.DB_PASSWORD }}
           DB_HOST: localhost
           DB_PORT: 5432
+          DB_HOST_SUPER: localhost
+          DB_PORT_SUPER: 5432
 
       - name: Run backend tests
         run: |
