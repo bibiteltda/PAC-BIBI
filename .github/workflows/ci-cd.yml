@@ -67,7 +67,7 @@ jobs:
           done
 
       - name: Setup database for tests
-        run: node ci-setup.js
+        run: node backend/ci-setup.js
         env:
           NODE_ENV: ci
           DB_NAME: ${{ secrets.DB_NAME }}
