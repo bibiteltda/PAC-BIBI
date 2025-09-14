@@ -1,4 +1,4 @@
-const { Autenticacao } = require("../../database/models.js");
+const { Autenticacao } = require("../database/models.js");
 
 const AutenticacaoController = {
   async create(req, res) {

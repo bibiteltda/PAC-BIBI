@@ -13,52 +13,101 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    env:
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_NAME_SUPER: postgres
+      DB_USER_SUPER: ${{ secrets.DB_USER }}
+      DB_PASSWORD_SUPER: ${{ secrets.DB_PASSWORD }}
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_HOST_SUPER: localhost
+      DB_PORT_SUPER: 5432
+
+    services:
+      postgres:
+        image: postgres:14.5
+        env:
+          POSTGRES_DB: ${{ secrets.DB_NAME }}
+          POSTGRES_USER: ${{ secrets.DB_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Debug env
+        run: |
+          echo "DB_USER=$DB_USER"
+          echo "DB_HOST=$DB_HOST"
+          echo "DB_NAME=$DB_NAME"
+          echo "DB_PASSWORD length=${#DB_PASSWORD}"
+
       # ---------------- Backend ----------------
       - name: Install backend dependencies
-        run: |
-          cd backend
-          npm ci
+        working-directory: backend
+        run: npm ci
 
-      - name: Run backend lint
+      - name: Wait for Postgres
         run: |
-          cd backend
-          npm run lint || echo "No lint script in backend"
+          until pg_isready -h localhost -p 5432 -U $DB_USER; do
+            echo "Esperando Postgres..."
+            sleep 2
+          done
+
+      - name: Setup database for tests
+        working-directory: backend
+        run: node ci-setup.js
+        env:
+          NODE_ENV: ci
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME_SUPER: postgres
+          DB_USER_SUPER: ${{ secrets.DB_USER }}
+          DB_PASSWORD_SUPER: ${{ secrets.DB_PASSWORD }}
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_HOST_SUPER: localhost
+          DB_PORT_SUPER: 5432
 
       - name: Run backend tests
-        run: |
-          cd backend
-          npm test
+        working-directory: backend
+        run: npm test
 
       - name: Build backend
-        run: |
-          cd backend
-          npm run build || echo "No build script for backend"
+        working-directory: backend
+        run: npm run build || echo "No build script for backend"
 
       # ---------------- Frontend ----------------
       - name: Install frontend dependencies
-        run: |
-          cd frontend
-          npm ci
+        working-directory: frontend
+        run: npm ci
 
       - name: Run frontend lint
-        run: |
-          cd frontend
-          npm run lint || echo "No lint script in frontend"
+        working-directory: frontend
+        run: npm run lint || echo "No lint script in frontend"
 
       - name: Run frontend tests
-        run: |
-          cd frontend
-          npm test
+        working-directory: frontend
+        run: npm test
 
       - name: Build frontend
-        run: |
-          cd frontend
-          npm run build
+        working-directory: frontend
+        run: npm run build
 
       # ---------------- Notifications ----------------
       - name: Notify Teams
@@ -81,14 +130,14 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Deploy backend
+        working-directory: backend
         run: |
-          cd backend
           echo "Deploy backend para produção..."
           # Coloque aqui seus comandos reais de deploy
 
       - name: Deploy frontend
+        working-directory: frontend
         run: |
-          cd frontend
           echo "Deploy frontend para produção..."
           # Coloque aqui seus comandos reais de deploy
 
