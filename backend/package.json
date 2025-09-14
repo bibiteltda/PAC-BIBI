@@ -1,11 +1,12 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "app.js",
+  "main": "server.js",
   "directories": {
     "test": "tests"
   },
   "scripts": {
+    "start": "node server.js",
     "test": "jest",
     "lint": "eslint ./src --ext .js,.jsx",
     "build": "echo 'No build needed for backend'"
@@ -15,6 +16,7 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "jest": "^30.1.3"
+    "jest": "^30.1.3",
+    "supertest": "^7.1.4"
   }
 }

@@ -52,9 +52,9 @@ async function syncModels() {
   }
 }
 
-(async () => {
-  await createDatabase();
-  await syncModels();
-})();
+module.exports = { sequelize, models, createDatabase, syncModels };
 
-module.exports = { sequelize, models };
+// (async () => {
+//   await createDatabase();
+//   await syncModels();
+// })();

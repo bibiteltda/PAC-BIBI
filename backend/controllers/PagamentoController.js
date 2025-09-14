@@ -1,4 +1,5 @@
-const { Pagamento, Responsavel, Motorista } = require("../../database/models.js");
+const { models: { Pagamento, Responsavel, Motorista, Aluno, Escola } } = require("../../database/index.js");
+const { Op } = require("sequelize");
 
 const PagamentoController = {
   async create(req, res) {
@@ -12,12 +13,60 @@ const PagamentoController = {
 
   async findAll(req, res) {
     try {
+      const { escolaId, status, dataInicio, dataFim } = req.query;
+
+      const whereClause = {};
+      const includeOptions = [
+        { model: Responsavel, as: "responsavelObj", include: [] },
+        { model: Motorista, as: "motoristaObj" }
+      ];
+
+      if (status) {
+        whereClause.status = status;
+      }
+
+      if (dataInicio && dataFim) {
+        whereClause.dta_pgmt = {
+          [Op.between]: [dataInicio, dataFim]
+        };
+      } else if (dataInicio) {
+        whereClause.dta_pgmt = {
+          [Op.gte]: dataInicio
+        };
+      } else if (dataFim) {
+        whereClause.dta_pgmt = {
+          [Op.lte]: dataFim
+        };
+      }
+
+      const responsavelInclude = includeOptions.find(inc => inc.model === Responsavel);
+      
+      if (escolaId) {
+        responsavelInclude.include.push({
+          model: Aluno,
+          as: 'alunos',
+          include: [{
+            model: Escola,
+            as: 'escolaObj', 
+            where: { id_escola: escolaId }
+          }]
+        });
+      } else {
+        responsavelInclude.include.push({
+          model: Aluno,
+          as: 'alunos', 
+          include: [{
+            model: Escola,
+            as: 'escolaObj'
+          }]
+        });
+      }
+
       const lista = await Pagamento.findAll({
-        include: [
-          { model: Responsavel, as: "responsavelObj" },
-          { model: Motorista, as: "motoristaObj" }
-        ]
+        where: whereClause,
+        include: includeOptions
       });
+
       res.json(lista);
     } catch (err) {
       res.status(500).json({ erro: err.message });

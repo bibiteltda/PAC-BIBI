@@ -75,6 +75,8 @@ module.exports = (sequelize, DataTypes) => {
   Pagamento.belongsTo(Responsavel, { foreignKey: 'responsavel', as: 'responsavelObj' });
   Pagamento.belongsTo(Motorista, { foreignKey: 'motorista', as: 'motoristaObj' });
 
+  Responsavel.hasMany(Aluno, { foreignKey: 'responsavel', as: 'alunos' });
+
   return {
     Autenticacao,
     Bairro,
