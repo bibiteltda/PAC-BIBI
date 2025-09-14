@@ -38,6 +38,10 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Install dotenv
+        run: npm install dotenv
+
+
       - name: Set up backend env
         run: |
           echo "DB_NAME=${{ secrets.DB_NAME }}" >> $GITHUB_ENV
