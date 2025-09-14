@@ -1,4 +1,4 @@
-const { Escola, Bairro, Cidade } = require("../../database/models.js");
+const { Escola, Bairro, Cidade } = require("../database/models.js");
 
 const EscolaController = {
   async create(req, res) {

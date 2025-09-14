@@ -1,4 +1,4 @@
-const { Motorista, Autenticacao } = require("../../database/models.js");
+const { Motorista, Autenticacao } = require("../database/models.js");
 
 const MotoristaController = {
   async create(req, res) {

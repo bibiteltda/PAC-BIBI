@@ -1,4 +1,4 @@
-const { models: { Aluno, Escola, Pagamento } } = require("../../database/index.js");
+const { models: { Aluno, Escola, Pagamento } } = require("../database/index.js");
 const { Op, fn, col, where, literal } = require("sequelize");
 
 const DashboardController = {

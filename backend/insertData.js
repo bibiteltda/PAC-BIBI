@@ -1,6 +1,6 @@
 // scripts/insertData.js
 
-const { models, sequelize } = require("../database/index.js");
+const { models, sequelize } = require("./database/index.js");
 
 async function insertData() {
   try {

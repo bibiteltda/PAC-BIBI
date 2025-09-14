@@ -1,11 +1,11 @@
 const request = require('supertest');
 const app = require('../app.js');
-const { sequelize, models } = require('../../database/index.js');
+const { sequelize, models } = require('../database/index.js');
 const { Op } = require("sequelize");
 
 describe('Testes da Rota de Pagamentos', () => {
   let escolaId;
-  
+
   beforeAll(async () => {
     const [escola] = await models.Escola.findAll({ limit: 1 });
     if (escola) {
