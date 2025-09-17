@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { motion } from "framer-motion";
 
 /* Imports */
-import DropdowmEscolas from './dropdowmEscolas';
+import DropdowmEscolas from './DropdowmEscolas';
 
 /* Funções do arquivo */
 const InputAnimado = ({ children, delay = 0 }) => {

@@ -1,4 +1,4 @@
-const { Motorista } = require("../../database/models.js");
+const { Motorista, Autenticacao } = require("../database/models.js");
 
 const MotoristaController = {
   async create(req, res) {
@@ -10,9 +10,11 @@ const MotoristaController = {
     }
   },
 
-  async findAll(res) {
+  async findAll(req, res) {
     try {
-      const lista = await Motorista.findAll();
+      const lista = await Motorista.findAll({
+        include: [{ model: Autenticacao, as: "autenticacao" }]
+      });
       res.json(lista);
     } catch (err) {
       res.status(500).json({ erro: err.message });
@@ -21,7 +23,9 @@ const MotoristaController = {
 
   async findOne(req, res) {
     try {
-      const item = await Motorista.findByPk(req.params.id);
+      const item = await Motorista.findByPk(req.params.id, {
+        include: [{ model: Autenticacao, as: "autenticacao" }]
+      });
       if (!item) return res.status(404).json({ erro: "Motorista não encontrado" });
       res.json(item);
     } catch (err) {
