@@ -26,39 +26,35 @@ const PagamentoController = {
       }
 
       if (dataInicio && dataFim) {
-        whereClause.dta_pgmt = {
-          [Op.between]: [dataInicio, dataFim]
+        whereClause.dta_vcto = {
+          [Op.between]: [
+            new Date(dataInicio + "T00:00:00"),
+            new Date(dataFim + "T23:59:59")
+          ]
         };
       } else if (dataInicio) {
-        whereClause.dta_pgmt = {
-          [Op.gte]: dataInicio
-        };
+        whereClause.dta_vcto = { [Op.gte]: new Date(dataInicio + "T00:00:00") };
       } else if (dataFim) {
-        whereClause.dta_pgmt = {
-          [Op.lte]: dataFim
-        };
+        whereClause.dta_vcto = { [Op.lte]: new Date(dataFim + "T23:59:59") };
       }
 
       const responsavelInclude = includeOptions.find(inc => inc.model === Responsavel);
-      
+
       if (escolaId) {
         responsavelInclude.include.push({
           model: Aluno,
           as: 'alunos',
           include: [{
             model: Escola,
-            as: 'escolaObj', 
+            as: 'escolaObj',
             where: { id_escola: escolaId }
           }]
         });
       } else {
         responsavelInclude.include.push({
           model: Aluno,
-          as: 'alunos', 
-          include: [{
-            model: Escola,
-            as: 'escolaObj'
-          }]
+          as: 'alunos',
+          include: [{ model: Escola, as: 'escolaObj' }]
         });
       }
 
@@ -77,7 +73,9 @@ const PagamentoController = {
     try {
       const item = await Pagamento.findByPk(req.params.id, {
         include: [
-          { model: Responsavel, as: "responsavelObj" },
+          { model: Responsavel, as: "responsavelObj", include: [
+            { model: Aluno, as: 'alunos', include: [{ model: Escola, as: 'escolaObj' }] }
+          ] },
           { model: Motorista, as: "motoristaObj" }
         ]
       });
