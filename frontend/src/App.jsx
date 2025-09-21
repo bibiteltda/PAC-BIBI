@@ -13,7 +13,9 @@ function App() {
         <Route path="/cadastro" element={<PageCadastro />} />
         <Route path="/login" element={<PageLogin />} />
         <Route path="/recuperarSenha" element={<PageEsqueceuSuaSenha />} />
+        <Route path="/redefinirSenha" element={<PageEsqueceuSuaSenha />} />
         <Route path="/test" element={<PageTestComponent />} />
+        <Route path="/financeiro" element={<PageEsqueceuSuaSenha />} />
       </Routes>
     </BrowserRouter>
   )
