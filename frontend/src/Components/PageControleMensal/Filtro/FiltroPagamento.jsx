@@ -7,11 +7,11 @@ export default function FiltroTurmas() {
     const [escola, setEscola] = useState("todas");
     const [status, setStatus] = useState("todas");
     const [data, setData] = useState({ inicio: "2020-01-01", fim: "2020-12-31" });
-    
+
 
     return (
         <div className="flex gap-4 items-end p-4 rounded-lg shadow">
-            {/* Filtro Escola */}
+            {/* Filtro Pagamento */}
             <div className="flex flex-col">
                 <label className="text-sm font-medium text-gray-700">Escola</label>
                 <select
