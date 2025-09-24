@@ -1,11 +1,20 @@
-// scripts/insertData.js
-
 const { models, sequelize } = require("./database/index.js");
 
 async function insertData() {
   try {
     await sequelize.sync({ alter: true });
     console.log("Conectado ao banco de dados e modelos sincronizados.");
+
+    await Promise.all([
+      models.Pagamento.destroy({ where: {}, truncate: true, cascade: true }),
+      models.Aluno.destroy({ where: {}, truncate: true, cascade: true }),
+      models.Responsavel.destroy({ where: {}, truncate: true, cascade: true }),
+      models.Motorista.destroy({ where: {}, truncate: true, cascade: true }),
+      models.Autenticacao.destroy({ where: {}, truncate: true, cascade: true }),
+      models.Escola.destroy({ where: {}, truncate: true, cascade: true }),
+      models.Bairro.destroy({ where: {}, truncate: true, cascade: true }),
+      models.Cidade.destroy({ where: {}, truncate: true, cascade: true }),
+    ]);
 
     const [bairro1, bairro2] = await models.Bairro.bulkCreate([
       { nome: "Centro" },
@@ -27,13 +36,19 @@ async function insertData() {
       { login: "responsavel1", senha: "senha123", role: "responsavel" },
       { login: "motorista1", senha: "senha456", role: "motorista" }
     ], { returning: true });
-    
+
     const responsavel = await models.Responsavel.create({
-      nome: "Daniela Luisa da C.", contato: "47987654321", cpf: "12345678901", id_autenticacao: authResp.id_autenticacao
+      nome: "Daniela Luisa da C.",
+      contato: "47987654321",
+      cpf: "12345678901",
+      id_autenticacao: authResp.id_autenticacao
     });
-    
+
     const motorista = await models.Motorista.create({
-      nome: "Eric Gabriel C.", contato: "47912345678", cpf: "98765432109", id_autenticacao: authMot.id_autenticacao
+      nome: "Eric Gabriel C.",
+      contato: "47912345678",
+      cpf: "98765432109",
+      id_autenticacao: authMot.id_autenticacao
     });
 
     const [aluno1, aluno2, aluno3, aluno4] = await models.Aluno.bulkCreate([
@@ -43,20 +58,25 @@ async function insertData() {
       { nome: "Aluno da Escola D", idade: 8, responsavel: responsavel.id_responsavel, escola: escola1.id_escola, motorista: motorista.id_motorista }
     ], { returning: true });
 
-    const today = new Date();
-    const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 15);
-    
+    const hoje = new Date();
+    const ontem = new Date();
+    ontem.setDate(hoje.getDate() - 1);
+    const lastMonth = new Date(hoje.getFullYear(), hoje.getMonth() - 1, 15);
+
     await models.Pagamento.bulkCreate([
-      { valor: 250.00, dta_vcto: today, dta_pgmt: today, status: "PAGO", responsavel: responsavel.id_responsavel, motorista: motorista.id_motorista },
-      { valor: 250.00, dta_vcto: today, dta_pgmt: today, status: "PENDENTE", responsavel: responsavel.id_responsavel, motorista: motorista.id_motorista },
-      { valor: 250.00, dta_vcto: today, dta_pgmt: null, status: "ATRASADO", responsavel: responsavel.id_responsavel, motorista: motorista.id_motorista },
-      { valor: 220.00, dta_vcto: lastMonth, dta_pgmt: lastMonth, status: "PAGO", responsavel: responsavel.id_responsavel, motorista: motorista.id_motorista }
+      { valor: 250.00, dta_vcto: hoje, dta_pgmt: hoje, status: "PAGO", responsavel: responsavel.id_responsavel, motorista: motorista.id_motorista },
+      { valor: 250.00, dta_vcto: hoje, dta_pgmt: hoje, status: "PENDENTE", responsavel: responsavel.id_responsavel, motorista: motorista.id_motorista },
+      { valor: 250.00, dta_vcto: hoje, dta_pgmt: null, status: "ATRASADO", responsavel: responsavel.id_responsavel, motorista: motorista.id_motorista },
+      { valor: 220.00, dta_vcto: lastMonth, dta_pgmt: lastMonth, status: "PAGO", responsavel: responsavel.id_responsavel, motorista: motorista.id_motorista },
+
+      { valor: 300.00, dta_vcto: ontem, dta_pgmt: null, status: "PENDENTE", responsavel: responsavel.id_responsavel, motorista: motorista.id_motorista },
+      { valor: 350.00, dta_vcto: hoje, dta_pgmt: null, status: "PAGO", responsavel: responsavel.id_responsavel, motorista: motorista.id_motorista }
     ]);
-    
+
     console.log("✅ Dados de teste inseridos com sucesso!");
-    
+
   } catch (error) {
-    console.error("❌ Erro ao inserir dados:", error.message);
+    console.error("❌ Erro ao inserir dados:", error);
   } finally {
     await sequelize.close();
   }
