@@ -1,7 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
   const Autenticacao = sequelize.define('Autenticacao', {
     id_autenticacao: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    login: { type: DataTypes.STRING(150), allowNull: false },
+    login: { type: DataTypes.STRING(150), allowNull: false, unique: true },
     senha: { type: DataTypes.STRING(100), allowNull: false },
     role: { type: DataTypes.STRING(50), allowNull: false },
   }, { tableName: 'Autenticacao', timestamps: false });
@@ -60,17 +60,13 @@ module.exports = (sequelize, DataTypes) => {
     motorista: { type: DataTypes.INTEGER, allowNull: false },
   }, { tableName: 'Pagamento', timestamps: false });
 
-
   Escola.belongsTo(Bairro, { foreignKey: 'bairro', as: 'bairroObj' });
   Escola.belongsTo(Cidade, { foreignKey: 'cidade', as: 'cidadeObj' });
-
   Responsavel.belongsTo(Autenticacao, { foreignKey: 'id_autenticacao', as: 'autenticacao' });
   Motorista.belongsTo(Autenticacao, { foreignKey: 'id_autenticacao', as: 'autenticacao' });
-
   Aluno.belongsTo(Responsavel, { foreignKey: 'responsavel', as: 'responsavelObj' });
   Aluno.belongsTo(Escola, { foreignKey: 'escola', as: 'escolaObj' });
   Aluno.belongsTo(Motorista, { foreignKey: 'motorista', as: 'motoristaObj' });
-
   Pagamento.belongsTo(Responsavel, { foreignKey: 'responsavel', as: 'responsavelObj' });
   Pagamento.belongsTo(Motorista, { foreignKey: 'motorista', as: 'motoristaObj' });
 

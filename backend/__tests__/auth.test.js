@@ -1,5 +1,5 @@
-const { criarConta } = require('../auth/validacao.js');
-const { sequelize, models } = require('../models.js');
+const { criarConta } = require('../validacao.js');
+const { sequelize, models } = require('../index.js');
 
 describe('Testes de Autenticação', () => {
 
