@@ -2,7 +2,6 @@ const { models, sequelize, createDatabase, syncModels } = require('./database');
 
 async function setupDatabaseForTests() {
   try {
-    await createDatabase();
     await syncModels();
     console.log("✅ Conexão com o banco de dados para testes estabelecida.");
 

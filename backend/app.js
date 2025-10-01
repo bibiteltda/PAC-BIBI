@@ -12,6 +12,8 @@ const cidadeRoutes = require("./routes/CidadeRoutes.js");
 const escolaRoutes = require("./routes/EscolaRoutes.js");
 const pagamentoRoutes = require("./routes/PagamentoRoutes.js");
 const dashboardRoutes = require("./routes/dashboardRoutes.js");
+const roteiroRoutes = require("./routes/RoteiroRoutes.js");
+const roteiroEscolaRoutes = require("./routes/RoteiroEscolaRoutes.js");
 
 const app = express();
 app.use(cors());
@@ -27,6 +29,8 @@ app.use("/cidades", cidadeRoutes);
 app.use("/escolas", escolaRoutes);
 app.use("/pagamentos", pagamentoRoutes);
 app.use("/dashboard", dashboardRoutes);
+app.use("/roteiros", roteiroRoutes);
+app.use("/roteiros-escolas", roteiroEscolaRoutes);
 
 const PORT = process.env.PORT || 3000;
 
