@@ -3,10 +3,10 @@ const AlunoController = require("../controllers/AlunoController");
 
 const router = express.Router();
 
-router.post("/", AlunoController.create);
-router.get("/", AlunoController.findAll);
-router.get("/:id", AlunoController.findOne);
-router.put("/:id", AlunoController.update);
-router.delete("/:id", AlunoController.delete);
+router.post("/Aluno/", AlunoController.create);
+router.get("/Aluno/", AlunoController.findAll);
+router.get("/Aluno/:id", AlunoController.findOne);
+router.put("/Aluno/:id", AlunoController.update);
+router.delete("/Aluno/:id", AlunoController.delete);
 
 module.exports = router;

@@ -1,0 +1,37 @@
+Gerar um seeder via CMD 
+npx sequelize-cli seed:generate --name demo-usuarios
+
+Criar estrutura como no código abaixo:
+
+'use strict';
+
+module.exports = {
+  async up(queryInterface, Sequelize) {
+    // Insere dados iniciais
+    await queryInterface.bulkInsert('Usuarios', [
+      {
+        nome: 'João Silva',
+        email: 'joao@email.com',
+        senha: 'senha123', // em produção, usar hash
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        nome: 'Maria Souza',
+        email: 'maria@email.com',
+        senha: 'senha123', // em produção, usar hash
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+    ], {});
+  },
+
+  async down(queryInterface, Sequelize) {
+    // Remove os dados inseridos
+    await queryInterface.bulkDelete('Usuarios', null, {});
+  }
+};
+
+Executando: npx sequelize-cli db:seed:all
+
+Revertendo: npx sequelize-cli db:seed:undo:all

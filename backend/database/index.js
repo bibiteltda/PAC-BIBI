@@ -4,60 +4,47 @@ if (process.env.NODE_ENV !== 'ci') {
   require('dotenv').config({ path: __dirname + '/../.env' });
 }
 
-const sequelizeForCreateDB = new Sequelize(
-  process.env.DB_NAME_SUPER,
-  process.env.DB_USER_SUPER,
-  String(process.env.DB_PASSWORD_SUPER),
-  {
-    host: process.env.DB_HOST_SUPER,
-    port: process.env.DB_PORT_SUPER,
-    dialect: 'postgres',
-    logging: false,
-  }
-);
+//
+// GUIA DE UTILIZAÇÃO DOS MÉTODOS ABAIXO
+// A DIFERENCIAÇÃO E DISTINÇÃO AQUI DEVE SER FEITA DA SEGUINTE FORMA:
+// UTILIZAR O MÉTODO QUE CHAMA O URL_EXTERNAL PARA COMPILES LOCAIS EM TESTES SEPARADOS;
+// UTILIZAR O MÉTODO QUE CHAMA O URL_INTERNAL PARA COMPILES NO REPOSITÓRIO ATUAL - MESMO QUE A FUNCIONALIDADE 
+// NÃO ESTEJA NO RENDER, O BANCO JÁ ESTÁ;
+// DÁ PRA COMENTAR VÁRIAS LINHAS COM CTRL + K + C E DESCOMENTAR COM CTRL + K + U
+//
 
-const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  String(process.env.DB_PASSWORD),
-  {
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    dialect: 'postgres',
-    logging: false,
+// const sequelize = new Sequelize(process.env.DB_URL_EXTERNAL, { 
+//   dialect: 'postgres',
+//   protocol: 'postgres',
+//   logging: false,
+//   dialectOptions: {
+//     ssl: { require: true,
+//            rejectUnauthorized: false
+//     }
+//   }
+// });
+
+const sequelize = new Sequelize(process.env.DB_URL_INTERNAL, {
+  dialect: 'postgres',
+  protocol: 'postgres',
+  logging: false,
+  dialectOptions: {
+    ssl: { require: true,
+           rejectUnauthorized: false
+    }
   }
-);
+});
 
 const models = require('./models')(sequelize, DataTypes);
-
-async function createDatabase() {
-  try {
-    await sequelizeForCreateDB.query(`CREATE DATABASE ${process.env.DB_NAME}`);
-    console.log(`✅ Banco ${process.env.DB_NAME} criado com sucesso!`);
-  } catch (error) {
-    if (error.original?.code === '42P04') {
-      console.log(`⚠️ Banco ${process.env.DB_NAME} já existe, seguindo...`);
-    } else {
-      throw error;
-    }
-  } finally {
-    await sequelizeForCreateDB.close();
-  }
-}
 
 async function syncModels() {
   try {
     await sequelize.authenticate();
-    await sequelize.sync({ alter: true });
+    await sequelize.sync();
     console.log('✅ Conectado e tabelas criadas/atualizadas');
   } catch (err) {
     console.error('❌ Erro ao conectar/sincronizar:', err);
   }
 }
 
-module.exports = { sequelize, models, createDatabase, syncModels };
-
-// (async () => {
-//   await createDatabase();
-//   await syncModels();
-// })();
+module.exports = { sequelize, models, syncModels };

@@ -2,7 +2,7 @@ module.exports = (sequelize, DataTypes) => {
   const Autenticacao = sequelize.define('Autenticacao', {
     id_autenticacao: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     login: { type: DataTypes.STRING(150), allowNull: false },
-    senha: { type: DataTypes.STRING(100), allowNull: false },
+    senha: { type: DataTypes.STRING(150), allowNull: false },
     role: { type: DataTypes.STRING(50), allowNull: false },
   }, { tableName: 'Autenticacao', timestamps: false });
 
@@ -41,6 +41,17 @@ module.exports = (sequelize, DataTypes) => {
     id_autenticacao: { type: DataTypes.INTEGER, allowNull: false },
   }, { tableName: 'Motorista', timestamps: false });
 
+  const Roteiro = sequelize.define('Roteiro', {
+    id_roteiro: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    turno: { type: DataTypes.INTEGER, allowNull: false },
+  }, { tableName: 'Roteiro', timestamps: false });
+
+  const RoteiroEscola = sequelize.define('RoteiroEscola', {
+    roteiroEscola: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    roteiro: { type: DataTypes.INTEGER, allowNull: false },
+    escola: { type: DataTypes.INTEGER, allowNull: false },
+  }, { tableName: 'RoteiroEscola', timestamps: false });
+
   const Aluno = sequelize.define('Aluno', {
     id_aluno: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     nome: { type: DataTypes.STRING(80), allowNull: false },
@@ -48,6 +59,7 @@ module.exports = (sequelize, DataTypes) => {
     responsavel: { type: DataTypes.INTEGER, allowNull: false },
     escola: { type: DataTypes.INTEGER, allowNull: false },
     motorista: { type: DataTypes.INTEGER, allowNull: false },
+    roteiro: { type: DataTypes.INTEGER, allowNull: false }, // 🔹 adicionado conforme DER
   }, { tableName: 'Aluno', timestamps: false });
 
   const Pagamento = sequelize.define('Pagamento', {
@@ -55,13 +67,12 @@ module.exports = (sequelize, DataTypes) => {
     valor: { type: DataTypes.FLOAT, allowNull: false },
     dta_vcto: { type: DataTypes.DATE },
     dta_pgmt: { type: DataTypes.DATE },
-    status: { type: DataTypes.STRING(50) },
+    status: { type: DataTypes.STRING }, // 🔹 sem limite fixo
     responsavel: { type: DataTypes.INTEGER, allowNull: false },
     motorista: { type: DataTypes.INTEGER, allowNull: false },
   }, { tableName: 'Pagamento', timestamps: false });
 
-  // Definindo relacionamentos (foreign keys)
-
+  // 🔹 Relacionamentos
   Escola.belongsTo(Bairro, { foreignKey: 'bairro', as: 'bairroObj' });
   Escola.belongsTo(Cidade, { foreignKey: 'cidade', as: 'cidadeObj' });
 
@@ -71,9 +82,13 @@ module.exports = (sequelize, DataTypes) => {
   Aluno.belongsTo(Responsavel, { foreignKey: 'responsavel', as: 'responsavelObj' });
   Aluno.belongsTo(Escola, { foreignKey: 'escola', as: 'escolaObj' });
   Aluno.belongsTo(Motorista, { foreignKey: 'motorista', as: 'motoristaObj' });
+  Aluno.belongsTo(Roteiro, { foreignKey: 'roteiro', as: 'roteiroObj' }); // 🔹 adicionado
 
   Pagamento.belongsTo(Responsavel, { foreignKey: 'responsavel', as: 'responsavelObj' });
   Pagamento.belongsTo(Motorista, { foreignKey: 'motorista', as: 'motoristaObj' });
+
+  Roteiro.belongsToMany(Escola, { through: RoteiroEscola, foreignKey: 'roteiro', otherKey: 'escola', as: 'escolas' });
+  Escola.belongsToMany(Roteiro, { through: RoteiroEscola, foreignKey: 'escola', otherKey: 'roteiro', as: 'roteiros' });
 
   Responsavel.hasMany(Aluno, { foreignKey: 'responsavel', as: 'alunos' });
 
@@ -84,6 +99,8 @@ module.exports = (sequelize, DataTypes) => {
     Escola,
     Responsavel,
     Motorista,
+    Roteiro,
+    RoteiroEscola,
     Aluno,
     Pagamento
   };

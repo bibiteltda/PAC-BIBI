@@ -12,16 +12,17 @@ const AlunoController = {
 
   async findAll(req, res) {
     try {
-      const lista = await Aluno.findAll({
+      const alunos = await Aluno.findAll({
         include: [
-          { model: Responsavel, as: "responsavelObj" },
-          { model: Escola, as: "escolaObj" },
-          { model: Motorista, as: "motoristaObj" }
+          { model: Responsavel, as: 'responsavelObj' },
+          { model: Escola, as: 'escolaObj' },
+          { model: Motorista, as: 'motoristaObj' },
+          { model: Roteiro, as: 'roteiroObj' }
         ]
       });
-      res.json(lista);
-    } catch (err) {
-      res.status(500).json({ erro: err.message });
+      res.json(alunos);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
     }
   },
 

@@ -3,10 +3,10 @@ const ResponsavelController = require("../controllers/ResponsavelController");
 
 const router = express.Router();
 
-router.post("/", ResponsavelController.create);
-router.get("/", ResponsavelController.findAll);
-router.get("/:id", ResponsavelController.findOne);
-router.put("/:id", ResponsavelController.update);
-router.delete("/:id", ResponsavelController.delete);
+router.post("/Responsavel/", ResponsavelController.create);
+router.get("/Responsavel/", ResponsavelController.findAll);
+router.get("/Responsavel/:id", ResponsavelController.findOne);
+router.put("/Responsavel/:id", ResponsavelController.update);
+router.delete("/Responsavel/:id", ResponsavelController.delete);
 
 module.exports = router;
