@@ -2,10 +2,10 @@ const express = require('express');
 const router = express.Router();
 const RoteiroController = require('../controllers/RoteiroController.js');
 
-router.get('/Roteiro/', RoteiroController.listar);
-router.get('/Roteiro/:id', RoteiroController.buscarPorId);
-router.post('/Roteiro/', RoteiroController.criar);
-router.put('/Roteiro/:id', RoteiroController.atualizar);
-router.delete('/Roteiro/:id', RoteiroController.deletar);
+router.get('/', RoteiroController.listar);
+router.get('/:id', RoteiroController.buscarPorId);
+router.post('/', RoteiroController.criar);
+router.put('/:id', RoteiroController.atualizar);
+router.delete('/:id', RoteiroController.deletar);
 
 module.exports = router;

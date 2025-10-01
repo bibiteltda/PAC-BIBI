@@ -1,12 +1,12 @@
 const express = require("express");
-const ResponsavelController = require("../controllers/ResponsavelController");
+const ResponsavelController = require("../controllers/ResponsavelController.js");
 
 const router = express.Router();
 
-router.post("/Responsavel/", ResponsavelController.create);
-router.get("/Responsavel/", ResponsavelController.findAll);
-router.get("/Responsavel/:id", ResponsavelController.findOne);
-router.put("/Responsavel/:id", ResponsavelController.update);
-router.delete("/Responsavel/:id", ResponsavelController.delete);
+router.post("/", ResponsavelController.create);
+router.get("/", ResponsavelController.findAll);
+router.get("/:id", ResponsavelController.findOne);
+router.put("/:id", ResponsavelController.update);
+router.delete("/:id", ResponsavelController.delete);
 
 module.exports = router;
