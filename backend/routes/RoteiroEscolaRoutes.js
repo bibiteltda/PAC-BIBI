@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const RoteiroEscolaController = require('../controllers/RoteiroEscolaController.js');
 
-router.get('/RoteiroEscola/', RoteiroEscolaController.listar);
-router.post('/RoteiroEscola/', RoteiroEscolaController.criar);
-router.delete('/RoteiroEscola/:id', RoteiroEscolaController.deletar);
+router.get('/', RoteiroEscolaController.listar);
+router.post('/', RoteiroEscolaController.criar);
+router.delete('/:id', RoteiroEscolaController.deletar);
 
 module.exports = router;

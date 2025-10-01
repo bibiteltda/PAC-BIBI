@@ -1,12 +1,12 @@
 const express = require("express");
-const MotoristaController = require("../controllers/MotoristaController");
+const MotoristaController = require("../controllers/MotoristaController.js");
 
 const router = express.Router();
 
-router.post("/Motorista/", MotoristaController.create);
-router.get("/Motorista/", MotoristaController.findAll);
-router.get("/Motorista/:id", MotoristaController.findOne);
-router.put("/Motorista/:id", MotoristaController.update);
-router.delete("/Motorista/:id", MotoristaController.delete);
+router.post("/", MotoristaController.create);
+router.get("/", MotoristaController.findAll);
+router.get("/:id", MotoristaController.findOne);
+router.put("/:id", MotoristaController.update);
+router.delete("/:id", MotoristaController.delete);
 
 module.exports = router;
