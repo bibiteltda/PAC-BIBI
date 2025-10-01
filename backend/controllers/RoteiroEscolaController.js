@@ -1,4 +1,4 @@
-const { RoteiroEscola, Roteiro, Escola } = require('../models');
+const { RoteiroEscola, Roteiro, Escola } = require('../database/models.js');
 
 const RoteiroEscolaController = {
   async listar(req, res) {
