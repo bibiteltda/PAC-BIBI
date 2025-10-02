@@ -47,4 +47,4 @@ async function syncModels() {
   }
 }
 
-module.exports = { sequelize, models, syncModels };
+module.exports = { sequelize, syncModels , ...models};

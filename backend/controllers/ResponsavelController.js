@@ -1,4 +1,4 @@
-const { Responsavel, Autenticacao } = require("../database/models.js");
+const { Responsavel, Autenticacao } = require("../database");
 
 const ResponsavelController = {
   async create(req, res) {
