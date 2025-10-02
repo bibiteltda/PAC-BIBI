@@ -1,4 +1,4 @@
-const { Aluno, Responsavel, Escola, Motorista } = require("../database/models.js");
+const { Aluno, Responsavel, Escola, Motorista } = require("../database");
 
 const AlunoController = {
   async create(req, res) {
