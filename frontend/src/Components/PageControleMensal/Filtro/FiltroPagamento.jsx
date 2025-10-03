@@ -1,7 +1,9 @@
 /* Dependências */
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+
+// eslint-disable-next-line no-unused-vars
+import { motion } from "framer-motion";
 
 export default function FiltroTurmas() {
     const [escola, setEscola] = useState("todas");
