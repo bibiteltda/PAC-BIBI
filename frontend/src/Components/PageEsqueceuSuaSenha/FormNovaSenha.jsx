@@ -1,8 +1,10 @@
 "use client";
 /* Dependências */
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+
+// eslint-disable-next-line no-unused-vars
+import { motion } from "framer-motion";
 
 /* Ícones */
 import { FaCircleArrowLeft } from "react-icons/fa6";

@@ -1,7 +1,9 @@
 /* Dependências */
 import { useState } from "react";
+//import { useNavigate } from "react-router-dom";
+
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
 
 /* Input animado */
 const InputAnimado = ({ children, delay = 0 }) => {
@@ -25,7 +27,7 @@ const InputAnimado = ({ children, delay = 0 }) => {
 };
 
 export default function FormAlterarMensalidade() {
-    const navigate = useNavigate();
+    //const navigate = useNavigate();
 
     const [form, setForm] = useState({
         aluno: "Eric Gabriel Caetano",
