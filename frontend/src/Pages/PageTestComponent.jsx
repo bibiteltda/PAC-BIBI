@@ -9,6 +9,8 @@ import CardRoteiro from "../Components/PageTurmas/CardRoteiro";
 import FiltroPagamentos from "../Components/PageControleMensal/Filtro/FiltroPagamento"
 import GraficoDistribuicaoPagamentos from "../Components/PageControleMensal/GraficoDistribuicaoPagamentos"
 import FormNovaSenha from "../Components/PageEsqueceuSuaSenha/FormNovaSenha"
+import FiltroRelatorio from "../Components/PageRelatorio/FiltroRelatorio";
+import Recibo from "../Components/PageRecibo/Recibo";
 
 
 
@@ -22,12 +24,14 @@ export default function PageEsqueceuSenha() {
             </div>
 
             {/* <FiltroTurmas /> */}
-            {/*<FormCadastroAlunos />*/}
+            {/* <FormCadastroAlunos /> */}
             {/* <FormMensalidade /> */}
-            {/*<CardRoteiro name={"Roteiro 1"} quantAlunos={21} turno={"Matutino"}/>*/}
+            {/* <CardRoteiro name={"Roteiro 1"} quantAlunos={21} turno={"Matutino"} /> */}
             {/* <FiltroPagamentos /> */}
             {/* <GraficoDistribuicaoPagamentos /> */}
-            <FormNovaSenha />
+            {/* <FormNovaSenha /> */}
+            {/* <FiltroRelatorio /> */}
+            <Recibo />
 
         </section>
     );
