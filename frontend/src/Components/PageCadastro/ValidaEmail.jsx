@@ -1,7 +1,7 @@
 /* Dependencias */
 import { useState, useRef } from "react";
 import { Link } from 'react-router-dom';
-import { validarCodigo } from "@/services/emailService";
+import { validarCodigo } from "../../services/emailService";;
 
 export default function validaEmail({ setEtapa, form }) {
   const inputsRef = useRef([]);
