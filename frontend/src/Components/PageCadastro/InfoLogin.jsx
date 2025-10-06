@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 /* Imports */
 import InputSenha from "./inputSenha";
 import useValidaEmail from "../../hooks/useValidaEmail"
+import { enviarCodigo } from "@/services/emailService";
 
 /* Icons */
 import { FcGoogle } from "react-icons/fc";
@@ -97,7 +98,7 @@ export default function InfoLogin({ form, setForm, setEtapa }) {
   };
 
   /* Função que verifica se todos os campos foram preenchidos e finaliza etapa */
-  const handleSubmit = (e) => {
+  async function handleSubmit (e) {
     e.preventDefault();
 
     const emailValido = validarEmail(email);
@@ -134,6 +135,7 @@ export default function InfoLogin({ form, setForm, setEtapa }) {
 
     // Se tudo ok, limpa erro e avança
     setErroGeral("");
+    await enviarCodigo(email);
     setEtapa(1);
   };
 
