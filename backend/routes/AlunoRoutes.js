@@ -1,5 +1,5 @@
 const express = require("express");
-const AlunoController = require("../controllers/AlunoController");
+const AlunoController = require("../controllers/AlunoController.js");
 
 const router = express.Router();
 

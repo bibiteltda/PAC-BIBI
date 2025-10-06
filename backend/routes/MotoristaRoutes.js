@@ -1,5 +1,5 @@
 const express = require("express");
-const MotoristaController = require("../controllers/MotoristaController");
+const MotoristaController = require("../controllers/MotoristaController.js");
 
 const router = express.Router();
 
