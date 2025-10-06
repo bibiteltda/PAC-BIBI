@@ -13,6 +13,8 @@ const escolaRoutes = require("./routes/EscolaRoutes.js");
 const pagamentoRoutes = require("./routes/PagamentoRoutes.js");
 const dashboardRoutes = require("./routes/dashboardRoutes.js");
 const authMailRoutes = require("./routes/auth_mail_routes.js");
+const roteiroRoutes = require("./routes/RoteiroRoutes.js");
+const roteiroEscolaRoutes = require("./routes/RoteiroEscolaRoutes.js");
 
 const app = express();
 
@@ -47,5 +49,7 @@ app.use("/escolas", escolaRoutes);
 app.use("/pagamentos", pagamentoRoutes);
 app.use("/dashboard", dashboardRoutes);
 app.use("/verificacao", authMailRoutes);
+app.use("/roteiros", roteiroRoutes);
+app.use("/roteiros-escolas", roteiroEscolaRoutes);
 
 module.exports = app;

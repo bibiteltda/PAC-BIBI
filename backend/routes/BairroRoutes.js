@@ -1,5 +1,5 @@
 const express = require("express");
-const BairroController = require("../controllers/BairroController");
+const BairroController = require("../controllers/BairroController.js");
 
 const router = express.Router();
 

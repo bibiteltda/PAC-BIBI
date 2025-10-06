@@ -1,5 +1,5 @@
 const express = require("express");
-const ResponsavelController = require("../controllers/ResponsavelController");
+const ResponsavelController = require("../controllers/ResponsavelController.js");
 
 const router = express.Router();
 

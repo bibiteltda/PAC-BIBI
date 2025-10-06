@@ -1,4 +1,4 @@
-const { Bairro } = require("../database/models.js");
+const { Bairro } = require("../database");
 
 const BairroController = {
   async create(req, res) {
