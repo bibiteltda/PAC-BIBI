@@ -1,13 +1,15 @@
 /* Dependências */
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+
+// eslint-disable-next-line no-unused-vars
+import { motion } from "framer-motion";
 
 export default function FiltroTurmas() {
     const [escola, setEscola] = useState("todas");
     const [status, setStatus] = useState("todas");
     const [data, setData] = useState({ inicio: "2020-01-01", fim: "2020-12-31" });
-    
+
 
     return (
         <div className="flex gap-4 items-end p-4 rounded-lg shadow">
