@@ -1,15 +1,21 @@
 /* Dependencias */
-import { useRef } from "react";
+import { useState, useRef } from "react";
 import { Link } from 'react-router-dom';
+import { validarCodigo } from "../../services/emailService";;
 
-export default function ValidaEmail({ setEtapa }) {
+export default function validaEmail({ setEtapa, form }) {
   const inputsRef = useRef([]);
+  const [codigo, setCodigo] = useState(["", "", "", ""]);
 
   /* Função para alterar valor dos inputs */
   const handleChange = (e, i) => {
     const value = e.target.value;
 
     if (/^\d$/.test(value)) {
+      const novoCodigo = [...codigo];
+      novoCodigo[i] = value;
+      setCodigo(novoCodigo);
+
       if (i < inputsRef.current.length - 1) {
         inputsRef.current[i + 1].focus();
       }
@@ -28,10 +34,13 @@ export default function ValidaEmail({ setEtapa }) {
   };
 
   /* Função para passar para a proxima etapa */
-  const handleSubmit = (e) => {
+  async function handleSubmit (e) {
     e.preventDefault();
 
-    setEtapa(2);
+    const codigoCompleto = codigo.join("");
+    const res = await validarCodigo(form.email, codigoCompleto);
+
+    if (res.success) setEtapa(2);
   }
 
   return (
