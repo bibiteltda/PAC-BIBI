@@ -1,14 +1,12 @@
 /* Dependencias */
 import { useState } from "react";
-import { Link } from 'react-router-dom';
-
-// eslint-disable-next-line no-unused-vars
 import { motion} from "framer-motion";
+import { Link } from 'react-router-dom';
 
 /* Imports */
 import InputSenha from "./inputSenha";
 import useValidaEmail from "../../hooks/useValidaEmail"
-import { enviarCodigo } from "@/services/emailService";
+import { enviarCodigo } from "../../services/emailService";
 
 /* Icons */
 import { FcGoogle } from "react-icons/fc";
@@ -257,7 +255,7 @@ export default function InfoLogin({ form, setForm, setEtapa }) {
               ease: "easeOut", 
               delay: 0.6
           }}
-          className="w-full max-w-90 mt-1 flex space-x-1 font-light text-[14px] justify-end select-none">
+          className="w-full max-w-90 mt-1 flex space-x-1 font-light text-[14px] flex justify-end select-none">
             <p>Já tem uma conta?</p>
             <Link to={"/login"} className="inline-block font-semibold text-[rgba(3,105,161,1)] transition-transform transform hover:scale-110">Log in</Link>
           </motion.button>
