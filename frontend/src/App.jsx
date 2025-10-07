@@ -5,6 +5,7 @@ import PageCadastro from './Pages/PageCadastro';
 import PageLogin from './Pages/PageLogin';
 import PageEsqueceuSuaSenha from './Pages/PageEsqueceuSuaSenha';
 import PageTestComponent from './Pages/PageTestComponent';
+// import PageRelatorio from "./Pages/PageRelatorio";
 
 function App() {
   return (
@@ -13,9 +14,10 @@ function App() {
         <Route path="/cadastro" element={<PageCadastro />} />
         <Route path="/login" element={<PageLogin />} />
         <Route path="/recuperarSenha" element={<PageEsqueceuSuaSenha />} />
-        <Route path="/redefinirSenha" element={<PageEsqueceuSuaSenha />} />
+        <Route path="/redefinirSenha" element={<PageEsqueceuSuaSenha />} />  {/*talvez tenha que mudar*/}
         <Route path="/test" element={<PageTestComponent />} />
-        <Route path="/financeiro" element={<PageEsqueceuSuaSenha />} />
+        <Route path="/financeiro" element={<PageEsqueceuSuaSenha />} /> {/* Temq ue ver oque é tbm*/}
+        {/* <Route path="/relatorio" element={<PageRelatorio />} /> */}
       </Routes>
     </BrowserRouter>
   )
