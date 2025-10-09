@@ -1,5 +1,4 @@
-import { text } from "body-parser";
-import transporter from "../config/mail.js";
+import sgMail from "../config/mail.js";
 import { generateCode } from "../utils/generate_code.js";
 
 const codes = {};
