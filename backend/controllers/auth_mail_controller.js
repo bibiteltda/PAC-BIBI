@@ -1,3 +1,4 @@
+import { text } from "body-parser";
 import transporter from "../config/mail.js";
 import { generateCode } from "../utils/generate_code.js";
 
@@ -13,17 +14,27 @@ export async function sendCode(req, res) {
    codes[email] = { code, expiresAt };
 
    try {
-      console.log("Enviamos um código para:", email)
-      await transporter.sendMail({
-         from: '"Verificação" <no-reply@bibi.com>',
-         to: email,
-         subject: "BiBi",
-         text: `Seu código de verificação é ${code}`,
-      });
+      console.log("Enviamos um código para:", email);
       
-      return res.json({ success: true, message: `Código enviado para ${email}` });
+      const  msg = {
+         to: email,
+         from: {
+            name: "BiBi Verificação",
+            email: "bibiteltda@gmail.com",
+         },
+         subject: "Código de Verificação - BiBi",
+         text: `Seu código de verificação é: ${code}`,
+         html: `<p>Olá! 👋</p><p>Seu código de verificação é: <b>${code}</b></p>`,
+      };
+
+      await sgMail.send(msg)
+      
+      return res.json({ 
+         success: true, 
+         message: `Código enviado para ${email}` 
+      });
    } catch (err) {
-      console.error(err);
+      console.error("Erro ao enviar e-mail:", err.response?.body || err.message);
       return res.status(500).json({ error: "Erro ao enviar e-mail" });
    }
 }
