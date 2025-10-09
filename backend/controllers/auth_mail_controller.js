@@ -19,7 +19,7 @@ export async function sendCode(req, res) {
          to: email,
          from: {
             name: "BiBi Verificação",
-            email: "bibiteltda@gmail.com",
+            email: "bibietltda@gmail.com",
          },
          subject: "Código de Verificação - BiBi",
          text: `Seu código de verificação é: ${code}`,
