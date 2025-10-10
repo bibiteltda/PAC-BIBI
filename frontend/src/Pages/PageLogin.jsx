@@ -27,29 +27,33 @@ export default function PageLogin() {
     };
 
   return (
-    <section className="flex h-screen w-screen font-inter">
-        {/* Container lado esquerdo */}
+    <section className="flex flex-col lg:flex-row h-screen w-screen font-inter">
+          {/* Container lado esquerdo */}
         <div className="
-        w-1/2 
-        flex flex-col justify-between
-        p-10
+        flex lg:flex-col justify-between
+        md:w-full lg:w-1/2 
+        p-3 md:p-6 lg:p-10
         bg-gradient-to-br from-[#1267A0] to-[#082F49] 
         text-white 
         ">
             {/* Logo */}
             <div className="flex items-center">
-                <p className="text-4xl font-bold italic">BIBI</p>
+                <p className="text-2xl md:text-4xl lg:text-4xl font-bold italic">BIBI</p>
                 <div className="text-4xl text-[#007DFA]">·</div>
             </div>
+
             {/* Chamariz */}
-            <div className="text-5xl font-extralight italic">
+            <div className="w-40 md:w-80 text-xs md:text-xl lg:text-5xl font-extralight italic space-y-0.2">
                 <h1>Bem-vindo.</h1>
-                <p>Comece sua jornada <br /> agora com nosso <br /> sistema de gestão!</p>
+                <p>Comece sua jornada agora com nosso sistema de gestão!</p>
             </div>
         </div>
 
         {/* Container lado direito */}
-        <div className="w-1/2 h-full flex justify-center items-center ">
+        <div className="
+        w-full lg:w-1/2 h-full 
+        flex justify-center items-center 
+        ">
             <div className="space-y-4">
                 {/* Botão Voltar */}
                 <div className="px-8">
