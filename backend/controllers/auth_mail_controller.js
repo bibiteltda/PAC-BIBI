@@ -1,4 +1,4 @@
-import transporter from "../config/mail.js";
+import sgMail from "../config/mail.js";
 import { generateCode } from "../utils/generate_code.js";
 
 const codes = {};
@@ -12,18 +12,28 @@ export async function sendCode(req, res) {
    const expiresAt = Date.now() + process.env.CODE_EXPIRATION_MINUTES * 60 * 1000;
    codes[email] = { code, expiresAt };
 
-   try {
-      console.log("Enviamos um código para:", email)
-      await transporter.sendMail({
-         from: '"Verificação" <no-reply@bibi.com>',
+   try {   
+      const  msg = {
          to: email,
-         subject: "BiBi",
-         text: `Seu código de verificação é ${code}`,
-      });
+         from: {
+            name: "BiBi Verificação",
+            email: "bibiteltda@gmail.com",
+         },
+         subject: "Código de Verificação - BiBi",
+         text: `Seu código de verificação é: ${code}`,
+         html: `<p>Olá! 👋</p><p>Seu código de verificação é: <b>${code}</b></p>`,
+      };
+
+      console.log("Usando SendGrid, chave começa com:", process.env.SENDGRID_API_KEY.slice(0, 10));
+
+      await sgMail.send(msg)
       
-      return res.json({ success: true, message: `Código enviado para ${email}` });
+      return res.json({ 
+         success: true, 
+         message: `Código enviado para ${email}` 
+      });
    } catch (err) {
-      console.error(err);
+      console.error("Erro ao enviar e-mail:", err.response?.body || err.message);
       return res.status(500).json({ error: "Erro ao enviar e-mail" });
    }
 }
