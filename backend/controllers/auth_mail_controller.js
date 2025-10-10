@@ -12,9 +12,7 @@ export async function sendCode(req, res) {
    const expiresAt = Date.now() + process.env.CODE_EXPIRATION_MINUTES * 60 * 1000;
    codes[email] = { code, expiresAt };
 
-   try {
-      console.log("Enviamos um código para:", email);
-      
+   try {   
       const  msg = {
          to: email,
          from: {
@@ -25,7 +23,7 @@ export async function sendCode(req, res) {
          text: `Seu código de verificação é: ${code}`,
          html: `<p>Olá! 👋</p><p>Seu código de verificação é: <b>${code}</b></p>`,
       };
-      
+
       console.log("Usando SendGrid, chave começa com:", process.env.MAIL_PASS.slice(0, 10));
 
       await sgMail.send(msg)
