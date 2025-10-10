@@ -24,7 +24,7 @@ export async function sendCode(req, res) {
          html: `<p>Olá! 👋</p><p>Seu código de verificação é: <b>${code}</b></p>`,
       };
 
-      console.log("Usando SendGrid, chave começa com:", process.env.MAIL_PASS.slice(0, 10));
+      console.log("Usando SendGrid, chave começa com:", process.env.SENDGRID_API_KEY.slice(0, 10));
 
       await sgMail.send(msg)
       
