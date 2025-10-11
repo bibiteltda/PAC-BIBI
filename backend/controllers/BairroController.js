@@ -1,4 +1,5 @@
-const { Bairro } = require("../database");
+import db from "../database/index.js";
+const { Bairro } = db;
 
 const BairroController = {
   async create(req, res) {
@@ -52,4 +53,4 @@ const BairroController = {
   }
 };
 
-module.exports = BairroController;
+export default BairroController;

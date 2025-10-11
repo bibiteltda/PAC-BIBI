@@ -1,5 +1,6 @@
-const { Pagamento, Responsavel, Motorista, Aluno, Escola } = require("../database");
-const { Op } = require("sequelize");
+import { Op } from "sequelize";
+import db from "../database/index.js";
+const { Pagamento, Responsavel, Motorista, Aluno, Escola } = db;
 
 const PagamentoController = {
   async create(req, res) {
@@ -109,4 +110,4 @@ const PagamentoController = {
   }
 };
 
-module.exports = PagamentoController;
+export default PagamentoController;
