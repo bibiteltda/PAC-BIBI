@@ -15,6 +15,7 @@ const dashboardRoutes = require("./routes/dashboardRoutes.js");
 const authMailRoutes = require("./routes/auth_mail_routes.js");
 const roteiroRoutes = require("./routes/RoteiroRoutes.js");
 const roteiroEscolaRoutes = require("./routes/RoteiroEscolaRoutes.js");
+const relatorioRoutes = require("./routes/relatorioRoutes.js");
 
 const app = express();
 
@@ -51,5 +52,7 @@ app.use("/dashboard", dashboardRoutes);
 app.use("/verificacao", authMailRoutes);
 app.use("/roteiros", roteiroRoutes);
 app.use("/roteiros-escolas", roteiroEscolaRoutes);
+app.use('/relatorios', relatorioRoutes);
+
 
 module.exports = app;
