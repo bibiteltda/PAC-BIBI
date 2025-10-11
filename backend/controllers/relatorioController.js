@@ -1,5 +1,6 @@
-const { models } = require('../database/index.js');
-const { Op } = require('sequelize');
+import { Op } from 'sequelize';
+import db from "../database/index.js";
+const { Responsavel, Aluno, Escola, Pagamento } = db;
 
 const buscarFiltrados = async (req, res) => {
   try {
@@ -8,15 +9,15 @@ const buscarFiltrados = async (req, res) => {
     const queryOptions = {
       include: [
         {
-          model: models.Responsavel,
+          model: Responsavel,
           as: 'responsavelObj',
           required: true,
           include: [{
-            model: models.Aluno,
+            model: Aluno,
             as: 'alunos',
             required: true,
             include: [{
-              model: models.Escola,
+              model: Escola,
               as: 'escolaObj',
               required: true,
               where: escolaId ? { id_escola: escolaId } : undefined
@@ -37,7 +38,7 @@ const buscarFiltrados = async (req, res) => {
       };
     }
 
-    const pagamentos = await models.Pagamento.findAll(queryOptions);
+    const pagamentos = await Pagamento.findAll(queryOptions);
     res.status(200).json(pagamentos);
 
   } catch (error) {
@@ -46,6 +47,4 @@ const buscarFiltrados = async (req, res) => {
   }
 };
 
-module.exports = {
-  buscarFiltrados
-};
+export default { buscarFiltrados };

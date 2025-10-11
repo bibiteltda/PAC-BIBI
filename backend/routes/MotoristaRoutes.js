@@ -1,5 +1,6 @@
-const express = require("express");
-const MotoristaController = require("../controllers/MotoristaController.js");
+// routes/MotoristaRoutes.js
+import express from "express";
+import MotoristaController from "../controllers/MotoristaController.js";
 
 const router = express.Router();
 
@@ -9,4 +10,4 @@ router.get("/:id", MotoristaController.findOne);
 router.put("/:id", MotoristaController.update);
 router.delete("/:id", MotoristaController.delete);
 
-module.exports = router;
+export default router;

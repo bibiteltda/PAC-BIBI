@@ -1,4 +1,5 @@
-const { Autenticacao } = require("../database");
+import db from "../database/index.js";
+const { Autenticacao } = db;
 
 const AutenticacaoController = {
   async create(req, res) {
@@ -52,4 +53,4 @@ const AutenticacaoController = {
   }
 };
 
-module.exports = AutenticacaoController;
+export default AutenticacaoController;

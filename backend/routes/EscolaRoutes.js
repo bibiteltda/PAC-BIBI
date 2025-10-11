@@ -1,5 +1,5 @@
-const express = require("express");
-const EscolaController = require("../controllers/EscolaController.js");
+import express from "express";
+import EscolaController from "../controllers/EscolaController.js";
 
 const router = express.Router();
 
@@ -9,4 +9,4 @@ router.get("/:id", EscolaController.findOne);
 router.put("/:id", EscolaController.update);
 router.delete("/:id", EscolaController.delete);
 
-module.exports = router;
+export default router;

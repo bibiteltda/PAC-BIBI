@@ -1,5 +1,5 @@
-const express = require("express");
-const ResponsavelController = require("../controllers/ResponsavelController.js");
+import express from "express";
+import ResponsavelController from "../controllers/ResponsavelController.js";
 
 const router = express.Router();
 
@@ -9,4 +9,4 @@ router.get("/:id", ResponsavelController.findOne);
 router.put("/:id", ResponsavelController.update);
 router.delete("/:id", ResponsavelController.delete);
 
-module.exports = router;
+export default router;

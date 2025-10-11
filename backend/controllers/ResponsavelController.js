@@ -1,4 +1,5 @@
-const { Responsavel, Autenticacao } = require("../database");
+import db from "../database/index.js";
+const { Responsavel, Autenticacao } = db;
 
 const ResponsavelController = {
   async create(req, res) {
@@ -56,4 +57,4 @@ const ResponsavelController = {
   }
 };
 
-module.exports = ResponsavelController;
+export default ResponsavelController;

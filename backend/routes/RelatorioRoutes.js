@@ -1,6 +1,8 @@
-const express = require('express');
+import express from 'express';
+import relatorioController from '../controllers/relatorioController.js';
+
 const router = express.Router();
-const relatorioController = require('../controllers/relatorioController.js');
 
 router.get('/', relatorioController.buscarFiltrados);
-module.exports = router;
+
+export default router;

@@ -1,5 +1,5 @@
-const express = require("express");
-const BairroController = require("../controllers/BairroController.js");
+import express from "express";
+import BairroController from "../controllers/BairroController.js";
 
 const router = express.Router();
 
@@ -9,4 +9,4 @@ router.get("/:id", BairroController.findOne);
 router.put("/:id", BairroController.update);
 router.delete("/:id", BairroController.delete);
 
-module.exports = router;
+export default router;

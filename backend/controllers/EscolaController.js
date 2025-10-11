@@ -1,4 +1,5 @@
-const { Escola, Bairro, Cidade } = require("../database");
+import db from "../database/index.js";
+const { Bairro, Escola, Cidade } = db;
 
 const EscolaController = {
   async create(req, res) {
@@ -62,4 +63,4 @@ const EscolaController = {
   }
 };
 
-module.exports = EscolaController;
+export default EscolaController;

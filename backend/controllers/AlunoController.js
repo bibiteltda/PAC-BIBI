@@ -1,4 +1,5 @@
-const { Aluno, Responsavel, Escola, Motorista } = require("../database");
+import db from "../database/index.js";
+const { Aluno, Responsavel, Escola, Motorista, Roteiro } = db;
 
 const AlunoController = {
   async create(req, res) {
@@ -65,4 +66,4 @@ const AlunoController = {
   }
 };
 
-module.exports = AlunoController;
+export default AlunoController;
