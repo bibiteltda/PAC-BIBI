@@ -1,5 +1,5 @@
 import express from 'express';
-import relatorioController from '../controllers/relatorioController.js';
+import relatorioController from '../controllers/RelatorioController.js';
 
 const router = express.Router();
 
