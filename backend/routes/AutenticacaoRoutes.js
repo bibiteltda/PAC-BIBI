@@ -3,7 +3,7 @@ import AutenticacaoController from "../controllers/AutenticacaoController.js";
 
 const router = express.Router();
 
-router.post("/Autenticacao/", AutenticacaoController.create);
+router.post("/", AutenticacaoController.create);
 router.get("/", AutenticacaoController.findAll);
 router.get("/:id", AutenticacaoController.findOne);
 router.put("/:id", AutenticacaoController.update);
