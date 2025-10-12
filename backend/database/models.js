@@ -1,4 +1,4 @@
-module.exports = (sequelize, DataTypes) => {
+export default (sequelize, DataTypes) => {
   const Autenticacao = sequelize.define('Autenticacao', {
     id_autenticacao: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     login: { type: DataTypes.STRING(150), allowNull: false },

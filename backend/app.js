@@ -1,21 +1,24 @@
-const express = require("express");
-const cors = require("cors");
-require("dotenv").config({ path: __dirname + "/../.env" });
+// app.js
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
 
 // Rotas
-const autenticacaoRoutes = require("./routes/AutenticacaoRoutes.js");
-const responsavelRoutes = require("./routes/ResponsavelRoutes.js");
-const motoristaRoutes = require("./routes/MotoristaRoutes.js");
-const alunoRoutes = require("./routes/AlunoRoutes.js");
-const bairroRoutes = require("./routes/BairroRoutes.js");
-const cidadeRoutes = require("./routes/CidadeRoutes.js");
-const escolaRoutes = require("./routes/EscolaRoutes.js");
-const pagamentoRoutes = require("./routes/PagamentoRoutes.js");
-const dashboardRoutes = require("./routes/dashboardRoutes.js");
-const authMailRoutes = require("./routes/auth_mail_routes.js");
-const roteiroRoutes = require("./routes/RoteiroRoutes.js");
-const roteiroEscolaRoutes = require("./routes/RoteiroEscolaRoutes.js");
-const relatorioRoutes = require("./routes/relatorioRoutes.js");
+import autenticacaoRoutes from "./routes/AutenticacaoRoutes.js";
+import responsavelRoutes from "./routes/ResponsavelRoutes.js";
+import motoristaRoutes from "./routes/MotoristaRoutes.js";
+import alunoRoutes from "./routes/AlunoRoutes.js";
+import bairroRoutes from "./routes/BairroRoutes.js";
+import cidadeRoutes from "./routes/CidadeRoutes.js";
+import escolaRoutes from "./routes/EscolaRoutes.js";
+import pagamentoRoutes from "./routes/PagamentoRoutes.js";
+import dashboardRoutes from "./routes/dashboardRoutes.js";
+import authMailRoutes from "./routes/auth_mail_routes.js";
+import roteiroRoutes from "./routes/RoteiroRoutes.js";
+import roteiroEscolaRoutes from "./routes/RoteiroEscolaRoutes.js";
+import relatorioRoutes from "./routes/relatorioRoutes.js";
+
+dotenv.config({ path: new URL("../.env", import.meta.url).pathname });
 
 const app = express();
 
@@ -25,7 +28,7 @@ const allowedOrigins = [
 
 app.use(
   cors({
-    origin: function (origin, callback) {
+    origin: (origin, callback) => {
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
@@ -52,7 +55,6 @@ app.use("/dashboard", dashboardRoutes);
 app.use("/verificacao", authMailRoutes);
 app.use("/roteiros", roteiroRoutes);
 app.use("/roteiros-escolas", roteiroEscolaRoutes);
-app.use('/relatorios', relatorioRoutes);
+app.use("/relatorios", relatorioRoutes);
 
-
-module.exports = app;
+export default app;

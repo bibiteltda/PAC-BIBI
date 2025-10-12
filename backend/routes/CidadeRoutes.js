@@ -1,5 +1,5 @@
-const express = require("express");
-const CidadeController = require("../controllers/CidadeController.js");
+import express from "express";
+import CidadeController from "../controllers/CidadeController.js";
 
 const router = express.Router();
 
@@ -9,4 +9,4 @@ router.get("/:id", CidadeController.findOne);
 router.put("/:id", CidadeController.update);
 router.delete("/:id", CidadeController.delete);
 
-module.exports = router;
+export default router;
