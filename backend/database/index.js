@@ -26,7 +26,7 @@ const models = modelsDef(sequelize, DataTypes);
 async function syncModels() {
   try {
     await sequelize.authenticate();
-    await sequelize.sync();
+    await sequelize.sync({ force: true });
     console.log('✅ Conectado e tabelas criadas/atualizadas');
   } catch (err) {
     console.error('❌ Erro ao conectar/sincronizar:', err);
