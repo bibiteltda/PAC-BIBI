@@ -16,7 +16,7 @@ import dashboardRoutes from "./routes/dashboardRoutes.js";
 import authMailRoutes from "./routes/auth_mail_routes.js";
 import roteiroRoutes from "./routes/RoteiroRoutes.js";
 import roteiroEscolaRoutes from "./routes/RoteiroEscolaRoutes.js";
-import relatorioRoutes from "./routes/relatorioRoutes.js";
+import relatorioRoutes from "./routes/RelatorioRoutes.js";
 import perfilRoutes from "./routes/PerfilRoutes.js";
 
 dotenv.config({ path: new URL("../.env", import.meta.url).pathname });
