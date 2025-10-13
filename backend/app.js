@@ -17,6 +17,7 @@ import authMailRoutes from "./routes/auth_mail_routes.js";
 import roteiroRoutes from "./routes/RoteiroRoutes.js";
 import roteiroEscolaRoutes from "./routes/RoteiroEscolaRoutes.js";
 import relatorioRoutes from "./routes/relatorioRoutes.js";
+import perfilRoutes from "./routes/PerfilRoutes.js";
 
 dotenv.config({ path: new URL("../.env", import.meta.url).pathname });
 
@@ -55,6 +56,8 @@ app.use("/dashboard", dashboardRoutes);
 app.use("/verificacao", authMailRoutes);
 app.use("/roteiros", roteiroRoutes);
 app.use("/roteiros-escolas", roteiroEscolaRoutes);
+app.use("/relatorios", relatorioRoutes);
+app.use('/perfis', perfilRoutes);
 app.use('/relatorios', relatorioRoutes);
 app.use('/login', loginRoutes);
 
