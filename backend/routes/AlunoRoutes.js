@@ -1,5 +1,5 @@
-const express = require("express");
-const AlunoController = require("../controllers/AlunoController.js");
+import express from "express";
+import AlunoController from "../controllers/AlunoController.js";
 
 const router = express.Router();
 
@@ -9,4 +9,4 @@ router.get("/:id", AlunoController.findOne);
 router.put("/:id", AlunoController.update);
 router.delete("/:id", AlunoController.delete);
 
-module.exports = router;
+export default router;

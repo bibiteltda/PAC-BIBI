@@ -1,82 +1,97 @@
-/* Dependências */
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useMemo } from "react";
+import { debounce } from "lodash";
+import useEscolas from "../../../hooks/useEscolas";
 
-// eslint-disable-next-line no-unused-vars
-import { motion } from "framer-motion";
+export default function FiltroTurmas({ escola, status, data, setFiltros }) {
+    const { escolas, loading: loadingEscolas } = useEscolas();
 
-export default function FiltroTurmas() {
-    const [escola, setEscola] = useState("todas");
-    const [status, setStatus] = useState("todas");
-    const [data, setData] = useState({ inicio: "2020-01-01", fim: "2020-12-31" });
+    useEffect(() => {
+        const hoje = new Date();
+        const primeiroDia = new Date(hoje.getFullYear(), hoje.getMonth(), 1)
+            .toISOString()
+            .slice(0, 10);
+        const ultimoDia = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0)
+            .toISOString()
+            .slice(0, 10);
 
+        setFiltros(prev => ({
+            ...prev,
+            data: { inicio: primeiroDia, fim: ultimoDia },
+        }));
+    }, [setFiltros]);
+
+    const setFiltrosDebounced = useMemo(
+        () => debounce(setFiltros, 300),
+        [setFiltros]
+    );
+
+    useEffect(() => {
+        return () => setFiltrosDebounced.cancel();
+    }, [setFiltrosDebounced]);
+
+    const handleChange = (campo, valor) => {
+        setFiltrosDebounced(prev => {
+            if (campo === "inicio" || campo === "fim") {
+                return { ...prev, data: { ...prev.data, [campo]: valor } };
+            }
+            return { ...prev, [campo]: valor };
+        });
+    };
 
     return (
-        <div className="flex gap-4 items-end p-4 rounded-lg shadow">
-            {/* Filtro Pagamento */}
-            <div className="flex flex-col">
-                <label className="text-sm font-medium text-gray-700">Escola</label>
+        <div className="w-full max-w-[300px] p-4 bg-white shadow rounded-2xl space-y-3">
+            <h2 className="font-semibold mb-2">Filtros</h2>
+
+            <div>
+                <label>Escola</label>
                 <select
-                    className="border rounded-md px-3 py-2 text-sm text-black"
                     value={escola}
-                    onChange={(e) => setEscola(e.target.value)}
+                    onChange={(e) => handleChange("escola", e.target.value)}
+                    className="w-full p-1 border rounded"
+                    disabled={loadingEscolas}
                 >
-                    <option value="todas" className="hover:bg-[#0369A1]">
-                        Todas
-                    </option>
-                    <option value="escola1" className="hover:bg-[#0369A1]">
-                        Escola 1
-                    </option>
-                    <option value="escola2" className="hover:bg-[#0369A1]">
-                        Escola 2
-                    </option>
+                    <option value="todas">Todas</option>
+                    {escolas.map(es => (
+                        <option key={es.id} value={es.id}>
+                            {es.nome}
+                        </option>
+                    ))}
                 </select>
             </div>
 
-            {/* Filtro Status */}
-            <div className="flex flex-col">
-                <label className="text-sm font-medium text-gray-700">Status</label>
+            <div>
+                <label>Status</label>
                 <select
-                    className="border rounded-md px-3 py-2 text-sm text-black"
                     value={status}
-                    onChange={(e) => setStatus(e.target.value)}
+                    onChange={(e) => handleChange("status", e.target.value)}
+                    className="w-full p-1 border rounded"
                 >
-                    <option value="todas" className="hover:bg-[#0369A1]">
-                        Todas
-                    </option>
-                    <option value="ativo" className="hover:bg-[#0369A1]">
-                        Ativo
-                    </option>
-                    <option value="inativo" className="hover:bg-[#0369A1]">
-                        Inativo
-                    </option>
+                    <option value="todas">Todos</option>
+                    <option value="PAGO">Pago</option>
+                    <option value="ATRASADO">Atrasado</option>
+                    <option value="CANCELADO">Cancelado</option>
                 </select>
             </div>
 
-            {/* Filtro Data */}
-            <div className="flex flex-col">
-                <label className="text-sm font-medium text-gray-700">Data</label>
-                <div className="flex gap-2">
-                    <input
-                        type="date"
-                        className="border rounded-md px-3 py-2 text-sm text-black"
-                        value={data.inicio}
-                        onChange={(e) => setData({ ...data, inicio: e.target.value })}
-                    />
-                    <span className="self-center">→</span>
-                    <input
-                        type="date"
-                        className="border rounded-md px-3 py-2 text-sm text-black"
-                        value={data.fim}
-                        onChange={(e) => setData({ ...data, fim: e.target.value })}
-                    />
-                </div>
+            <div>
+                <label>Data início</label>
+                <input
+                    type="date"
+                    value={data.inicio}
+                    onChange={(e) => handleChange("inicio", e.target.value)}
+                    className="w-full p-1 border rounded"
+                />
             </div>
 
-            {/* Botão Filtrar */}
-            <button className="bg-[rgba(3,105,161,0.9)] border border-[#0369A1] text-white hover:bg-[#0369A1] hover:text-white font-medium px-6 py-2 rounded-md">
-                Filtrar
-            </button>
+            <div>
+                <label>Data fim</label>
+                <input
+                    type="date"
+                    value={data.fim}
+                    onChange={(e) => handleChange("fim", e.target.value)}
+                    className="w-full p-1 border rounded"
+                />
+            </div>
         </div>
     );
 }

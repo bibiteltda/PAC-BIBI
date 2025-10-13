@@ -1,5 +1,6 @@
-const { Aluno, Escola, Pagamento } = require("../database");
-const { Op, fn, col, where, literal } = require("sequelize");
+import { Op, fn, col, where, literal } from "sequelize";
+import db from "../database/index.js";
+const { Pagamento, Aluno, Escola } = db;
 
 const DashboardController = {
 
@@ -71,4 +72,4 @@ const DashboardController = {
 
 };
 
-module.exports = DashboardController;
+export default DashboardController;
