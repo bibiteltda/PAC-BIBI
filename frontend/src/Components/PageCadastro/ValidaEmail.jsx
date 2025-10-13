@@ -1,9 +1,7 @@
 /* Dependencias */
 import { useState, useRef } from "react";
-import { Link } from 'react-router-dom';
-import { validarCodigo } from "../../services/emailService";;
 
-export default function validaEmail({ setEtapa, form }) {
+export default function ValidaEmail({ setEtapa }) {
   const inputsRef = useRef([]);
   const [codigo, setCodigo] = useState(["", "", "", ""]);
 
@@ -33,14 +31,10 @@ export default function validaEmail({ setEtapa, form }) {
     }
   };
 
-  /* Função para passar para a proxima etapa */
-  async function handleSubmit (e) {
+  /* Função para passar para a próxima etapa direto */
+  const handleSubmit = (e) => {
     e.preventDefault();
-
-    const codigoCompleto = codigo.join("");
-    const res = await validarCodigo(form.email, codigoCompleto);
-
-    if (res.success) setEtapa(2);
+    setEtapa(2); // vai direto para a próxima etapa sem validação
   }
 
   return (
@@ -57,44 +51,41 @@ export default function validaEmail({ setEtapa, form }) {
             onChange={(e) => handleChange(e, i)}
             onKeyDown={(e) => handleKeyDown(e, i)}
             className="
-                w-20 h-24
-                text-center text-[rgba(3,105,161,1)] text-2xl font-semibold
-                bg-[rgba(186,230,253,0.30)]
-                border-1 rounded-lg
-                outline-none appearance-none
-                focus:bg-[rgba(186,230,253,0.50)]
-                transition-all duration-200 ease-in-out
-                [-moz-appearance:textfield]
-                "
+              w-20 h-24
+              text-center text-[rgba(3,105,161,1)] text-2xl font-semibold
+              bg-[rgba(186,230,253,0.30)]
+              border-1 rounded-lg
+              outline-none appearance-none
+              focus:bg-[rgba(186,230,253,0.50)]
+              transition-all duration-200 ease-in-out
+              [-moz-appearance:textfield]
+            "
           />
         ))}
       </div>
 
       {/* Legenda */}
-      <p className="text-sm font-light mt-1 select-none px-8">Insira o codigo de 4 digitos enviado para seu email.</p>
+      <p className="text-sm font-light mt-1 select-none px-8">
+        Insira o código de 4 dígitos.
+      </p>
 
-      {/* Botão de envio ou próximos passos */}
+      {/* Botão de envio */}
       <button
         type="submit"
         className="
-        w-full max-w-90 
-        bg-[rgba(3,105,161,0.9)]
-        mx-8 py-2 mt-4
-        text-white text-xl font-semibold
-        rounded-lg
-        cursor-pointer
-        hover:bg-[rgba(3,105,161,1)] hover:scale-102
-        transition-all duration-300 ease-in-out
-        select-none
-        ">
+          w-full max-w-90 
+          bg-[rgba(3,105,161,0.9)]
+          mx-8 py-2 mt-4
+          text-white text-xl font-semibold
+          rounded-lg
+          cursor-pointer
+          hover:bg-[rgba(3,105,161,1)] hover:scale-102
+          transition-all duration-300 ease-in-out
+          select-none
+        "
+      >
         Avançar Etapa
       </button>
-
-      {/* Botão para reenviar codigo */}
-      <div className="w-full max-w-90 mt-1 flex space-x-1 font-light text-[14px] justify-end select-none">
-        <p>Não recebeu o Codigo?</p>
-        <Link href={"/cadastro"} className="inline-block font-semibold text-[rgba(3,105,161,1)] transition-transform transform hover:scale-110">Reenviar</Link>
-      </div>
     </form>
   );
 }
