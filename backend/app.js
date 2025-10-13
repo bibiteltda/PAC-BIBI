@@ -55,6 +55,7 @@ app.use("/dashboard", dashboardRoutes);
 app.use("/verificacao", authMailRoutes);
 app.use("/roteiros", roteiroRoutes);
 app.use("/roteiros-escolas", roteiroEscolaRoutes);
-app.use("/relatorios", relatorioRoutes);
+app.use('/relatorios', relatorioRoutes);
+app.use('/login', loginRoutes);
 
 export default app;
