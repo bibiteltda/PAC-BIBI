@@ -7,8 +7,8 @@ import FiltroTurmas from "../Components/PageTurmas/Filtro/FiltroTurmas";
 import FormCadastroAlunos from "../Components/PageTurmas/FormCadastroAlunos"
 import FormMensalidade from "../Components/PageCondutor/FormMensalidade"
 import CardRoteiro from "../Components/PageTurmas/CardRoteiro";
-import FiltroPagamentos from "../Components/PageControleMensal/Filtro/FiltroPagamento"
-import GraficoDistribuicaoPagamentos from "../Components/PageControleMensal/GraficoDistribuicaoPagamentos"
+// import FiltroPagamentos from "../Components/PageControleMensal/Filtro/FiltroPagamento"
+// import GraficoDistribuicaoPagamentos from "../Components/PageControleMensal/GraficoDistribuicaoPagamentos"
 import FormNovaSenha from "../Components/PageEsqueceuSuaSenha/FormNovaSenha"
 import FiltroRelatorio from "../Components/PageRelatorio/FiltroRelatorio";
 import Recibo from "../Components/PageRecibo/Recibo";

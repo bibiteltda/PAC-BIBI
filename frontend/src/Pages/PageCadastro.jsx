@@ -1,6 +1,7 @@
 /* Dependencias */
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import useAuth from '../hooks/useAuth';
 
 /* Imports */
 import BarraDeProgresso from "../Components/PageCadastro/BarraDeProgresso";
@@ -13,6 +14,7 @@ import { FaCircleArrowLeft } from "react-icons/fa6";
 
 export default function PageCadastro() {
     const navigate = useNavigate();
+    const { register, loading, error } = useAuth();
 
     const [form, setForm] = useState({
         email: "",
@@ -21,74 +23,67 @@ export default function PageCadastro() {
         nome: "",
         cpf: "",
         celular: "",
-        codigoPais: "+55",
         role: "condutor",
     });
     const [etapa, setEtapa] = useState(0);
 
-    /* Função para Finalizar Cadastro e Enviar para banco */
-    const handleSubmit = (e) => {
+    /* Função para avançar etapa */
+    const avancarEtapa = () => setEtapa(prev => prev + 1);
+
+    /* Função para Finalizar Cadastro e enviar para backend */
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        console.log("Cadastro: ", form)
+        // chamando o hook useAuth
+        const usuario = await register(form);
+        if (usuario) {
+            alert("Cadastro realizado com sucesso!");
+            navigate("/dashboard"); // ou outra página
+        }
     }
 
     /* Função para voltar etapa */
     const voltarEtapa = () => {
-    if (etapa === 0) {
-        navigate("/"); // volta para a home
-    } else {
-        setEtapa((prev) => prev - 1);
-    }
+        if (etapa === 0) navigate("/"); 
+        else setEtapa(prev => prev - 1);
     };
 
-  return (
-    <section className="flex flex-col lg:flex-row h-screen w-screen font-inter">
-        {/* Container lado esquerdo */}
-        <div className="
-        flex lg:flex-col justify-between
-        md:w-full lg:w-1/2 
-        p-3 md:p-6 lg:p-10
-        bg-gradient-to-br from-[#1267A0] to-[#082F49] 
-        text-white 
-        ">
-            {/* Logo */}
-            <div className="flex items-center">
-                <p className="text-2xl md:text-4xl lg:text-4xl font-bold italic">BIBI</p>
-                <div className="text-4xl text-[#007DFA]">·</div>
-            </div>
-
-            {/* Chamariz */}
-            <div className="w-40 md:w-80 text-xs md:text-xl lg:text-5xl font-extralight italic space-y-0.2">
-                <h1>Bem-vindo.</h1>
-                <p>Comece sua jornada agora com nosso sistema de gestão!</p>
-            </div>
-        </div>
-
-        {/* Container lado direito */}
-        <div className="
-        w-full lg:w-1/2 h-full 
-        flex justify-center items-center 
-        ">
-            <div className="space-y-4">
-                {/* Botão Voltar */}
-                <div className="px-8">
-                    <FaCircleArrowLeft onClick={voltarEtapa} className="text-[#0369A1] text-2xl cursor-pointer hover:scale-120 transition-all duration-300 ease-in-out"/> 
+    return (
+        <section className="flex flex-col lg:flex-row h-screen w-screen font-inter">
+            {/* Lado esquerdo */}
+            <div className="flex lg:flex-col justify-between md:w-full lg:w-1/2 p-3 md:p-6 lg:p-10 bg-gradient-to-br from-[#1267A0] to-[#082F49] text-white">
+                <div className="flex items-center">
+                    <p className="text-2xl md:text-4xl lg:text-4xl font-bold italic">BIBI</p>
+                    <div className="text-4xl text-[#007DFA]">·</div>
                 </div>
-                
-                <BarraDeProgresso indexEtapa={etapa}/>
-                <p className="font-semibold text-3xl select-none px-8">Crie uma conta</p>
-                {etapa === 0 && (
-                    <InfoLogin form={form} setForm={setForm} setEtapa={setEtapa}/>
-                )}
-                {etapa === 1 && (
-                    <ValidaEmail form={form} setEtapa={setEtapa}/>
-                )}  
-                {etapa === 2 && (
-                    <InfoAdicionais form={form} setForm={setForm} handleSubmit={handleSubmit}/>
-                )}
+                <div className="w-40 md:w-80 text-xs md:text-xl lg:text-5xl font-extralight italic space-y-0.2">
+                    <h1>Bem-vindo.</h1>
+                    <p>Comece sua jornada agora com nosso sistema de gestão!</p>
+                </div>
             </div>
-        </div>
-    </section>
-  )
+
+            {/* Lado direito */}
+            <div className="w-full lg:w-1/2 h-full flex justify-center items-center">
+                <div className="space-y-4">
+                    <div className="px-8">
+                        <FaCircleArrowLeft
+                            onClick={voltarEtapa}
+                            className="text-[#0369A1] text-2xl cursor-pointer hover:scale-120 transition-all duration-300 ease-in-out"
+                        />
+                    </div>
+
+                    <BarraDeProgresso indexEtapa={etapa}/>
+                    <p className="font-semibold text-3xl select-none px-8">Crie uma conta</p>
+
+                    {/* Etapas */}
+                    {etapa === 0 && <InfoLogin form={form} setForm={setForm} setEtapa={avancarEtapa} />}
+                    {etapa === 1 && <ValidaEmail form={form} setEtapa={avancarEtapa} />}  
+                    {etapa === 2 && <InfoAdicionais form={form} setForm={setForm} handleSubmit={handleSubmit} />}
+
+                    {loading && <p className="text-blue-500 px-8">Cadastrando...</p>}
+                    {error && <p className="text-red-500 px-8">{error}</p>}
+                </div>
+            </div>
+        </section>
+    )
 }
