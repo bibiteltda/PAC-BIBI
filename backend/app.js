@@ -58,5 +58,7 @@ app.use("/roteiros", roteiroRoutes);
 app.use("/roteiros-escolas", roteiroEscolaRoutes);
 app.use("/relatorios", relatorioRoutes);
 app.use('/perfis', perfilRoutes);
+app.use('/relatorios', relatorioRoutes);
+app.use('/login', loginRoutes);
 
 export default app;
