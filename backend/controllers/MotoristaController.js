@@ -1,4 +1,5 @@
-const { Motorista, Autenticacao } = require("../database");
+import db from "../database/index.js";
+const { Motorista, Autenticacao } = db;
 
 const MotoristaController = {
   async create(req, res) {
@@ -56,4 +57,4 @@ const MotoristaController = {
   }
 };
 
-module.exports = MotoristaController;
+export default MotoristaController;

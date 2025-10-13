@@ -21,7 +21,7 @@ export default function BarraDeProgresso({ indexEtapa }) {
 
         return (
           <div key={i} className={`
-          relative flex items-center px-4 py-2 text-[10px] font-medium
+          relative flex items-center px-1 md:px-4 lg:px-4 py-2 text-[10px] font-medium
           ${ativa ? 'text-[#1267A0]' : completa ? 'text-[#252525]' : 'text-gray-400'}
           bg-white
           `}>

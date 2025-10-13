@@ -1,4 +1,5 @@
-const { Roteiro, Escola } = require('../database');
+import db from "../database/index.js";
+const { Escola, Roteiro } = db;
 
 const RoteiroController = {
   async listar(req, res) {
@@ -54,4 +55,4 @@ const RoteiroController = {
   }
 };
 
-module.exports = RoteiroController;
+export default RoteiroController;

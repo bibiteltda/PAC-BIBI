@@ -89,4 +89,4 @@ async create(req, res) {
   }
 };
 
-module.exports = AlunoController;
+export default AlunoController;
