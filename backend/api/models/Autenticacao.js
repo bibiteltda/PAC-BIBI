@@ -3,7 +3,7 @@ module.exports = {
   primaryKey: 'id_autenticacao',
   schema: true,
   attributes: {
-    id_autenticacao: { type: 'number', autoIncrement: true },
+    id_autenticacao: { type: 'number', columnName: 'id_autenticacao', autoIncrement: true },
     login: { type: 'string', required: true, maxLength: 150 },
     senha: { type: 'string', required: true, maxLength: 150 },
     role: { type: 'string', required: true, maxLength: 50 },
