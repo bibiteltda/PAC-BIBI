@@ -1,6 +1,6 @@
 module.exports = {
   tableName: 'Autenticacao',
-  primaryKey: 'id_autenticacao',
+  primaryKey: 'id',
   attributes: {
     id: { type: 'number', autoIncrement: true },
     login: { type: 'string', required: true, maxLength: 150 },
