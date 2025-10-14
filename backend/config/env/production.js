@@ -1,6 +1,6 @@
 module.exports = {
   models: {
-    migrate: 'alter'
+    migrate: 'safe'
   },
 
   datastores: {
