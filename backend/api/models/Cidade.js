@@ -1,16 +1,12 @@
-/**
- * Cidade.js
- *
- * @description :: A model definition represents a database table/collection.
- * @docs        :: https://sailsjs.com/docs/concepts/models-and-orm/models
- */
-
 module.exports = {
-  tableName: 'Cidade',
-  primaryKey: 'id_cidade',
+  tableName: 'cidade',
   attributes: {
-    id_cidade: { type: 'number', autoIncrement: true },
+    id: { type: 'number', columnName: 'id_cidade', autoIncrement: true },
     nome: { type: 'string', required: true, maxLength: 255 },
-    escolas: { collection: 'escola', via: 'cidade' }
+
+    escolas: { collection: 'escola', via: 'cidade' },
+
+    createdAt: { type: 'ref', columnType: 'timestamp without time zone', autoCreatedAt: true },
+    updatedAt: { type: 'ref', columnType: 'timestamp without time zone', autoUpdatedAt: true }
   }
 };
