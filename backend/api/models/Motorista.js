@@ -1,7 +1,7 @@
 module.exports = {
   tableName: 'motorista',
   attributes: {
-    id: { type: 'number', columnName: 'id_motorista', autoIncrement: true },
+    id: { type: 'number', autoIncrement: true },
     nome: { type: 'string', required: true, maxLength: 80 },
     contato: { type: 'string', maxLength: 15 },
     cpf: { type: 'string', maxLength: 15 },
