@@ -6,12 +6,13 @@ export default function useAuth() {
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
 
+  // 🟢 Cadastro
   const register = async (formData) => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await fetch(`${API_URL}/api/register`, {
+      const response = await fetch(`${API_URL}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -24,10 +25,17 @@ export default function useAuth() {
         return null;
       }
 
-      setUser(data.usuario);
-      return data.usuario;
+      // Guarda token e dados do usuário
+      localStorage.setItem("token", data.token);
+      const usuario = {
+        autenticacao: data.autenticacao,
+        perfil: data.perfil,
+      };
+
+      setUser(usuario);
+      return usuario;
     } catch (err) {
-      console.error(err);
+      console.error("Erro no register:", err);
       setError("Erro ao conectar com o servidor.");
       return null;
     } finally {
@@ -35,12 +43,13 @@ export default function useAuth() {
     }
   };
 
+  // 🟢 Login
   const login = async (formData) => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await fetch(`${API_URL}/api/login`, {
+      const response = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -53,11 +62,17 @@ export default function useAuth() {
         return null;
       }
 
-      setUser(data.usuario);
+      // Guarda token e dados do usuário
       localStorage.setItem("token", data.token);
-      return data.usuario;
+      const usuario = {
+        autenticacao: data.autenticacao,
+        perfil: data.perfil,
+      };
+
+      setUser(usuario);
+      return usuario;
     } catch (err) {
-      console.error(err);
+      console.error("Erro no login:", err);
       setError("Erro ao conectar com o servidor.");
       return null;
     } finally {
@@ -65,5 +80,11 @@ export default function useAuth() {
     }
   };
 
-  return { register, login, loading, error, user };
+  // 🟡 Logout
+  const logout = () => {
+    localStorage.removeItem("token");
+    setUser(null);
+  };
+
+  return { register, login, logout, loading, error, user };
 }

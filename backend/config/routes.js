@@ -31,6 +31,8 @@ module.exports.routes = {
   'PUT /responsavel/:id': { action: 'responsavel/update' },
   'DELETE /responsavel/:id': { action: 'responsavel/delete' },
   // Autenticacao
+  'POST /register': { action: 'autenticacao/register' },
+  'POST /login': { action: 'autenticacao/login' },
   'GET /autenticacao': { action: 'autenticacao/find' },
   'GET /autenticacao/:id': { action: 'autenticacao/find' },
   'POST /autenticacao': { action: 'autenticacao/create' },
