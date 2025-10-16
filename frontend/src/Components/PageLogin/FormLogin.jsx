@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 
 /* Imports */
 import InputSenha from "../PageCadastro/inputSenha";
-import useAuth from '../hooks/useAuth';
+import useAuth from '../../hooks/useAuth';
 
 /* Icons */
 import { FcGoogle } from "react-icons/fc";
@@ -30,6 +30,7 @@ const InputAnimado = ({ children, delay = 0 }) => {
 
 export default function FormLogin({ form, setForm, setEtapa }) {
   const [erroGeral, setErroGeral] = useState("");
+  const { login, loading, error } = useAuth();
 
   const [camposTocados, setCamposTocados] = useState({
     email: false,
