@@ -32,23 +32,21 @@ export default function PageCadastro() {
 
     /* Função para Finalizar Cadastro e enviar para backend */
     const handleSubmit = async (e) => {
-    e.preventDefault();
+        e.preventDefault();
 
-    const payload = {
-        login: form.email, // backend espera login
-        senha: form.senha,
-        nome: form.nome,
-        cpf: form.cpf,
-        contato: form.celular,
-        // converte "condutor" para "motorista" conforme o backend
-        role: form.role === "condutor" ? "motorista" : "responsavel",
-    };
+        const payload = {
+            login: form.email,
+            senha: form.senha,
+            nome: form.nome,
+            cpf: form.cpf,
+            contato: form.celular,
+            role: form.role === "condutor" ? "motorista" : "responsavel",
+        };
 
-    const usuario = await register(payload);
-    if (usuario) {
-        alert("Cadastro realizado com sucesso!");
-        navigate("/dashboard");
-    }
+        const usuario = await register(payload);
+        if (usuario) {
+            navigate("/dashboard");
+        }
     };
 
 

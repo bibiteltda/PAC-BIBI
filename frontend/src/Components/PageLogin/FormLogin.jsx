@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 
 /* Imports */
 import InputSenha from "../PageCadastro/inputSenha";
+import useAuth from '../hooks/useAuth';
 
 /* Icons */
 import { FcGoogle } from "react-icons/fc";
@@ -61,7 +62,7 @@ export default function FormLogin({ form, setForm, setEtapa }) {
   };
 
   /* Função submit */
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const camposVazios =
@@ -90,6 +91,15 @@ export default function FormLogin({ form, setForm, setEtapa }) {
     // Tudo ok
     setErroGeral("");
     setEtapa(1);
+    const payload = {
+      login: form.email,
+      senha: form.senha,
+    };
+
+    const usuario = await login(payload);
+    if (usuario) {
+        navigate("/dashboard");
+    }
   };
 
   return (
