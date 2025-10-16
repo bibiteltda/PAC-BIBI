@@ -164,9 +164,9 @@ export default function InfoAdicionais({ form, setForm, handleSubmit }) {
                 </InputAnimado>
                 
                 {/* Input Escolas Associadas */}
-                <InputAnimado delay={0.7}>
+                {/* <InputAnimado delay={0.7}>
                     <DropdowmEscolas />
-                </InputAnimado>
+                </InputAnimado> */}
                 
 
             </div>
