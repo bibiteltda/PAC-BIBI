@@ -1,7 +1,7 @@
 module.exports = {
   tableName: 'pagamento',
   attributes: {
-    id: { type: 'number', columnName: 'id_pagamento', autoIncrement: true },
+    id: { type: 'number', autoIncrement: true },
     valor: { type: 'number', columnType: 'real' },
     dta_vcto: { type: 'ref', columnType: 'date' },
     dta_pgmt: { type: 'ref', columnType: 'date' },

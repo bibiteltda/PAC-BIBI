@@ -1,7 +1,7 @@
 module.exports = {
   tableName: 'bairro',
   attributes: {
-    id: { type: 'number', columnName: 'id_bairro', autoIncrement: true },
+    id: { type: 'number', autoIncrement: true },
     nome: { type: 'string', required: true, maxLength: 255 },
 
     escolas: { collection: 'escola', via: 'bairro' },
