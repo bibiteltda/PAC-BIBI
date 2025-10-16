@@ -1,7 +1,7 @@
 module.exports = {
   tableName: 'autenticacao',
   attributes: {
-    id: { type: 'number', columnName: 'id_autenticacao', autoIncrement: true },
+    id: { type: 'number', autoIncrement: true },
     login: { type: 'string', required: true, maxLength: 150 },
     senha: { type: 'string', required: true, maxLength: 150 },
     role: { type: 'string', maxLength: 50 },
