@@ -66,15 +66,14 @@ export default function FormLogin({ form, setForm, setEtapa }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const camposVazios =
-      !form.email.trim() || !form.senha.trim() || !form.confirmarSenha.trim();
-
+    // Marca campos como tocados
     setCamposTocados({
       email: true,
       senha: true,
     });
 
-    if (camposVazios) {
+    // Verificações básicas
+    if (!form.email.trim() || !form.senha.trim()) {
       setErroGeral("Preencha todos os campos.");
       return;
     }
@@ -89,19 +88,25 @@ export default function FormLogin({ form, setForm, setEtapa }) {
       return;
     }
 
-    // Tudo ok
     setErroGeral("");
-    setEtapa(1);
+
+    // ✅ Monta o payload compatível com o backend
     const payload = {
-      login: form.email,
+      login: form.email, // backend usa login, não email
       senha: form.senha,
     };
 
+    // Chama o hook de autenticação
     const usuario = await login(payload);
+
     if (usuario) {
-        navigate("/dashboard");
+      alert("Login realizado com sucesso!");
+      navigate("/dashboard"); // Redireciona pro dashboard
+    } else {
+      setErroGeral("Usuário ou senha inválidos.");
     }
   };
+
 
   return (
     <form onSubmit={handleSubmit} className="px-8 space-y-2">
