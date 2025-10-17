@@ -183,7 +183,7 @@ export default function FormLogin({ form, setForm, setEtapa }) {
             select-none
           "
         >
-          Avançar Etapa
+          Fazer Login
         </motion.button>
 
         <motion.button
