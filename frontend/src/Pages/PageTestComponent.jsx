@@ -12,6 +12,7 @@ import CardRoteiro from "../Components/PageTurmas/CardRoteiro";
 import FormNovaSenha from "../Components/PageEsqueceuSuaSenha/FormNovaSenha"
 import FiltroRelatorio from "../Components/PageRelatorio/FiltroRelatorio";
 import Recibo from "../Components/PageRecibo/Recibo";
+import LinkConvite from "../Components/PageTurmas/LinkConvite";
 
 
 
@@ -32,7 +33,8 @@ export default function PageEsqueceuSenha() {
             {/* <GraficoDistribuicaoPagamentos /> */}
             {/* <FormNovaSenha /> */}
             {/* <FiltroRelatorio /> */}
-            <Recibo />
+            {/* <Recibo /> */}
+            <LinkConvite />
 
         </section>
     );
