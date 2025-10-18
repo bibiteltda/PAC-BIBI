@@ -3,7 +3,9 @@ import { motion } from "framer-motion";
 
 export default function CardRoteiro({ name, quantAlunos, turno }) {
   return (
-    <section className="flex w-full max-w-100 h-30 bg-gradient-to-br from-[#1267A0] to-[#082F49] rounded-xl text-white shadow-lg p-4">
+    // <section className="flex w-full max-w-100 h-30 bg-gradient-to-br from-[#1267A0] to-[#082F49] rounded-xl text-white shadow-lg p-4">
+    <section className="w-full max-w-[800px] mx-auto h-30 flex bg-gradient-to-br from-[#1267A0] to-[#082F49] rounded-xl text-white shadow-lg p-4">
+
       <motion.div
         className="w-full flex flex-col justify-between select-none"
         initial={{ opacity: 0, y: 20 }}
