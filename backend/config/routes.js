@@ -68,4 +68,11 @@ module.exports.routes = {
   'POST /cidade': { action: 'cidade/create' },
   'PUT /cidade/:id': { action: 'cidade/update' },
   'DELETE /cidade/:id': { action: 'cidade/delete' },
+  // Controle Mensal
+  'GET /controle-mensal': { action: 'controle-mensal/find' },
+  'GET /controle-mensal/:tipo': { action: 'controle-mensal/find' },
+  'POST /controle-mensal': { action: 'controle-mensal/create' },
+  'PUT /controle-mensal/:id': { action: 'controle-mensal/update' },
+  'DELETE /controle-mensal/:id': { action: 'controle-mensal/delete' },
+
 };
