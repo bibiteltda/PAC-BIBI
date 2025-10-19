@@ -78,16 +78,29 @@ module.exports = {
         const lista = [];
 
         for (const p of pagamentos) {
-          const aluno = await Aluno.findOne({ motorista: p.motorista.id }).populate('escola');
+          const alunos = await Aluno.find({ motorista: p.motorista.id }).populate('escola');
 
-          lista.push({
-            id: p.id_pagamento,
-            aluno: aluno ? aluno.nome : 'N/A',
-            escola: aluno?.escola?.nome || 'N/A',
-            valor: p.valor,
-            data: p.dta_pgmt || p.dta_vcto,
-            status: p.status,
-          });
+          if (alunos.length > 0) {
+            alunos.forEach(aluno => {
+              lista.push({
+                id: p.id_pagamento,
+                aluno: aluno.nome,
+                escola: aluno.escola?.nome || 'N/A',
+                valor: p.valor,
+                data: p.dta_pgmt || p.dta_vcto,
+                status: p.status,
+              });
+            });
+          } else {
+            lista.push({
+              id: p.id_pagamento,
+              aluno: 'N/A',
+              escola: 'N/A',
+              valor: p.valor,
+              data: p.dta_pgmt || p.dta_vcto,
+              status: p.status,
+            });
+          }
         }
 
         return exits.success({ tipo: 'listar', lista });
