@@ -1,72 +1,61 @@
-// import { useState, useEffect } from "react";
-// import axios from "axios";
-// import { API_URL } from "../services/api";
+import { useState, useEffect } from "react";
 
-// import FiltroTurmas from "../Components/PageControleMensal/Filtro/FiltroPagamento";
-// import DistribuicaoPagamentos from "../Components/PageControleMensal/GraficoDistribuicaoPagamentos";
-// import TabelaTransacoes from "../Components/PageControleMensal/TabelaTransacoes";
-// import TopEscolas from "../Components/PageControleMensal/TopEscolas";
+import FiltroTurmas from "../Components/PageControleMensal/Filtro/FiltroPagamento";
+import DistribuicaoPagamentos from "../Components/PageControleMensal/GraficoDistribuicaoPagamentos";
+import TabelaTransacoes from "../Components/PageControleMensal/TabelaTransacoes";
+import TopEscolas from "../Components/PageControleMensal/TopEscolas";
 
-// export default function ControleMensal() {
-//   const [filtros, setFiltros] = useState({
-//     escola: "todas",
-//     status: "todas",
-//     data: { inicio: "2020-01-01", fim: "2020-12-31" },
-//   });
+import useControleMensal from "../hooks/useControleMensal";
 
-//   const [dadosDashboard, setDadosDashboard] = useState(null);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
+export default function ControleMensal() {
+  const [filtros, setFiltros] = useState({
+    escola: "todas",
+    status: "todas",
+    data: { inicio: "", fim: "" },
+  });
 
-//   useEffect(() => {
-//     async function fetchDashboard() {
-//       setLoading(true);
-//       try {
-//         const res = await axios.get(`${API_URL}/dashboard/controles`);
-//         setDadosDashboard(res.data);
-//       } catch (err) {
-//         setError(err.message);
-//       } finally {
-//         setLoading(false);
-//       }
-//     }
-//     fetchDashboard();
-//   }, []);
+  const {
+    loading,
+    error,
+    data,
+    create,
+    find,
+    update,
+    remove,
+  } = useControleMensal();
 
-//   if (loading) return <p>Carregando dashboard...</p>;
-//   if (error) return <p>Erro: {error}</p>;
+  useEffect(() => {
+    find();
+  }, []);
 
-//   return (
-//     <div className="p-6 space-y-6">
-//       <h1 className="text-xl font-bold">Controle Mensal</h1>
+  if (loading) return <p>Carregando dashboard...</p>;
+  if (error) return <p className="text-red-500">Erro: {error}</p>;
 
-//       {/* Gráfico e Filtro */}
-//       <div className="flex flex-col md:flex-row gap-4">
-//         {dadosDashboard && (
-//           <DistribuicaoPagamentos
-//             ganhosMensais={dadosDashboard.ganhosMensais}
-//             perdasMensais={dadosDashboard.perdasMensais}
-//             ganhosMesPassado={dadosDashboard.ganhosMesAnterior}
-//           />
-//         )}
+  return (
+    <div className="p-6 space-y-6">
+      <h1 className="text-2xl font-bold text-gray-800">Controle Mensal</h1>
 
-//         <FiltroTurmas
-//           escola={filtros.escola}
-//           status={filtros.status}
-//           data={filtros.data}
-//           setFiltros={setFiltros}
-//         />
-//       </div>
+      <div className="flex flex-col md:flex-row gap-4">
+        <DistribuicaoPagamentos
+          ganhosMensais={data?.graficos?.ganhosMensais ?? 0}
+          perdasMensais={data?.graficos?.perdasMensais ?? 0}
+          ganhosMesPassado={data?.graficos?.ganhosMesAnterior ?? 0}
+        />
 
-//       {/* Top 3 Escolas */}
-//       <TopEscolas />
+        <FiltroTurmas
+          filtros={filtros}
+          setFiltros={setFiltros}
+          escolasTop={data?.melhorEscola ? [data.melhorEscola] : []}
+        />
+      </div>
 
-//       {/* Tabela de transações */}
-//       <TabelaTransacoes
-//         filtroEscola={filtros.escola}
-//         filtroStatus={filtros.status}
-//         filtroData={filtros.data}
-//       />
-//     </div>
-//   );
-// }
+      <TopEscolas escolas={data?.melhorEscola ? [data.melhorEscola] : []} />
+
+      <TabelaTransacoes
+        transacoes={data?.transacoes ?? []}
+        updateStatus={(id, status) => update(id, { status })}
+        onDelete={(id) => remove(id)}
+      />
+    </div>
+  );
+}

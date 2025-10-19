@@ -1,97 +1,96 @@
-// import { useEffect, useMemo } from "react";
-// import { debounce } from "lodash";
-// import useEscolas from "../../../hooks/useEscolas";
+import { useEffect, useMemo, useCallback } from "react";
+import { debounce } from "lodash";
 
-// export default function FiltroTurmas({ escola, status, data, setFiltros }) {
-//     const { escolas, loading: loadingEscolas } = useEscolas();
+export default function FiltroTurmas({ filtros = {}, setFiltros, escolasTop = [] }) {
+    const { escola = "todas", status = "todas", data = { inicio: "", fim: "" } } = filtros;
 
-//     useEffect(() => {
-//         const hoje = new Date();
-//         const primeiroDia = new Date(hoje.getFullYear(), hoje.getMonth(), 1)
-//             .toISOString()
-//             .slice(0, 10);
-//         const ultimoDia = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0)
-//             .toISOString()
-//             .slice(0, 10);
+    useEffect(() => {
+        if (!data.inicio || !data.fim) {
+            const hoje = new Date();
+            const primeiroDia = new Date(hoje.getFullYear(), hoje.getMonth(), 1)
+                .toISOString()
+                .slice(0, 10);
+            const ultimoDia = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0)
+                .toISOString()
+                .slice(0, 10);
 
-//         setFiltros(prev => ({
-//             ...prev,
-//             data: { inicio: primeiroDia, fim: ultimoDia },
-//         }));
-//     }, [setFiltros]);
+            setFiltros((prev) => ({
+                ...prev,
+                data: { inicio: primeiroDia, fim: ultimoDia },
+            }));
+        }
+    }, [data, setFiltros]);
 
-//     const setFiltrosDebounced = useMemo(
-//         () => debounce(setFiltros, 300),
-//         [setFiltros]
-//     );
+    const setFiltrosDebounced = useMemo(() => debounce(setFiltros, 300), [setFiltros]);
 
-//     useEffect(() => {
-//         return () => setFiltrosDebounced.cancel();
-//     }, [setFiltrosDebounced]);
+    useEffect(() => () => setFiltrosDebounced.cancel(), [setFiltrosDebounced]);
 
-//     const handleChange = (campo, valor) => {
-//         setFiltrosDebounced(prev => {
-//             if (campo === "inicio" || campo === "fim") {
-//                 return { ...prev, data: { ...prev.data, [campo]: valor } };
-//             }
-//             return { ...prev, [campo]: valor };
-//         });
-//     };
+    const handleChange = useCallback(
+        (campo, valor) => {
+            setFiltrosDebounced((prev) => {
+                if (campo === "inicio" || campo === "fim") {
+                    return { ...prev, data: { ...prev.data, [campo]: valor } };
+                }
+                return { ...prev, [campo]: valor };
+            });
+        },
+        [setFiltrosDebounced]
+    );
 
-//     return (
-//         <div className="w-full max-w-[300px] p-4 bg-white shadow rounded-2xl space-y-3">
-//             <h2 className="font-semibold mb-2">Filtros</h2>
+    return (
+        <div className="w-full max-w-[300px] p-4 bg-white shadow-md rounded-2xl space-y-3 border border-gray-100">
+            <h2 className="font-semibold text-gray-800 mb-2">Filtros</h2>
 
-//             <div>
-//                 <label>Escola</label>
-//                 <select
-//                     value={escola}
-//                     onChange={(e) => handleChange("escola", e.target.value)}
-//                     className="w-full p-1 border rounded"
-//                     disabled={loadingEscolas}
-//                 >
-//                     <option value="todas">Todas</option>
-//                     {escolas.map(es => (
-//                         <option key={es.id} value={es.id}>
-//                             {es.nome}
-//                         </option>
-//                     ))}
-//                 </select>
-//             </div>
+            <div>
+                <label className="block text-sm text-gray-600">Escola</label>
+                <select
+                    value={escola}
+                    onChange={(e) => handleChange("escola", e.target.value)}
+                    className="w-full p-2 border rounded-md text-sm"
+                >
+                    <option value="todas">Todas</option>
+                    {escolasTop.map((es) => (
+                        <option key={es.id_escola} value={es.id_escola}>
+                            {es.nome}
+                        </option>
+                    ))}
+                </select>
+            </div>
 
-//             <div>
-//                 <label>Status</label>
-//                 <select
-//                     value={status}
-//                     onChange={(e) => handleChange("status", e.target.value)}
-//                     className="w-full p-1 border rounded"
-//                 >
-//                     <option value="todas">Todos</option>
-//                     <option value="PAGO">Pago</option>
-//                     <option value="ATRASADO">Atrasado</option>
-//                     <option value="CANCELADO">Cancelado</option>
-//                 </select>
-//             </div>
+            <div>
+                <label className="block text-sm text-gray-600">Status</label>
+                <select
+                    value={status}
+                    onChange={(e) => handleChange("status", e.target.value)}
+                    className="w-full p-2 border rounded-md text-sm"
+                >
+                    <option value="todas">Todos</option>
+                    <option value="PAGO">Pago</option>
+                    <option value="ATRASADO">Atrasado</option>
+                    <option value="CANCELADO">Cancelado</option>
+                </select>
+            </div>
 
-//             <div>
-//                 <label>Data início</label>
-//                 <input
-//                     type="date"
-//                     value={data.inicio}
-//                     onChange={(e) => handleChange("inicio", e.target.value)}
-//                     className="w-full p-1 border rounded"
-//                 />
-//             </div>
-
-//             <div>
-//                 <label>Data fim</label>
-//                 <input
-//                     type="date"
-//                     value={data.fim}
-//                     onChange={(e) => handleChange("fim", e.target.value)}
-//                     className="w-full p-1 border rounded"
-//                 />
-//             </div>
-//         </div>
-//     );
-// }
+            <div className="grid grid-cols-2 gap-2">
+                <div>
+                    <label className="block text-sm text-gray-600">Início</label>
+                    <input
+                        type="date"
+                        value={data.inicio || ""}
+                        onChange={(e) => handleChange("inicio", e.target.value)}
+                        className="w-full p-2 border rounded-md text-sm"
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm text-gray-600">Fim</label>
+                    <input
+                        type="date"
+                        value={data.fim || ""}
+                        onChange={(e) => handleChange("fim", e.target.value)}
+                        className="w-full p-2 border rounded-md text-sm"
+                    />
+                </div>
+            </div>
+        </div>
+    );
+}
