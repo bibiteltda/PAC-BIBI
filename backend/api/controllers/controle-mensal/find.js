@@ -18,7 +18,7 @@ module.exports = {
         const escolas = {};
 
         for (const p of pagamentos) {
-          const alunos = await Aluno.find({ motorista: p.motorista }).populate('escola');
+          const alunos = await Aluno.find({ motorista: p.motorista.id }).populate('escola');
           for (const aluno of alunos) {
             const nomeEscola = aluno.escola?.nome || 'Desconhecida';
             escolas[nomeEscola] = (escolas[nomeEscola] || 0) + p.valor;
@@ -78,7 +78,7 @@ module.exports = {
         const lista = [];
 
         for (const p of pagamentos) {
-          const aluno = await Aluno.findOne({ motorista: p.motorista }).populate('escola');
+          const aluno = await Aluno.findOne({ motorista: p.motorista.id }).populate('escola');
 
           lista.push({
             id: p.id_pagamento,
