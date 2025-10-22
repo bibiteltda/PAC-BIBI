@@ -3,16 +3,30 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
+// Filtros
+
 import FiltroTurmas from "../Components/PageTurmas/Filtro/FiltroTurmas";
+import FiltroPagamentos from "../Components/PageControleMensal/Filtro/FiltroPagamento";
+import FiltroRelatorio from "../Components/PageRelatorio/FiltroRelatorio";
+
+// Forms
+
 import FormCadastroAlunos from "../Components/PageTurmas/FormCadastroAlunos"
 import FormMensalidade from "../Components/PageCondutor/FormMensalidade"
-import CardRoteiro from "../Components/PageTurmas/CardRoteiro";
-// import FiltroPagamentos from "../Components/PageControleMensal/Filtro/FiltroPagamento"
-// import GraficoDistribuicaoPagamentos from "../Components/PageControleMensal/GraficoDistribuicaoPagamentos"
 import FormNovaSenha from "../Components/PageEsqueceuSuaSenha/FormNovaSenha"
-import FiltroRelatorio from "../Components/PageRelatorio/FiltroRelatorio";
-import Recibo from "../Components/PageRecibo/Recibo";
 import LinkConvite from "../Components/PageTurmas/LinkConvite";
+
+// Gráficos
+
+import GraficoDistribuicaoPagamentos from "../Components/PageControleMensal/GraficoDistribuicaoPagamentos";
+import TabelaTransacao from "../Components/PageControleMensal/TabelaTransacoes";
+import TopEscolas from "../Components/PageControleMensal/TopEscolas";
+
+// Recebem Informação
+
+import Recibo from "../Components/PageRecibo/Recibo";
+import CardRoteiro from "../Components/PageTurmas/CardRoteiro";
+
 
 
 
@@ -25,16 +39,30 @@ export default function PageEsqueceuSenha() {
                 <div className="text-4xl text-[#007DFA]">·</div>
             </div>
 
+            {/* Filtros  */}
+
             {/* <FiltroTurmas /> */}
+            {/* <FiltroPagamentos /> */}
+            {/* <FiltroRelatorio /> */}
+
+            {/* Forms */}
+
             {/* <FormCadastroAlunos /> */}
             {/* <FormMensalidade /> */}
-            {/* <CardRoteiro name={"Roteiro 1"} quantAlunos={21} turno={"Matutino"} /> */}
-            {/* <FiltroPagamentos /> */}
-            {/* <GraficoDistribuicaoPagamentos /> */}
             {/* <FormNovaSenha /> */}
-            {/* <FiltroRelatorio /> */}
+            {/* <LinkConvite /> */}
+
+            {/* Gráficos */}
+
+            <GraficoDistribuicaoPagamentos />
+            {/* <TabelaTransacao />    Provável que vou ter que fazer */}
+            {/* <TopEscolas />  Provável que vou ter que fazer */}
+
+            {/* Recebem Informação */}
+
             {/* <Recibo /> */}
-            <LinkConvite />
+            {/* <CardRoteiro name={"Roteiro 1"} quantAlunos={21} turno={"Matutino"} /> */}
+
 
         </section>
     );
