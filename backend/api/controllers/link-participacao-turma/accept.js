@@ -1,5 +1,3 @@
-const { description, exits } = require("./invite");
-
 module.exports = {
    friendlyName: 'Aceitar convite de turma',
    description: 'Permite que o usuário aceite o convite recebido por e-mail.',
