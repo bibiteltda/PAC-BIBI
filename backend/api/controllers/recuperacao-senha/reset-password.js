@@ -1,34 +1,41 @@
-import crypto from 'crypto';
-import bcrypt from 'bcryptjs';
-import Responsavel from '../../models/Responsavel';
+const bcrypt = require('bcrypt');
+const Autenticacao = require("../../models/Autenticacao");
 
 module.exports = {
-   friendlyName: 'Reset password',
-  description: 'Redefine a senha do usuário com base no token',
-  inputs: {
-    token: { type: 'string', required: true },
-    newPassword: { type: 'string', required: true },
-  },
-  exits: {
-    invalid: { description: 'Token inválido ou expirado.' },
-    success: { description: 'Senha redefinida com sucesso.' },
-  },
-  fn: async function (inputs, exits) {
-   const { token, newPassword } = inputs;
+   friendlyName: 'Redefinir senha',
+   description: 'Permite redefinir a senha após validação do código de recuperação.',
+   inputs: {
+      email: { type: 'string', required: true },
+      code: { type: 'string', required: true },
+      newPassword: { type: 'string', required: true },
+   },
+   exits: {
+      success: { description: 'Senha redefinida com sucesso.' },
+      invalid: { description: 'Código inválido ou expirado.' },
+   },
+   fn: async function (inputs, exits) {
+      const { email, code, newPassword } = inputs;
 
-   const user = await Responsavel.findOne({ resetToken: token });
-   if (!user || user.resetTokenExpires < Date.now()) {
-      return exits.invalid({ error: 'Token inválido ou expirado.' });
-   }
+      const usuario = await Autenticacao.findOne({ email });
+      if (
+         !usuario ||
+         usuario.resetCode !== code ||
+         !usuario.resetCodeExiresAt ||
+         new Date(usuario.resetCodeExiresAt) < new Date()
+      ) {
+         return exits.invalid({ message: 'Código inválido ou expirado.' });
+      }
 
-   const hashed = await bcrypt.hash(newPassword, 10);
+      // Criptografa a nova senha
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-   await Responsavel.updateOne({ id: user.id }).set({
-      senha: hashed,
-      resetToken: null,
-      resetTokenExpires: null,
-   });
+      // Atualiza senha e limpa o código
+      await Autenticacao.updateOne({ id: usuario.id }).set({
+         senha: hashedPassword,
+         resetCode: null,
+         resetCodeExiresAt: null,
+      });
 
-   return exits.success({ message: 'Senha redefinida com sucesso!' });
-  },
+      return exits.success({ message: 'Senha redefinida com sucesso!' });
+   },
 };

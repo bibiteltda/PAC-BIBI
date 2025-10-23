@@ -12,8 +12,5 @@ module.exports = {
 
     createdAt: { type: 'ref', columnType: 'timestamp without time zone', autoCreatedAt: true },
     updatedAt: { type: 'ref', columnType: 'timestamp without time zone', autoUpdatedAt: true },
-    
-    // resetToken: { type: 'string', allowNull: true },
-    // resetTokenExpires: { type: 'number', allowNull: true }
   }
 };
