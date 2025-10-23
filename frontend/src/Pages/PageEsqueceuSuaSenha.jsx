@@ -20,3 +20,23 @@ export default function PageEsqueceuSenha() {
     </section>
   );
 }
+
+
+// Esse hook é usado quando digita o e-mail na tela "Esqueci minha senha"
+//
+// const { sendRecoveryCode, loading, message, error } = useRecoveryPassword();
+
+// function handleSubmit(e) {
+//   e.preventDefault();
+//   sendRecoveryCode(email);
+// }
+
+
+// Esse hook é usaod na tela onde o usuário digita o código recebido por e-mail e define a nova senha
+//
+// const { resetPassword, loading, message, error } = useResetPassword();
+
+// function handleSubmit(e) {
+//   e.preventDefault();
+//   resetPassword(email, code, newPassword);
+// }

@@ -1,38 +1,33 @@
 import { useState } from "react";
 
-export function useRecoverPassword() {
+export function useRecoveryPassword() {
    const [loading, setLoading] = useState(false);
-   const [error, setError] = useState(null);
-   const [success, setSuccess] = useState(null);
+   const [message, setMessage] = useState("");
+   const [error, setError] = useState("");
 
-   async function sendRecoveryEmail(email) {
+   async function sendRecoveryCode(email) {
       setLoading(true);
-      setError(null);
-      setSuccess(null);
+      setMessage("");
+      setError("");
 
       try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/recuperacao-senha/recover-password`, {
-         method: "POST",
-         headers: { "Content-Type": "application/json" },
-         body: JSON.stringify({ email }),
-      });
+         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/recuperacao-senha/send-code`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+         });
 
-      const data = await response.json();
+         const data = await response.json();
 
-      if (!response.ok) throw new Error(data.error || "Erro ao enviar e-mail");
+         if (!response.ok) throw new Error(data.message || "Erro ao enviar código");
 
-      setSuccess(data.message || "Link enviado com sucesso!");
+         setMessage("Código enviado com sucesso! Verifique seu e-mail.");
       } catch (err) {
-      setError(err.message);
+         setError(err.message);
       } finally {
-      setLoading(false);
+         setLoading(false);
       }
    }
 
-   return { 
-      sendRecoveryEmail, 
-      loading, 
-      error, 
-      success 
-   };
+   return { sendRecoveryCode, loading, message, error };
 }

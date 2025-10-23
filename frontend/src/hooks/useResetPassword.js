@@ -2,37 +2,32 @@ import { useState } from "react";
 
 export function useResetPassword() {
    const [loading, setLoading] = useState(false);
-   const [error, setError] = useState(null);
-   const [success, setSuccess] = useState(null);
+   const [message, setMessage] = useState("");
+   const [error, setError] = useState("");
 
-   async function resetPassword(token, newPassword) {
+   async function resetPassword(email, code, newPassword) {
       setLoading(true);
-      setError(null);
-      setSuccess(null);
+      setMessage("");
+      setError("");
 
       try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/recuperacao-senha/reset-password`, {
-         method: "POST",
-         headers: { "Content-Type": "application/json" },
-         body: JSON.stringify({ token, newPassword }),
-      });
+         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/recuperacao-senha/reset-password`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, code, newPassword }),
+         });
 
-      const data = await response.json();
+         const data = await response.json();
 
-      if (!response.ok) throw new Error(data.error || "Erro ao redefinir senha");
+         if (!response.ok) throw new Error(data.message || "Erro ao redefinir senha");
 
-      setSuccess(data.message || "Senha redefinida com sucesso!");
+         setMessage("Senha redefinida com sucesso! Você já pode fazer login.");
       } catch (err) {
-      setError(err.message);
+         setError(err.message);
       } finally {
-      setLoading(false);
+         setLoading(false);
       }
    }
 
-   return { 
-      resetPassword, 
-      loading, 
-      error, 
-      success 
-   };
+   return { resetPassword, loading, message, error };
 }
