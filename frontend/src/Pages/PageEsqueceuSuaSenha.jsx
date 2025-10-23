@@ -32,7 +32,7 @@ export default function PageEsqueceuSenha() {
 // }
 
 
-// Esse hook é usaod na tela onde o usuário digita o código recebido por e-mail e define a nova senha
+// Esse hook é usado na tela onde o usuário digita o código recebido por e-mail e define a nova senha
 //
 // const { resetPassword, loading, message, error } = useResetPassword();
 

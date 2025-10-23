@@ -14,6 +14,6 @@ module.exports = {
     updatedAt: { type: 'ref', columnType: 'timestamp without time zone', autoUpdatedAt: true },
 
     // resetCode: { type: 'string', allowNull: true }, -> código de 6 digitos
-    // resetCodeExpirestAt: { type: 'ref', columnType: 'datetime', allowNull: true } -> data de expiração
+    // resetCodeExpiresAt: { type: 'ref', columnType: 'datetime', allowNull: true } -> data de expiração
   }
 };
