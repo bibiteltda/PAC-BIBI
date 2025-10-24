@@ -1,16 +1,27 @@
 module.exports = {
   tableName: 'aluno',
   attributes: {
-    id: { type: 'number', autoIncrement: true },
+    // ID é gerenciado pelo Sails/Waterline
+
     nome: { type: 'string', required: true, maxLength: 80 },
-    idade: { type: 'number' },
+    idade: { type: 'number', required: true }, 
 
-    responsavel: { model: 'responsavel' },
-    escola: { model: 'escola' },
-    motorista: { model: 'motorista' },
-    roteiro: { model: 'roteiro' },
-
-    createdAt: { type: 'ref', columnType: 'timestamp without time zone', autoCreatedAt: true },
-    updatedAt: { type: 'ref', columnType: 'timestamp without time zone', autoUpdatedAt: true }
-  }
+    // --- Relacionamentos ---
+    responsavel: {
+      model: 'responsavel',
+      required: true
+    },
+    escola: {
+      model: 'escola',
+      required: true
+    },
+    motorista: {
+      model: 'motorista',
+      required: true
+    },
+    roteiro: {
+      model: 'roteiro',
+      required: true
+    }
+  },
 };
