@@ -11,6 +11,6 @@ module.exports = {
     pagamentos: { collection: 'pagamento', via: 'responsavel' },
 
     createdAt: { type: 'ref', columnType: 'timestamp without time zone', autoCreatedAt: true },
-    updatedAt: { type: 'ref', columnType: 'timestamp without time zone', autoUpdatedAt: true }
+    updatedAt: { type: 'ref', columnType: 'timestamp without time zone', autoUpdatedAt: true },
   }
 };
