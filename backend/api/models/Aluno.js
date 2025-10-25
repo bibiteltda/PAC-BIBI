@@ -1,5 +1,8 @@
 module.exports = {
   tableName: 'aluno',
+  autoCreatedAt: true,
+  autoUpdatedAt: true,
+  
   attributes: {
     id: { type: 'number', autoIncrement: true },
     nome: { type: 'string', required: true, maxLength: 80 },
