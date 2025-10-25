@@ -1,6 +1,6 @@
 module.exports = {
   friendlyName: 'Listar controle mensal',
-  description: 'Busca dados de controle mensal, gráficos ou relatórios.',
+  description: 'Busca todos os dados do controle mensal: gráficos, melhor escola e transações.',
 
   inputs: {
     tipo: { type: 'string', required: false },
@@ -13,7 +13,7 @@ module.exports = {
 
   fn: async function (inputs, exits) {
     try {
-      if (inputs.tipo === 'melhorEscola') {
+      async function obterMelhorEscola() {
         const pagamentos = await Pagamento.find({ status: 'pago' }).populate('motorista');
         const escolas = {};
 
@@ -30,10 +30,10 @@ module.exports = {
           ['', 0]
         );
 
-        return exits.success({ tipo: 'melhorEscola', escola: melhorEscola, rendimento: valor });
+        return { escola: melhorEscola, rendimento: valor };
       }
 
-      if (inputs.tipo === 'graficos') {
+      async function obterGraficos() {
         const agora = new Date();
         const mesAtual = agora.getMonth() + 1;
         const anoAtual = agora.getFullYear();
@@ -61,19 +61,15 @@ module.exports = {
 
         const comparativo = totalMesAtual - totalMesPassado;
 
-        return exits.success({
-          tipo: 'graficos',
+        return {
           ganhosMensais,
           perdasMensais,
-          comparativo: {
-            mesAtual: totalMesAtual,
-            mesPassado: totalMesPassado,
-            diferenca: comparativo,
-          },
-        });
+          ganhosMesAnterior: totalMesPassado,
+          comparativo,
+        };
       }
 
-      if (inputs.tipo === 'transacoes' || !inputs.tipo) {
+      async function obterTransacoes() {
         const pagamentos = await Pagamento.find().populate('responsavel').populate('motorista');
         const lista = [];
 
@@ -83,7 +79,7 @@ module.exports = {
           if (alunos.length > 0) {
             alunos.forEach(aluno => {
               lista.push({
-                id: p.id_pagamento,
+                id_pagamento: p.id_pagamento,
                 aluno: aluno.nome,
                 escola: aluno.escola?.nome || 'N/A',
                 valor: p.valor,
@@ -93,7 +89,7 @@ module.exports = {
             });
           } else {
             lista.push({
-              id: p.id_pagamento,
+              id_pagamento: p.id_pagamento,
               aluno: 'N/A',
               escola: 'N/A',
               valor: p.valor,
@@ -103,7 +99,33 @@ module.exports = {
           }
         }
 
-        return exits.success({ tipo: 'listar', lista });
+        return lista;
+      }
+
+      if (!inputs.tipo) {
+        const [graficos, melhorEscola, transacoes] = await Promise.all([
+          obterGraficos(),
+          obterMelhorEscola(),
+          obterTransacoes(),
+        ]);
+
+        return exits.success({
+          graficos,
+          melhorEscola,
+          transacoes,
+        });
+      }
+
+      if (inputs.tipo === 'melhorEscola') {
+        return exits.success({ tipo: 'melhorEscola', ...await obterMelhorEscola() });
+      }
+
+      if (inputs.tipo === 'graficos') {
+        return exits.success({ tipo: 'graficos', ...await obterGraficos() });
+      }
+
+      if (inputs.tipo === 'transacoes') {
+        return exits.success({ tipo: 'listar', lista: await obterTransacoes() });
       }
 
     } catch (err) {
