@@ -1,20 +1,16 @@
-/**
- * Pagamento.js
- *
- * @description :: A model definition represents a database table/collection.
- * @docs        :: https://sailsjs.com/docs/concepts/models-and-orm/models
- */
-
 module.exports = {
-  tableName: 'Pagamento',
-  primaryKey: 'id_pagamento',
+  tableName: 'pagamento',
   attributes: {
-    id_pagamento: { type: 'number', autoIncrement: true },
-    valor: { type: 'number', required: true },
-    dta_vcto: { type: 'ref', columnType: 'datetime' },
-    dta_pgmt: { type: 'ref', columnType: 'datetime' },
+    id: { type: 'number', autoIncrement: true },
+    valor: { type: 'number', columnType: 'real' },
+    dta_vcto: { type: 'ref', columnType: 'date' },
+    dta_pgmt: { type: 'ref', columnType: 'date' },
     status: { type: 'string' },
-    responsavel: { model: 'responsavel', required: true },
-    motorista: { model: 'motorista', required: true }
+
+    responsavel: { model: 'responsavel' },
+    motorista: { model: 'motorista' },
+
+    createdAt: { type: 'ref', columnType: 'timestamp without time zone', autoCreatedAt: true },
+    updatedAt: { type: 'ref', columnType: 'timestamp without time zone', autoUpdatedAt: true }
   }
 };

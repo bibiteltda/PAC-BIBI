@@ -1,17 +1,14 @@
-/**
- * Roteiro.js
- *
- * @description :: A model definition represents a database table/collection.
- * @docs        :: https://sailsjs.com/docs/concepts/models-and-orm/models
- */
-
 module.exports = {
-  tableName: 'Roteiro',
-  primaryKey: 'id_roteiro',
+  tableName: 'roteiro',
   attributes: {
-    id_roteiro: { type: 'number', autoIncrement: true },
-    turno: { type: 'number', required: true },
+    id: { type: 'number', autoIncrement: true },
+    turno: { type: 'number' },
+
+    escolas: { collection: 'escola', via: 'roteiros' },
     alunos: { collection: 'aluno', via: 'roteiro' },
-    escolas: { collection: 'escola', via: 'roteiro', through: 'roteiroescola' }
+    motorista: { model: 'motorista' },
+
+    createdAt: { type: 'ref', columnType: 'timestamp without time zone', autoCreatedAt: true },
+    updatedAt: { type: 'ref', columnType: 'timestamp without time zone', autoUpdatedAt: true }
   }
 };

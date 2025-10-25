@@ -1,11 +1,11 @@
 module.exports = {
-
   models: {
     migrate: 'safe'
   },
 
   datastores: {
     default: {
+      adapter: 'sails-postgresql',
       url: process.env.DATABASE_URL
     }
   },
@@ -30,14 +30,6 @@ module.exports = {
     }
   },
 
-  http: {
-    trustProxy: true
-  },
-
-  session: {
-    cookie: {
-      secure: true
-    }
-  }
-
+  http: { trustProxy: true },
+  session: { cookie: { secure: true } }
 };

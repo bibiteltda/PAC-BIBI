@@ -1,16 +1,12 @@
-/**
- * Bairro.js
- *
- * @description :: A model definition represents a database table/collection.
- * @docs        :: https://sailsjs.com/docs/concepts/models-and-orm/models
- */
-
 module.exports = {
-  tableName: 'Bairro',
-  primaryKey: 'id_bairro',
+  tableName: 'bairro',
   attributes: {
-    id_bairro: { type: 'number', autoIncrement: true },
+    id: { type: 'number', autoIncrement: true },
     nome: { type: 'string', required: true, maxLength: 255 },
-    escolas: { collection: 'escola', via: 'bairro' }
+
+    escolas: { collection: 'escola', via: 'bairro' },
+
+    createdAt: { type: 'ref', columnType: 'timestamp without time zone', autoCreatedAt: true },
+    updatedAt: { type: 'ref', columnType: 'timestamp without time zone', autoUpdatedAt: true }
   }
 };

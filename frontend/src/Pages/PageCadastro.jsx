@@ -34,13 +34,21 @@ export default function PageCadastro() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // chamando o hook useAuth
-        const usuario = await register(form);
+        const payload = {
+            login: form.email,
+            senha: form.senha,
+            nome: form.nome,
+            cpf: form.cpf,
+            contato: form.celular,
+            role: form.role === "condutor" ? "motorista" : "responsavel",
+        };
+
+        const usuario = await register(payload);
         if (usuario) {
-            alert("Cadastro realizado com sucesso!");
-            navigate("/dashboard"); // ou outra página
+            navigate("/dashboard");
         }
-    }
+    };
+
 
     /* Função para voltar etapa */
     const voltarEtapa = () => {

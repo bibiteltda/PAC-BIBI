@@ -1,5 +1,5 @@
-// import React from "react";
-// import usePagamentos from "../../hooks/usePagamentos";
+import React, { useEffect } from "react";
+import useControleMensal from "../../hooks/useControleMensal";
 
 // export default function TabelaTransacoes({ filtroEscola, filtroStatus, filtroData }) {
 //     const filtros = { escola: filtroEscola, status: filtroStatus, data: filtroData };
