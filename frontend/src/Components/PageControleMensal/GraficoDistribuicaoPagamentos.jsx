@@ -1,35 +1,28 @@
 import { useState } from "react";
-import {
-    PieChart,
-    Pie,
-    Cell,
-    ResponsiveContainer,
-    Sector,
-} from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Sector } from "recharts";
 
-export default function DistribuicaoPagamentos({ ganhosMensais, perdasMensais, ganhosMesPassado }) {
+export default function DistribuicaoPagamentos({
+    ganhosMensais = 0,
+    perdasMensais = 0,
+    ganhosMesPassado = 0,
+}) {
+    const [activeIndex, setActiveIndex] = useState(null);
 
-    const ganhos = ganhosMensais ?? 0;
-    const perdas = perdasMensais ?? 0;
-    const ganhosPassado = ganhosMesPassado ?? 0;
-
-    const semDados = ganhos === 0 && perdas === 0 && ganhosPassado === 0;
-
-    const diferenca = ganhos - ganhosPassado;
+    const semDados = ganhosMensais === 0 && perdasMensais === 0 && ganhosMesPassado === 0;
+    const diferenca = ganhosMensais - ganhosMesPassado;
 
     const data = [
-        { name: "Ganhos", value: ganhos },
-        { name: "Perdas", value: perdas },
+        { name: "Ganhos", value: ganhosMensais },
+        { name: "Perdas", value: perdasMensais },
         { name: "Diferença", value: Math.abs(diferenca) },
     ];
 
-    const COLORS = ["#006400", "#8B0000", "#696969"];
-    const [activeIndex, setActiveIndex] = useState(null);
+    const COLORS = ["#22c55e", "#ef4444", "#64748b"];
 
     const renderActiveShape = (props) => {
         const RADIAN = Math.PI / 180;
-        const { cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle, fill, percent } = props;
-
+        const { cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle, fill, percent } =
+            props;
         const sin = Math.sin(-RADIAN * midAngle);
         const cos = Math.cos(-RADIAN * midAngle);
         const sx = cx + (outerRadius + 15) * cos;
@@ -45,22 +38,9 @@ export default function DistribuicaoPagamentos({ ganhosMensais, perdasMensais, g
                     startAngle={startAngle}
                     endAngle={endAngle}
                     fill={fill}
-                    stroke="white"
-                    strokeWidth={1}
                 />
                 <foreignObject x={sx - 25} y={sy - 15} width={50} height={30}>
-                    <div
-                        style={{
-                            backgroundColor: "#0369A1",
-                            color: "white",
-                            fontSize: "12px",
-                            fontWeight: "bold",
-                            borderRadius: "6px",
-                            textAlign: "center",
-                            padding: "2px",
-                            boxShadow: "0px 2px 6px rgba(0,0,0,0.3)",
-                        }}
-                    >
+                    <div className="bg-sky-700 text-white text-xs font-semibold rounded-lg text-center p-1 shadow">
                         {(percent * 100).toFixed(0)}%
                     </div>
                 </foreignObject>
@@ -69,28 +49,30 @@ export default function DistribuicaoPagamentos({ ganhosMensais, perdasMensais, g
     };
 
     return (
-        <div className="w-full max-w-[500px] h-[270px] p-4 rounded-2xl shadow-lg bg-white">
-            <h2 className="text-black text-lg font-semibold mb-1">Distribuição de Pagamentos</h2>
+        <div className="w-full max-w-[500px] h-[280px] p-4 rounded-2xl shadow-md bg-white">
+            <h2 className="text-gray-800 text-lg font-semibold mb-3">
+                Distribuição de Pagamentos
+            </h2>
 
             {semDados ? (
-                <div className="flex items-center justify-center h-full text-gray-500">
+                <div className="flex items-center justify-center h-[200px] text-gray-400">
                     Nenhum dado disponível
                 </div>
             ) : (
                 <div className="grid grid-cols-2 gap-3 items-center">
                     <div className="space-y-2">
-                        <div className="bg-[#0369A1] text-white p-2 rounded-lg shadow-md">
-                            <p className="text-sm font-semibold">GANHOS MENSAIS</p>
-                            <p className="text-sm">R$ {ganhos.toLocaleString()}</p>
+                        <div className="bg-emerald-600 text-white p-2 rounded-lg shadow">
+                            <p className="text-sm font-semibold">Ganhos Mensais</p>
+                            <p className="text-sm">R$ {ganhosMensais.toLocaleString()}</p>
                         </div>
-                        <div className="bg-[#0369A1] text-white p-2 rounded-lg shadow-md">
-                            <p className="text-sm font-semibold">PERDAS MENSAIS</p>
-                            <p className="text-sm">R$ {perdas.toLocaleString()}</p>
+                        <div className="bg-red-600 text-white p-2 rounded-lg shadow">
+                            <p className="text-sm font-semibold">Perdas Mensais</p>
+                            <p className="text-sm">R$ {perdasMensais.toLocaleString()}</p>
                         </div>
-                        <div className="bg-[#0369A1] text-white p-2 rounded-lg shadow-md">
-                            <p className="text-sm font-semibold">MÊS PASSADO VS ATUAL</p>
+                        <div className="bg-sky-700 text-white p-2 rounded-lg shadow">
+                            <p className="text-sm font-semibold">Mês Passado vs Atual</p>
                             <p className="text-sm">
-                                R$ {ganhosPassado.toLocaleString()} x R$ {ganhos.toLocaleString()}
+                                R$ {ganhosMesPassado.toLocaleString()} → R$ {ganhosMensais.toLocaleString()}
                             </p>
                         </div>
                     </div>
@@ -106,9 +88,7 @@ export default function DistribuicaoPagamentos({ ganhosMensais, perdasMensais, g
                                 outerRadius={80}
                                 fill="#8884d8"
                                 dataKey="value"
-                                onClick={(_, index) =>
-                                    setActiveIndex(index === activeIndex ? null : index)
-                                }
+                                onClick={(_, index) => setActiveIndex(index === activeIndex ? null : index)}
                             >
                                 {data.map((entry, index) => (
                                     <Cell
@@ -126,4 +106,3 @@ export default function DistribuicaoPagamentos({ ganhosMensais, perdasMensais, g
         </div>
     );
 }
-
