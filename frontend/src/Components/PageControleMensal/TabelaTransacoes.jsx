@@ -1,142 +1,77 @@
-// import React, { useEffect } from "react";
-// import useControleMensal from "../../hooks/useControleMensal";
+import React, { useEffect } from "react";
+import useControleMensal from "../../hooks/useControleMensal";
 
-// export default function TabelaTransacoes({ filtroEscola, filtroStatus, filtroData }) {
-//     const filtros = { escola: filtroEscola, status: filtroStatus, data: filtroData };
-//     const { pagamentos, loading, error, updateStatus } = usePagamentos(filtros);
+export default function TabelaTransacoes({ filtros }) {
+    const { data, loading, error, find, update, remove } = useControleMensal();
 
-//     if (loading) return <p>Carregando pagamentos...</p>;
-//     if (error) return <p>Erro: {error}</p>;
+    useEffect(() => {
+        find(filtros);
+    }, [filtros]);
 
-//     return (
-//         <table className="w-full border">
-//             <thead>
-//                 <tr>
-//                     <th>Aluno</th>
-//                     <th>Responsável</th>
-//                     <th>Valor</th>
-//                     <th>Status</th>
-//                     <th>Ações</th>
-//                 </tr>
-//             </thead>
-//             <tbody>
-//                 {pagamentos.map(p => (
-//                     <tr key={p.id}>
-//                         <td>{p.aluno?.nome}</td>
-//                         <td>{p.responsavelObj?.nome}</td>
-//                         <td>{p.valor}</td>
-//                         <td>{p.status}</td>
-//                         <td>
-//                             <button
-//                                 onClick={() => updateStatus(p.id, p.status === "Pago" ? "Pendente" : "Pago")}
-//                                 className="px-2 py-1 bg-blue-500 text-white rounded"
-//                             >
-//                                 Alternar
-//                             </button>
-//                         </td>
-//                     </tr>
-//                 ))}
-//             </tbody>
-//         </table>
-//     );
-// }
+    const transacoes = data?.transacoes ?? [];
 
-
-import React from "react";
-
-export default function TabelaPagamentos({ pagamentos = [] }) {
-    // Mock temporário caso não venha nada por props
-    const dadosMock = [
-        {
-            id: 1,
-            aluno: "Eric Gabriel C.",
-            escola: "Escola Primavera",
-            valor: "R$0,00",
-            data: "",
-            status: "",
-        },
-        {
-            id: 2,
-            aluno: "Daniela Luisa da C.",
-            escola: "Escola Primavera",
-            valor: "R$250,00",
-            data: "03/05/2025",
-            status: "PENDENTE",
-        },
-        {
-            id: 3,
-            aluno: "Daniela Luisa da C.",
-            escola: "Escola Primavera",
-            valor: "R$250,00",
-            data: "03/05/2025",
-            status: "ATRASADO",
-        },
-        {
-            id: 4,
-            aluno: "Daniela Luisa da C.",
-            escola: "Escola Primavera",
-            valor: "R$250,00",
-            data: "03/05/2025",
-            status: "PAGO",
-        },
-        {
-            id: 5,
-            aluno: "João Silva",
-            escola: "Escola Primavera",
-            valor: "R$180,00",
-            data: "01/05/2025",
-            status: "PENDENTE",
-        },
-    ];
-
-    const lista = pagamentos.length > 0 ? pagamentos : dadosMock;
+    if (loading) return <p>Carregando pagamentos...</p>;
+    if (error) return <p className="text-red-500">Erro: {error}</p>;
+    if (!transacoes.length)
+        return (
+            <p className="text-gray-500 text-center py-4">
+                Nenhuma transação encontrada.
+            </p>
+        );
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden w-full max-w-5xl mx-auto">
-            <table className="w-full text-sm text-gray-700">
-                <thead className="bg-gray-50 border-b border-gray-200">
-                    <tr>
-                        <th className="py-3 px-4 text-left font-semibold">Aluno</th>
-                        <th className="py-3 px-4 text-left font-semibold">Escola</th>
-                        <th className="py-3 px-4 text-left font-semibold">Valor</th>
-                        <th className="py-3 px-4 text-left font-semibold">Data</th>
-                        <th className="py-3 px-4 text-left font-semibold">Status</th>
-                        <th className="py-3 px-4 text-left font-semibold"></th>
+        <div className="overflow-x-auto bg-white rounded-2xl shadow-md p-4">
+            <h2 className="text-gray-800 text-lg font-semibold mb-3">Transações</h2>
+            <table className="w-full border-collapse text-sm">
+                <thead>
+                    <tr className="bg-gray-100 text-gray-700 text-left">
+                        <th className="p-2">Aluno</th>
+                        <th className="p-2">Responsável</th>
+                        <th className="p-2">Valor</th>
+                        <th className="p-2">Status</th>
+                        <th className="p-2 text-center">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {lista.map((p) => (
+                    {transacoes.map((p) => (
                         <tr
-                            key={p.id}
-                            className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                            key={p.id_pagamento}
+                            className="border-t hover:bg-gray-50 transition"
                         >
-                            <td className="py-3 px-4 font-semibold text-gray-800">{p.aluno}</td>
-                            <td className="py-3 px-4">{p.escola}</td>
-                            <td className="py-3 px-4">{p.valor}</td>
-                            <td className="py-3 px-4">{p.data}</td>
-                            <td className="py-3 px-4">
-                                {p.status === "PENDENTE" && (
-                                    <span className="bg-gray-500 text-white px-3 py-1 rounded-md text-xs font-semibold">
-                                        PENDENTE
-                                    </span>
-                                )}
-                                {p.status === "ATRASADO" && (
-                                    <span className="bg-red-600 text-white px-3 py-1 rounded-md text-xs font-semibold">
-                                        ATRASADO
-                                    </span>
-                                )}
-                                {p.status === "PAGO" && (
-                                    <span
-                                        className="text-white px-3 py-1 rounded-md text-xs font-semibold inline-block"
-                                        style={{ backgroundColor: "#006400" }}
-                                    >
-                                        PAGO
-                                    </span>
-                                )}
+                            <td className="p-2">{p.aluno?.nome}</td>
+                            <td className="p-2">{p.responsavelObj?.nome}</td>
+                            <td className="p-2 font-medium">
+                                R$ {p.valor.toLocaleString()}
                             </td>
-                            <td className="py-3 px-4">
-                                <button className="border border-blue-400 text-blue-500 text-sm font-medium px-3 py-1 rounded-md hover:bg-blue-50 transition-colors">
-                                    Mudar Status
+                            <td className="p-2">
+                                <span
+                                    className={`px-2 py-1 rounded-full text-xs font-semibold ${p.status === "Pago"
+                                            ? "bg-green-100 text-green-700"
+                                            : p.status === "Atrasado"
+                                                ? "bg-red-100 text-red-700"
+                                                : "bg-gray-100 text-gray-700"
+                                        }`}
+                                >
+                                    {p.status}
+                                </span>
+                            </td>
+                            <td className="p-2 text-center space-x-2">
+                                <button
+                                    className="text-blue-600 hover:underline"
+                                    onClick={() =>
+                                        update(p.id_pagamento, {
+                                            status: p.status === "Pago" ? "Pendente" : "Pago",
+                                        })
+                                    }
+                                >
+                                    Alternar
+                                </button>
+
+                                <button
+                                    className="text-red-600 hover:underline"
+                                    onClick={() => remove(p.id_pagamento)}
+                                >
+                                    Excluir
                                 </button>
                             </td>
                         </tr>

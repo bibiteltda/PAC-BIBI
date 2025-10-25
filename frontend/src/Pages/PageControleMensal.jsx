@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
-import { API_URL } from "../services/api";
 
-import FiltroPagamento from "../Components/PageControleMensal/Filtro/FiltroPagamento";
+import FiltroTurmas from "../Components/PageControleMensal/Filtro/FiltroPagamento";
 import DistribuicaoPagamentos from "../Components/PageControleMensal/GraficoDistribuicaoPagamentos";
 import TabelaTransacoes from "../Components/PageControleMensal/TabelaTransacoes";
 import TopEscolas from "../Components/PageControleMensal/TopEscolas";
+
+import useControleMensal from "../hooks/useControleMensal";
 
 export default function ControleMensal() {
   const [filtros, setFiltros] = useState({
@@ -17,7 +17,7 @@ export default function ControleMensal() {
   const { loading, error, data, create, find, update, remove } = useControleMensal();
 
   useEffect(() => {
-    find(); 
+    find();
   }, []);
 
   if (loading) return <p>Carregando dashboard...</p>;
