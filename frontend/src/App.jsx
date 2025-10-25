@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import PageCadastro from './Pages/PageCadastro';
 import PageLogin from './Pages/PageLogin';
 import PageEsqueceuSuaSenha from './Pages/PageEsqueceuSuaSenha';
-import PageTestComponent from './Pages/PageTestComponent
+import PageTestComponent from './Pages/PageTestComponent';
 import PageTurmas from './Pages/PageTurmas';
 import PageControleMensal from './Pages/PageControleMensal';
 // import PageRelatorio from "./Pages/PageRelatorio";
