@@ -8,67 +8,56 @@ import TabelaTransacoes from "../Components/PageControleMensal/TabelaTransacoes"
 import TopEscolas from "../Components/PageControleMensal/TopEscolas";
 
 export default function ControleMensal() {
-    const [filtros, setFiltros] = useState({
-        escola: "todas",
-        status: "todas",
-        data: { inicio: "2020-01-01", fim: "2020-12-31" },
-    });
+  const [filtros, setFiltros] = useState({
+    escola: "todas",
+    status: "todas",
+    data: { inicio: "", fim: "" },
+  });
 
-    const [dadosDashboard, setDadosDashboard] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+  const { loading, error, data, create, find, update, remove } = useControleMensal();
 
-    useEffect(() => {
-        async function fetchDashboard() {
-            setLoading(true);
-            try {
-                const res = await axios.get(`${API_URL}/dashboard/controles`);
-                setDadosDashboard(res.data);
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
+  useEffect(() => {
+    find(); 
+  }, []);
+
+  if (loading) return <p>Carregando dashboard...</p>;
+  if (error) return <p className="text-red-500">Erro: {error}</p>;
+
+  return (
+    <div className="p-6 space-y-6">
+      <h1 className="text-2xl font-bold text-gray-800">Controle Mensal</h1>
+
+      <div className="flex flex-col md:flex-row gap-4">
+        <DistribuicaoPagamentos
+          ganhosMensais={data?.graficos?.ganhosMensais ?? 0}
+          perdasMensais={data?.graficos?.perdasMensais ?? 0}
+          ganhosMesPassado={data?.graficos?.comparativo?.mesPassado ?? 0}
+        />
+
+        <FiltroTurmas
+          filtros={filtros}
+          setFiltros={setFiltros}
+          escolasTop={
+            data?.melhorEscola
+              ? [{ nome: data.melhorEscola.escola, valor: data.melhorEscola.rendimento }]
+              : []
+          }
+        />
+      </div>
+
+      <TopEscolas
+        escolas={
+          data?.melhorEscola
+            ? [{ nome: data.melhorEscola.escola, valor: data.melhorEscola.rendimento }]
+            : []
         }
-        fetchDashboard();
-    }, []);
+      />
 
-    if (loading) return <p>Carregando dashboard...</p>;
-    if (error) return <p>Erro: {error}</p>;
-
-    return (
-        <div className="p-6 space-y-6">
-            <h1 className="text-xl font-bold">Controle Mensal</h1>
-
-            {/* Gráfico e Filtro */}
-            <div className="flex flex-col md:flex-row gap-4">
-                {dadosDashboard && (
-                    <DistribuicaoPagamentos
-                        ganhosMensais={dadosDashboard.ganhosMensais}
-                        perdasMensais={dadosDashboard.perdasMensais}
-                        ganhosMesPassado={dadosDashboard.ganhosMesAnterior}
-                    />
-                )}
-
-                <FiltroPagamento
-                    escola={filtros.escola}
-                    status={filtros.status}
-                    data={filtros.data}
-                    setFiltros={setFiltros}
-                />
-            </div>
-
-            {/* Top 3 Escolas */}
-            <TopEscolas />
-
-            {/* Tabela de transações */}
-            <TabelaTransacoes
-                filtroEscola={filtros.escola}
-                filtroStatus={filtros.status}
-                filtroData={filtros.data}
-            />
-        </div>
-    );
+      <TabelaTransacoes
+        transacoes={data?.transacoes ?? []}
+        updateStatus={(id, status) => update(id, { status })}
+        onDelete={(id) => remove(id)}
+      />
+    </div>
+  );
 }
-
-

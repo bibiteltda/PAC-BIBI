@@ -10,18 +10,22 @@ export default function useControleMensal() {
     transacoes: [],
   });
 
-  const find = useCallback(async (filtros = {}) => {
+  const find = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const query = new URLSearchParams(filtros).toString();
-      const response = await fetch(`${API_URL}/controle-mensal?${query}`);
+      const response = await fetch(`${API_URL}/controle-mensal`);
       const result = await response.json();
 
       if (!response.ok) throw new Error(result.message || "Erro ao buscar dados.");
 
-      setData(result);
+      setData({
+        melhorEscola: result.melhorEscola || null,
+        graficos: result.graficos || null,
+        transacoes: result.transacoes || [],
+      });
+
       return result;
     } catch (err) {
       console.error(err);
