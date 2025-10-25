@@ -1,7 +1,5 @@
 module.exports = {
   tableName: 'aluno',
-  autoCreatedAt: true,
-  autoUpdatedAt: true,
   
   attributes: {
     nome: { type: 'string', required: true, maxLength: 80 },
