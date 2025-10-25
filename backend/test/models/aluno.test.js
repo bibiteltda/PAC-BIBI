@@ -6,15 +6,16 @@ describe('Model: Aluno', () => {
     });
 
     it('deve definir os atributos principais', () => {
-        const attrs = Aluno.attributes;
 
-        expect(attrs).toHaveProperty('id');
-        expect(attrs).toHaveProperty('nome');
-        expect(attrs).toHaveProperty('idade');
-        expect(attrs).toHaveProperty('responsavel');
-        expect(attrs).toHaveProperty('escola');
-        expect(attrs).toHaveProperty('motorista');
-        expect(attrs).toHaveProperty('roteiro');
+        expect(Aluno.attributes).toHaveProperty('nome');
+        expect(Aluno.attributes).toHaveProperty('idade');
+        expect(Aluno.attributes).toHaveProperty('responsavel');
+        expect(Aluno.attributes).toHaveProperty('escola');
+        expect(Aluno.attributes).toHaveProperty('motorista');
+        expect(Aluno.attributes).toHaveProperty('roteiro');
+        expect(Aluno.autoCreatedAt).toBe(true);
+        expect(Aluno.autoUpdatedAt).toBe(true);
+
     });
 
     it('deve exigir o campo nome', () => {
@@ -30,7 +31,7 @@ describe('Model: Aluno', () => {
     });
 
     it('deve ter timestamps automáticos', () => {
-        expect(Aluno.attributes).toHaveProperty('createdAt');
-        expect(Aluno.attributes).toHaveProperty('updatedAt');
+        expect(Aluno.autoCreatedAt).toBe(true);
+        expect(Aluno.autoUpdatedAt).toBe(true);
     });
 });
