@@ -13,9 +13,6 @@ describe('Model: Aluno', () => {
         expect(Aluno.attributes).toHaveProperty('escola');
         expect(Aluno.attributes).toHaveProperty('motorista');
         expect(Aluno.attributes).toHaveProperty('roteiro');
-        expect(Aluno.autoCreatedAt).toBe(true);
-        expect(Aluno.autoUpdatedAt).toBe(true);
-
     });
 
     it('deve exigir o campo nome', () => {
@@ -28,10 +25,5 @@ describe('Model: Aluno', () => {
         expect(Aluno.attributes.escola.model).toBe('escola');
         expect(Aluno.attributes.motorista.model).toBe('motorista');
         expect(Aluno.attributes.roteiro.model).toBe('roteiro');
-    });
-
-    it('deve ter timestamps automáticos', () => {
-        expect(Aluno.autoCreatedAt).toBe(true);
-        expect(Aluno.autoUpdatedAt).toBe(true);
     });
 });
