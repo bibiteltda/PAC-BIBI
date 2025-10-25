@@ -14,18 +14,10 @@ export default function ControleMensal() {
     data: { inicio: "", fim: "" },
   });
 
-  const {
-    loading,
-    error,
-    data,
-    create,
-    find,
-    update,
-    remove,
-  } = useControleMensal();
+  const { loading, error, data, create, find, update, remove } = useControleMensal();
 
   useEffect(() => {
-    find();
+    find(); 
   }, []);
 
   if (loading) return <p>Carregando dashboard...</p>;
@@ -39,17 +31,27 @@ export default function ControleMensal() {
         <DistribuicaoPagamentos
           ganhosMensais={data?.graficos?.ganhosMensais ?? 0}
           perdasMensais={data?.graficos?.perdasMensais ?? 0}
-          ganhosMesPassado={data?.graficos?.ganhosMesAnterior ?? 0}
+          ganhosMesPassado={data?.graficos?.comparativo?.mesPassado ?? 0}
         />
 
         <FiltroTurmas
           filtros={filtros}
           setFiltros={setFiltros}
-          escolasTop={data?.melhorEscola ? [data.melhorEscola] : []}
+          escolasTop={
+            data?.melhorEscola
+              ? [{ nome: data.melhorEscola.escola, valor: data.melhorEscola.rendimento }]
+              : []
+          }
         />
       </div>
 
-      <TopEscolas escolas={data?.melhorEscola ? [data.melhorEscola] : []} />
+      <TopEscolas
+        escolas={
+          data?.melhorEscola
+            ? [{ nome: data.melhorEscola.escola, valor: data.melhorEscola.rendimento }]
+            : []
+        }
+      />
 
       <TabelaTransacoes
         transacoes={data?.transacoes ?? []}

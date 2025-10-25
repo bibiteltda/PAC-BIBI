@@ -4,12 +4,9 @@ module.exports = {
   autoUpdatedAt: true,
   
   attributes: {
-    // ID é gerenciado pelo Sails/Waterline
-
     nome: { type: 'string', required: true, maxLength: 80 },
     idade: { type: 'number', required: true }, 
 
-    // --- Relacionamentos ---
     responsavel: {
       model: 'responsavel',
       required: true
