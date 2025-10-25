@@ -1,5 +1,8 @@
 module.exports = {
   tableName: 'aluno',
+  autoCreatedAt: true,
+  autoUpdatedAt: true,
+  
   attributes: {
     // ID é gerenciado pelo Sails/Waterline
 
