@@ -95,11 +95,11 @@ export default function InfoLogin({ form, setForm, setEtapa }) {
 
     setErroGeral("");
     // Passa direto para a próxima etapa
-    setEtapa(1);
+    setEtapa(2);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="px-8 space-y-2">
+    <form onSubmit={handleSubmit} className="w-100 px-8 space-y-2">
       {/* Input Email */}
       <InputAnimado delay={0.1}>
         <div className="select-none">

@@ -68,7 +68,7 @@ export default function InfoAdicionais({ form, setForm, handleSubmit }) {
     };
 
   return (
-     <form onSubmit={handleSubmit} className="flex flex-col px-8">
+     <form onSubmit={handleSubmit} className="flex flex-col px-8 w-100">
         {/* Container de botões para trocar role */}
         <div className='flex justify-between w-full max-w-90'>
             {/* Botão Informações condutor */}
