@@ -38,38 +38,41 @@ export default function FiltroTurmas({ filtros = {}, setFiltros, escolasTop = []
     );
 
     return (
-        <div className="w-full max-w-[300px] p-4 bg-white shadow-md rounded-2xl space-y-3 border border-gray-100">
+        <div className="w-full p-4 bg-white shadow-md rounded-2xl space-y-3 border border-gray-100">
             <h2 className="font-semibold text-gray-800 mb-2">Filtros</h2>
 
-            <div>
-                <label className="block text-sm text-gray-600">Escola</label>
-                <select
-                    value={escola}
-                    onChange={(e) => handleChange("escola", e.target.value)}
-                    className="w-full p-2 border rounded-md text-sm"
-                >
-                    <option value="todas">Todas</option>
-                    {escolasTop.map((es) => (
-                        <option key={es.id_escola} value={es.id_escola}>
-                            {es.nome}
-                        </option>
-                    ))}
-                </select>
+            <div className="flex w-full gap-2">
+                <div className="w-1/2">
+                    <label className="block text-sm text-gray-600">Escola</label>
+                    <select
+                        value={escola}
+                        onChange={(e) => handleChange("escola", e.target.value)}
+                        className="w-full p-2 border rounded-md text-sm"
+                    >
+                        <option value="todas">Todas</option>
+                        {escolasTop.map((es) => (
+                            <option key={es.id_escola} value={es.id_escola}>
+                                {es.nome}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                <div className="w-1/2">
+                    <label className="block text-sm text-gray-600">Status</label>
+                    <select
+                        value={status}
+                        onChange={(e) => handleChange("status", e.target.value)}
+                        className="w-full p-2 border rounded-md text-sm"
+                    >
+                        <option value="todas">Todos</option>
+                        <option value="PAGO">Pago</option>
+                        <option value="ATRASADO">Atrasado</option>
+                        <option value="CANCELADO">Cancelado</option>
+                    </select>
+                </div>
             </div>
 
-            <div>
-                <label className="block text-sm text-gray-600">Status</label>
-                <select
-                    value={status}
-                    onChange={(e) => handleChange("status", e.target.value)}
-                    className="w-full p-2 border rounded-md text-sm"
-                >
-                    <option value="todas">Todos</option>
-                    <option value="PAGO">Pago</option>
-                    <option value="ATRASADO">Atrasado</option>
-                    <option value="CANCELADO">Cancelado</option>
-                </select>
-            </div>
 
             <div className="grid grid-cols-2 gap-2">
                 <div>

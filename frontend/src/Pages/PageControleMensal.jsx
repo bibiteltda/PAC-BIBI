@@ -1,63 +1,98 @@
+/* Dependências */
 import { useState, useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
-import FiltroTurmas from "../Components/PageControleMensal/Filtro/FiltroPagamento";
+/* Components */
+import NavBar from "../Components/PagePainel/NavBar";
+import SideBar from "../Components/PagePainel/SideBar";
 import DistribuicaoPagamentos from "../Components/PageControleMensal/GraficoDistribuicaoPagamentos";
 import TabelaTransacoes from "../Components/PageControleMensal/TabelaTransacoes";
 import TopEscolas from "../Components/PageControleMensal/TopEscolas";
+import FiltroPagamento from "../Components/PageControleMensal/Filtro/FiltroPagamento";
 
 import useControleMensal from "../hooks/useControleMensal";
 
-export default function ControleMensal() {
-  const [filtros, setFiltros] = useState({
-    escola: "todas",
-    status: "todas",
-    data: { inicio: "", fim: "" },
-  });
+export default function Turmas() {
+    const [funcao, setFuncao] = useState("Financeiro");
+    const { loading, error, data, create, find, update, remove } = useControleMensal();
 
-  const { loading, error, data, create, find, update, remove } = useControleMensal();
+    const [filtros, setFiltros] = useState({
+        escola: "todas",
+        status: "todas",
+        data: { inicio: "", fim: "" },
+    });
 
-  useEffect(() => {
-    find();
-  }, []);
+    useEffect(() => {
+        find();
+    }, []);
 
-  if (loading) return <p>Carregando dashboard...</p>;
-  if (error) return <p className="text-red-500">Erro: {error}</p>;
+    return (
+        <>
+            <div className="flex flex-col h-screen w-full bg-[#F9FAFB] relative">
+                {/* Navbar */}
+                <NavBar
+                    foto="https://i.pravatar.cc/300"
+                    nome="Daniela Luisa"
+                    email="daniela@gmail.com"
+                />
 
-  return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold text-gray-800">Controle Mensal</h1>
+                <div className="flex flex-1 flex-col lg:flex-row">
+                    {/* Sidebar principal */}
+                    <div className="w-full lg:w-[250px] bg-white">
+                        <SideBar setFuncao={setFuncao} funcao={funcao} role="condutor" />
+                    </div>
 
-      <div className="flex flex-col md:flex-row gap-4">
-        <DistribuicaoPagamentos
-          ganhosMensais={data?.graficos?.ganhosMensais ?? 0}
-          perdasMensais={data?.graficos?.perdasMensais ?? 0}
-          ganhosMesPassado={data?.graficos?.comparativo?.mesPassado ?? 0}
-        />
+                    {/* Conteúdo central */}
+                    <main className="flex-1 flex justify-center items-start bg-[#F3F4F6] p-6 lg:p-8 overflow-y-auto">
+                        <div className="w-full max-w-[800px] flex flex-col space-y-6">
+                            {/* Título */}
+                            <h1 className="text-3xl font-bold text-center">Controle Mensal</h1>
 
-        <FiltroTurmas
-          filtros={filtros}
-          setFiltros={setFiltros}
-          escolasTop={
-            data?.melhorEscola
-              ? [{ nome: data.melhorEscola.escola, valor: data.melhorEscola.rendimento }]
-              : []
-          }
-        />
-      </div>
+                            <div className="flex justify-between w-full gap-5">
+                                <DistribuicaoPagamentos
+                                ganhosMensais={data?.graficos?.ganhosMensais ?? 0}
+                                perdasMensais={data?.graficos?.perdasMensais ?? 0}
+                                ganhosMesPassado={data?.graficos?.comparativo?.mesPassado ?? 0}
+                                />
 
-      <TopEscolas
-        escolas={
-          data?.melhorEscola
-            ? [{ nome: data.melhorEscola.escola, valor: data.melhorEscola.rendimento }]
-            : []
-        }
-      />
+                                <TopEscolas
+                                escolas={
+                                    data?.melhorEscola
+                                    ? [{ nome: data.melhorEscola.escola, valor: data.melhorEscola.rendimento }]
+                                    : []
+                                }
+                                />
+                            </div>
 
-      <TabelaTransacoes
-        transacoes={data?.transacoes ?? []}
-        updateStatus={(id, status) => update(id, { status })}
-        onDelete={(id) => remove(id)}
-      />
-    </div>
-  );
+                            {/* Filtro centralizado */}
+                            <div className="flex justify-center ">
+                                <div className="w-full">
+                                    <FiltroPagamento
+                                    filtros={filtros}
+                                    setFiltros={setFiltros}
+                                    escolasTop={
+                                        data?.melhorEscola
+                                        ? [{ nome: data.melhorEscola.escola, valor: data.melhorEscola.rendimento }]
+                                        : []
+                                    }
+                                    />
+                                </div>
+                            </div>
+
+                            <TabelaTransacoes
+                                transacoes={data?.transacoes ?? []}
+                                updateStatus={(id, status) => update(id, { status })}
+                                onDelete={(id) => remove(id)}
+                            />
+
+                        </div>
+                    </main>
+
+                    {/* Espaço lateral direito (simetria visual em desktop) */}
+                    <div className="hidden lg:block w-[250px]" />
+                </div>
+            </div>
+
+        </>
+    );
 }
