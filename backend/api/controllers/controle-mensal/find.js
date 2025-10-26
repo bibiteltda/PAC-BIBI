@@ -70,18 +70,25 @@ module.exports = {
       }
 
       async function obterTransacoes() {
-        const pagamentos = await Pagamento.find().populate('responsavel').populate('motorista');
+        const pagamentos = await Pagamento.find()
+          .populate('responsavel')
+          .populate('motorista');
+
+        const todosResponsaveisIds = [...new Set(pagamentos.map(p => p.responsavel?.id).filter(Boolean))];
+        const alunos = await Aluno.find({ responsavel: todosResponsaveisIds }).populate('escola');
+
         const lista = [];
 
         for (const p of pagamentos) {
-          const alunos = await Aluno.find({ motorista: p.motorista.id }).populate('escola');
+          const alunosDoResponsavel = alunos.filter(a => a.responsavel === p.responsavel.id);
 
-          if (alunos.length > 0) {
-            alunos.forEach(aluno => {
+          if (alunosDoResponsavel.length > 0) {
+            alunosDoResponsavel.forEach(aluno => {
               lista.push({
-                id_pagamento: p.id_pagamento,
+                id_pagamento: p.id,
                 aluno: aluno.nome,
                 escola: aluno.escola?.nome || 'N/A',
+                responsavel: p.responsavel?.nome || 'N/A',
                 valor: p.valor,
                 data: p.dta_pgmt || p.dta_vcto,
                 status: p.status,
@@ -89,9 +96,10 @@ module.exports = {
             });
           } else {
             lista.push({
-              id_pagamento: p.id_pagamento,
+              id_pagamento: p.id,
               aluno: 'N/A',
               escola: 'N/A',
+              responsavel: p.responsavel?.nome || 'N/A',
               valor: p.valor,
               data: p.dta_pgmt || p.dta_vcto,
               status: p.status,
