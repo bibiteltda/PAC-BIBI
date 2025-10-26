@@ -84,7 +84,7 @@ export default function PageCadastro() {
                     <p className="font-semibold text-3xl select-none px-8">Crie uma conta</p>
 
                     {/* Etapas */}
-                    {etapa === 0 && <InfoLogin form={form} setForm={setForm} setEtapa={avancarEtapa} />}
+                    {etapa === 0 && <InfoLogin form={form} setForm={setForm} setEtapa={setEtapa} />}
                     {etapa === 1 && <ValidaEmail form={form} setEtapa={avancarEtapa} />}  
                     {etapa === 2 && <InfoAdicionais form={form} setForm={setForm} handleSubmit={handleSubmit} />}
 

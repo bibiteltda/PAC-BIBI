@@ -9,22 +9,25 @@ export default function BarraDeProgresso({ indexEtapa }) {
   const etapaAtual = indexEtapa;
   const etapas = [
     { numero: '01', texto: 'Informações de login' },
-    { numero: '02', texto: 'Verificar Email' },
-    { numero: '03', texto: 'Informações adicionais' },
+    // { numero: '02', texto: 'Verificar Email' },
+    { numero: '02', texto: 'Informações adicionais' },
   ];
 
   return (
-    <div className="flex overflow-hidden rounded-full border border-gray-300 divide-x divide-gray-200 shadow-sm select-none">
+    <div className="flex overflow-hidden rounded-full border border-gray-300 divide-x divide-gray-200 shadow-sm select-none w-full">
       {etapas.map((etapa, i) => {
         const completa = i < etapaAtual;
         const ativa = i === etapaAtual;
 
         return (
-          <div key={i} className={`
-          relative flex items-center px-1 md:px-4 lg:px-4 py-2 text-[10px] font-medium
-          ${ativa ? 'text-[#1267A0]' : completa ? 'text-[#252525]' : 'text-gray-400'}
-          bg-white
-          `}>
+          <div
+            key={i}
+            className={`
+              relative flex-1 flex items-center justify-center px-1 md:px-4 lg:px-4 py-2 text-[10px] font-medium
+              ${ativa ? 'text-[#1267A0]' : completa ? 'text-[#252525]' : 'text-gray-400'}
+              bg-white
+            `}
+          >
             <motion.span
               className={`
                 mr-1 inline-flex h-5 w-5 items-center justify-center rounded-full border 
