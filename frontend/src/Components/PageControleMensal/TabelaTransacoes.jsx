@@ -1,5 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import useControleMensal from "../../hooks/useControleMensal";
+
+import TabelaTransacoesLoading from "./TabelaTransacoesLoading";
 
 export default function TabelaTransacoes({ filtros }) {
     const { data, loading, error, find, update, remove } = useControleMensal();
@@ -10,8 +12,8 @@ export default function TabelaTransacoes({ filtros }) {
 
     const transacoes = data?.transacoes ?? [];
 
-    if (loading) return <p>Carregando pagamentos...</p>;
-    if (error) return <p className="text-red-500">Erro: {error}</p>;
+    if (loading) return <p><TabelaTransacoesLoading/></p>;
+    if (error) return <p className="text-gray-500 text-center py-4">Houve um erro inesperado ao se conectar com o servidor. ({error}) </p>;
     if (!transacoes.length)
         return (
             <p className="text-gray-500 text-center py-4">
