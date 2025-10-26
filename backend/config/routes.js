@@ -56,6 +56,8 @@ module.exports.routes = {
   'POST /escola': { action: 'escola/create' },
   'PUT /escola/:id': { action: 'escola/update' },
   'DELETE /escola/:id': { action: 'escola/delete' },
+  // Turmas
+  'GET /turmas/filtro': { action: 'filtro-turmas/filtro' },
   // Bairro
   'GET /bairro': { action: 'bairro/find' },
   'GET /bairro/:id': { action: 'bairro/find' },
