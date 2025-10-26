@@ -50,17 +50,20 @@ export default function Turmas() {
 
                             <div className="flex justify-between w-full gap-5">
                                 <DistribuicaoPagamentos
-                                ganhosMensais={data?.graficos?.ganhosMensais ?? 0}
-                                perdasMensais={data?.graficos?.perdasMensais ?? 0}
-                                ganhosMesPassado={data?.graficos?.comparativo?.mesPassado ?? 0}
+                                    ganhosMensais={data?.graficos?.ganhosMensais ?? 0}
+                                    perdasMensais={data?.graficos?.perdasMensais ?? 0}
+                                    ganhosMesPassado={data?.graficos?.comparativo?.mesPassado ?? 0}
                                 />
 
                                 <TopEscolas
-                                escolas={
-                                    data?.melhorEscola
-                                    ? [{ nome: data.melhorEscola.escola, valor: data.melhorEscola.rendimento }]
-                                    : []
-                                }
+                                    escolas={
+                                        data?.melhorEscola
+                                            ? [{
+                                                nome: data.melhorEscola.escola,
+                                                totalReceita: data.melhorEscola.rendimento
+                                            }]
+                                            : []
+                                    }
                                 />
                             </div>
 
@@ -68,13 +71,13 @@ export default function Turmas() {
                             <div className="flex justify-center ">
                                 <div className="w-full">
                                     <FiltroPagamento
-                                    filtros={filtros}
-                                    setFiltros={setFiltros}
-                                    escolasTop={
-                                        data?.melhorEscola
-                                        ? [{ nome: data.melhorEscola.escola, valor: data.melhorEscola.rendimento }]
-                                        : []
-                                    }
+                                        filtros={filtros}
+                                        setFiltros={setFiltros}
+                                        escolasTop={
+                                            data?.melhorEscola
+                                                ? [{ nome: data.melhorEscola.escola, valor: data.melhorEscola.rendimento }]
+                                                : []
+                                        }
                                     />
                                 </div>
                             </div>
