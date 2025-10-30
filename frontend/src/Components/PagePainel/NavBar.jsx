@@ -45,11 +45,7 @@ export default function NavBar() {
 
                 <div className="flex items-center space-x-2">
                     <div className="w-8 h-8 border border-white rounded-sm overflow-hidden">
-                        <img
-                            src={foto}
-                            alt="foto"
-                            className="w-full h-full object-cover"
-                        />
+                        
                     </div>
 
                     <div className="hidden sm:flex flex-col justify-center">
