@@ -1,6 +1,7 @@
 /* Dependências */
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
@@ -29,6 +30,7 @@ const InputAnimado = ({ children, delay = 0 }) => {
 };
 
 export default function FormLogin({ form, setForm, setEtapa }) {
+  const navigate = useNavigate();
   const [erroGeral, setErroGeral] = useState("");
   const { login, loading, error } = useAuth();
 
