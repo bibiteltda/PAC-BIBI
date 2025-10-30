@@ -63,11 +63,13 @@ export default function useAuth() {
       }
 
       // Guarda token e dados do usuário
-      localStorage.setItem("token", data.token);
       const usuario = {
         autenticacao: data.autenticacao,
-        perfil: data.perfil,
+        nome: data.perfil.nome,
+        email: data.perfil.email
       };
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("userInfo", JSON.stringify(usuario));
 
       setUser(usuario);
       return usuario;

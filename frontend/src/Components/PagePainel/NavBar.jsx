@@ -1,14 +1,12 @@
 /* Dependências */
 import Logo from "../../assets/Logo.png";
-import useAuth from '../../hooks/useAuth';
 import { useState } from "react";
 
 /* Componente */
 export default function NavBar() {
-    const { user } = useAuth()
-    const [ nome, setNome ] = useState( user.perfil.nome );
-    const [ email, setEmail ] = useState( user.autenticacao.login );
-
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const [ nome, setNome ] = useState( userInfo.nome );
+    const [ email, setEmail ] = useState( userInfo.email );
     return (
         <nav className="w-full h-25 flex justify-between items-center bg-[#252525] px-3">
             <div className="flex space-x-3 mt-2 ">
