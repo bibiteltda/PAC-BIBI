@@ -1,35 +1,34 @@
 import { useState } from 'react';
 
-export function useCreateTurma() {
+export function useCreateRoteiro() {
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState(null);
    const [success, setSuccess] = useState(null);
 
-   async function createTurma(data) {
+   async function createRoteiro(data) {
       setLoading(true);
       setError(null);
       setSuccess(null);
 
       try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/turma/create`, {
-         method: 'POST',
-         headers: { 'Content-Type': 'application/json' },
-         body: JSON.stringify(data),
-      });
+         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/roteiro/create`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+         });
 
-      const result = await response.json();
+         const result = await response.json();
+         if (!response.ok) throw new Error(result.message || 'Erro ao criar roteiro');
 
-      if (!response.ok) throw new Error(result.message || 'Erro ao criar turma');
-
-      setSuccess(result);
-      return result;
-      } catch (err) {
+         setSuccess(result);
+         return result;
+     } catch (err) {
          setError(err.message);
-         console.error('Erro no useCreateTurma:', err);
-      } finally {
+         console.error('Erro no useCreateRoteiro:', err);
+     } finally {
          setLoading(false);
-      }
+     }
    }
 
-   return { createTurma, loading, error, success };
-}
+   return { createRoteiro, loading, error, success };
+};
