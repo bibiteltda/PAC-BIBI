@@ -13,6 +13,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<PageLogin />} />
         <Route path="/cadastro" element={<PageCadastro />} />
         <Route path="/login" element={<PageLogin />} />
         <Route path="/recuperarSenha" element={<PageEsqueceuSuaSenha />} />
