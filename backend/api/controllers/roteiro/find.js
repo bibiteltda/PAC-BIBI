@@ -14,7 +14,7 @@ module.exports = {
       return exits.success(list);
     } catch (err) {
       sails.log.error('Erro ao listar roteiro:', err);
-      throw 'serverError';
+      return exits.error(new Error('Erro interno ao listar roteiro.'));
     }
   }
 };
