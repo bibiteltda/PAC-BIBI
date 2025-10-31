@@ -89,7 +89,7 @@ module.exports = {
           );
 
           alunosDoResponsavel.forEach(aluno => {
-            transacoes.push({
+            lista.push({
               id_transacao: p.id,
               aluno: aluno.nome,
               responsavel: p.responsavel?.nome || 'N/A',
