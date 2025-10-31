@@ -103,7 +103,7 @@ export default function FormLogin({ form, setForm, setEtapa }) {
 
     if (usuario) {
       alert("Login realizado com sucesso!");
-      navigate("/dashboard"); // Redireciona pro dashboard
+      navigate("/turmas"); // Redireciona pro dashboard
     } else {
       setErroGeral("Usuário ou senha inválidos.");
     }
