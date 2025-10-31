@@ -74,19 +74,14 @@ module.exports = {
           .populate('responsavel')
           .populate('motorista');
 
-        const idsResponsaveis = [...new Set(
-          pagamentos.map(p => p.responsavel?.id).filter(Boolean)
-        )];
-
-        const alunos = await Aluno.find({ responsavel: idsResponsaveis })
-          .populate('responsavel');
-
         const lista = [];
 
-        pagamentos.forEach(p => {
-          const alunosDoResponsavel = alunos.filter(
-            a => String(a.responsavel.id) === String(p.responsavel.id)
-          );
+        for (const p of pagamentos) {
+          if (!p.responsavel) continue;
+
+          const alunosDoResponsavel = await Aluno.find({
+            responsavel: p.responsavel.id
+          });
 
           alunosDoResponsavel.forEach(aluno => {
             lista.push({
@@ -97,7 +92,7 @@ module.exports = {
               valor: p.valor,
             });
           });
-        });
+        }
 
         return lista;
       }
