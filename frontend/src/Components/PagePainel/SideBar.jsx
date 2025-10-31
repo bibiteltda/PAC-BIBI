@@ -1,6 +1,7 @@
 /* Dependências */
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 /* Ícones */
 import { FaHouse, FaMoneyCheck, FaFileLines, FaFileSignature } from "react-icons/fa6";
@@ -14,11 +15,27 @@ import { IoClose } from "react-icons/io5";
 export default function SideBar({ setFuncao, funcao, role }) {
     const [ativo, setAtivo] = useState(funcao);
     const [isOpen, setIsOpen] = useState(false);
+    const navigate = useNavigate();
 
     const handleSelect = (nome) => {
         setAtivo(nome);
         setFuncao(nome);
         setIsOpen(false);
+
+        const rotas = {
+            Home: "",
+            Funcoes: "",
+            Sobre: "",
+            Estatisticas: "",
+            Relatorios: "",
+            Financeiro: "/controle-mensal",
+            Turmas: "/turmas",
+            Contratos: "",
+        };
+ 
+        if (rotas[nome]) {
+            navigate(rotas[nome]);
+        }
     };
 
     const menusPrincipais = [
@@ -30,7 +47,7 @@ export default function SideBar({ setFuncao, funcao, role }) {
     const recursosCondutor = [
         { nome: "Estatisticas", icon: <GoGraph size={22} /> },
         { nome: "Relatorios", icon: <FaFileLines size={22} /> },
-        { nome: "Financeiro", icon: <GrMoney size={22} /> },
+        { nome: "Financeiro", icon: <GrMoney size={22} />,  },
         { nome: "Turmas", icon: <BsFillPersonVcardFill size={22} /> },
     ];
 
