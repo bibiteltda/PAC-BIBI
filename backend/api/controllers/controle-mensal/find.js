@@ -80,7 +80,7 @@ module.exports = {
         const lista = [];
 
         for (const p of pagamentos) {
-          const alunosDoResponsavel = alunos.filter(a => a.responsavel === p.responsavel.id);
+          const alunosDoResponsavel = alunos.filter(a => String(a.responsavel?._id || a.responsavel) === String(p.responsavel?._id || p.responsavel?.id));
 
           if (alunosDoResponsavel.length > 0) {
             alunosDoResponsavel.forEach(aluno => {
