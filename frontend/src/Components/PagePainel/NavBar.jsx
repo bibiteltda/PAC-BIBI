@@ -4,7 +4,7 @@ import { useState } from "react";
 
 /* Componente */
 export default function NavBar() {
-    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const userInfo = JSON.parse(localStorage.getItem("userInfo")) || {};
     const [ nome, setNome ] = useState( userInfo.nome );
     const [ email, setEmail ] = useState( userInfo.email );
     return (
