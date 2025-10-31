@@ -26,7 +26,7 @@ export default function useAluno() {
 
     try {
       // Faz a requisição POST para o endpoint /alunos
-      const response = await fetch(`${API_URL}/alunos`, {
+      const response = await fetch(`${API_URL}/aluno`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
