@@ -70,45 +70,42 @@ module.exports = {
       }
 
       async function obterTransacoes() {
+        // Busca todos os pagamentos com relações
         const pagamentos = await Pagamento.find()
           .populate('responsavel')
           .populate('motorista');
 
-        const todosResponsaveisIds = [...new Set(pagamentos.map(p => p.responsavel?.id).filter(Boolean))];
-        const alunos = await Aluno.find({ responsavel: todosResponsaveisIds }).populate('escola');
+        // Busca todos os alunos relacionados aos responsáveis
+        const todosResponsaveisIds = [...new Set(
+          pagamentos.map(p => p.responsavel?.id).filter(Boolean)
+        )];
 
-        const lista = [];
+        const alunos = await Aluno.find({ responsavel: todosResponsaveisIds })
+          .populate('escola');
 
-        for (const p of pagamentos) {
-          const alunosDoResponsavel = alunos.filter(a => String(a.responsavel?._id || a.responsavel) === String(p.responsavel?._id || p.responsavel?.id));
+        // Monta a lista agrupando alunos dentro de cada pagamento
+        const lista = pagamentos.map(p => {
+          const alunosDoResponsavel = alunos.filter(
+            a => String(a.responsavel?._id || a.responsavel) === String(p.responsavel?._id || p.responsavel?.id)
+          );
 
-          if (alunosDoResponsavel.length > 0) {
-            alunosDoResponsavel.forEach(aluno => {
-              lista.push({
-                id_pagamento: p.id,
-                aluno: aluno.nome,
-                escola: aluno.escola?.nome || 'N/A',
-                responsavel: p.responsavel?.nome || 'N/A',
-                valor: p.valor,
-                data: p.dta_pgmt || p.dta_vcto,
-                status: p.status,
-              });
-            });
-          } else {
-            lista.push({
-              id_pagamento: p.id,
-              aluno: 'N/A',
-              escola: 'N/A',
-              responsavel: p.responsavel?.nome || 'N/A',
-              valor: p.valor,
-              data: p.dta_pgmt || p.dta_vcto,
-              status: p.status,
-            });
-          }
-        }
+          return {
+            id_pagamento: p.id,
+            responsavel: p.responsavel?.nome || 'N/A',
+            motorista: p.motorista?.nome || 'N/A',
+            alunos: alunosDoResponsavel.map(a => ({
+              nome: a.nome,
+              escola: a.escola?.nome || 'N/A'
+            })),
+            valor: p.valor,
+            data: p.dta_pgmt || p.dta_vcto,
+            status: p.status,
+          };
+        });
 
         return lista;
       }
+
 
       if (!inputs.tipo) {
         const [graficos, melhorEscola, transacoes] = await Promise.all([
