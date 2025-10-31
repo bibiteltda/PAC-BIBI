@@ -2,11 +2,11 @@ module.exports = {
    friendlyName: 'Criar turma',
    description: 'Cadastra uma nova turma no sistema',
    inputs: {
-      turno: { type: 'number', required: true },
-      motorista: { type: 'number', required: true },
-      escolas: { type: 'json', defaultsTo: [] },
-      alunos: { type: 'json', defaultsTo: [] },
-   },
+    turno: { type: 'number', required: true },
+    motorista: { type: 'number', required: true },
+    escolas: { type: 'json', defaultsTo: [] },
+    alunos: { type: 'json', defaultsTo: [] },
+  },
    exits: {
       success: { description: 'Turma criada com sucesso.' },
       invalid: { description: 'Erro ao cadastrar turma.'}
