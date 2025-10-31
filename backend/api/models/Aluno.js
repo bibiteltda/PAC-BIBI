@@ -20,10 +20,6 @@ module.exports = {
     roteiro: {
       model: 'roteiro',
       required: true
-    },
-    turma: {
-      model: 'turma',
-      required: true
     }
   },
 };
