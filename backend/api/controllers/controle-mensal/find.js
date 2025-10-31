@@ -70,42 +70,37 @@ module.exports = {
       }
 
       async function obterTransacoes() {
-        // Busca todos os pagamentos com relações
         const pagamentos = await Pagamento.find()
           .populate('responsavel')
           .populate('motorista');
 
-        // Busca todos os alunos relacionados aos responsáveis
-        const todosResponsaveisIds = [...new Set(
+        const idsResponsaveis = [...new Set(
           pagamentos.map(p => p.responsavel?.id).filter(Boolean)
         )];
 
-        const alunos = await Aluno.find({ responsavel: todosResponsaveisIds })
-          .populate('escola');
+        const alunos = await Aluno.find({ responsavel: idsResponsaveis })
+          .populate('responsavel');
 
-        // Monta a lista agrupando alunos dentro de cada pagamento
-        const lista = pagamentos.map(p => {
+        const lista = [];
+
+        pagamentos.forEach(p => {
           const alunosDoResponsavel = alunos.filter(
-            a => String(a.responsavel?._id || a.responsavel) === String(p.responsavel?._id || p.responsavel?.id)
+            a => String(a.responsavel.id) === String(p.responsavel.id)
           );
 
-          return {
-            id_pagamento: p.id,
-            responsavel: p.responsavel?.nome || 'N/A',
-            motorista: p.motorista?.nome || 'N/A',
-            alunos: alunosDoResponsavel.map(a => ({
-              nome: a.nome,
-              escola: a.escola?.nome || 'N/A'
-            })),
-            valor: p.valor,
-            data: p.dta_pgmt || p.dta_vcto,
-            status: p.status,
-          };
+          alunosDoResponsavel.forEach(aluno => {
+            transacoes.push({
+              id_transacao: p.id,
+              aluno: aluno.nome,
+              responsavel: p.responsavel?.nome || 'N/A',
+              status: p.status,
+              valor: p.valor,
+            });
+          });
         });
 
         return lista;
       }
-
 
       if (!inputs.tipo) {
         const [graficos, melhorEscola, transacoes] = await Promise.all([
