@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { API_URL } from "../services/api";
 
 export function useCreateRoteiro() {
    const [loading, setLoading] = useState(false);
@@ -11,7 +12,7 @@ export function useCreateRoteiro() {
       setSuccess(null);
 
       try {
-         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/roteiro/create`, {
+         const response = await fetch(`${API_URL}/roteiro/create`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
@@ -22,9 +23,9 @@ export function useCreateRoteiro() {
 
          setSuccess(result);
          return result;
-     } catch (err) {
-         setError(err.message);
-         console.error('Erro no useCreateRoteiro:', err);
+     } catch (e) {
+         setError(e.message);
+         console.error('Erro no useCreateRoteiro:', e);
      } finally {
          setLoading(false);
      }
