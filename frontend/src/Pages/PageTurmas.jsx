@@ -9,39 +9,20 @@ import NavBar from "../Components/PagePainel/NavBar";
 import SideBar from "../Components/PagePainel/SideBar";
 import LinkConvite from "../Components/PageTurmas/LinkConvite";
 
-/* Hook customizado */
-import { useSearchAlunosPorResponsavel } from "../hooks/useSearchAlunosPorResponsavel";
-
 export default function Turmas() {
   const [funcao, setFuncao] = useState("Turmas");
   const [escola, setEscola] = useState("todas");
   const [status, setStatus] = useState("todas");
   const [data, setData] = useState({ inicio: "2020-01-01", fim: "2020-12-31" });
 
-  // Estados principais
+
+  // 🔹 Agora inicia vazio (sem mock)
   const [turmas, setTurmas] = useState([]);
   const [turmasFiltradas, setTurmasFiltradas] = useState([]);
   const [turmaSelecionada, setTurmaSelecionada] = useState(null);
   const [mostrarPopup, setMostrarPopup] = useState(false);
-  const [novaTurma, setNovaTurma] = useState({
-    name: "",
-    escola: "",
-    turno: "",
-  });
+  const [novaTurma, setNovaTurma] = useState({ name: "", escola: "", turno: "" });
 
-  // Responsável e alunos
-  const [emailResponsavel, setEmailResponsavel] = useState("");
-  const [alunosSelecionados, setAlunosSelecionados] = useState([]);
-  const { alunos, loading, error, searchAlunos } = useSearchAlunosPorResponsavel();
-
-  // Função para marcar/desmarcar alunos
-  const toggleAluno = (id) => {
-    setAlunosSelecionados((prev) =>
-      prev.includes(id) ? prev.filter((a) => a !== id) : [...prev, id]
-    );
-  };
-
-  // Filtro de turmas
   const filtrar = () => {
     const inicio = new Date(data.inicio);
     const fim = new Date(data.fim);
@@ -57,54 +38,24 @@ export default function Turmas() {
     setTurmasFiltradas(filtradas);
   };
 
-  // Criar nova turma
-  const adicionarTurma = async () => {
+  const adicionarTurma = () => {
     if (!novaTurma.name || !novaTurma.escola || !novaTurma.turno)
       return alert("Preencha todos os campos!");
-    if (alunosSelecionados.length === 0)
-      return alert("Selecione ao menos um aluno!");
 
-    try {
-      // Monta os dados para enviar ao backend
-      const data = {
-        name: novaTurma.name,
-        escola: novaTurma.escola,
-        turno: novaTurma.turno,
-        alunos: alunosSelecionados,
-      };
+    const nova = {
+      id: turmas.length + 1,
+      escola: novaTurma.escola,
+      name: novaTurma.name,
+      turno: novaTurma.turno,
+      status: "ativo",
+      data: new Date().toISOString().split("T")[0],
+    };
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/roteiro/create`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.message || "Erro ao criar turma");
-
-      alert("Turma criada com sucesso!");
-      console.log("✅ Turma criada:", result);
-
-      // Atualiza lista local
-      const nova = {
-        id: turmas.length + 1,
-        ...novaTurma,
-        status: "ativo",
-        data: new Date().toISOString().split("T")[0],
-      };
-      const novaLista = [...turmas, nova];
-      setTurmas(novaLista);
-      setTurmasFiltradas(novaLista);
-
-      // Reseta estados
-      setNovaTurma({ name: "", escola: "", turno: "" });
-      setEmailResponsavel("");
-      setAlunosSelecionados([]);
-      setMostrarPopup(false);
-    } catch (err) {
-      console.error("Erro ao criar turma:", err);
-      alert(err.message);
-    }
+    const novaLista = [...turmas, nova];
+    setTurmas(novaLista);
+    setTurmasFiltradas(novaLista);
+    setNovaTurma({ name: "", escola: "", turno: "" });
+    setMostrarPopup(false);
   };
 
   const escolasDisponiveis = useMemo(
@@ -116,11 +67,7 @@ export default function Turmas() {
     <>
       <div className="flex flex-col h-screen w-full bg-[#F9FAFB] relative">
         {/* Navbar */}
-        <NavBar
-          foto="https://i.pravatar.cc/300"
-          nome="Daniela Luisa"
-          email="daniela@gmail.com"
-        />
+        <NavBar foto="https://i.pravatar.cc/300" nome="Daniela Luisa" email="daniela@gmail.com" />
 
         <div className="flex flex-1 flex-col lg:flex-row">
           {/* Sidebar esquerda */}
@@ -164,13 +111,15 @@ export default function Turmas() {
                       onClick={() => setTurmaSelecionada(turma)}
                       className="cursor-pointer hover:scale-[1.02] transition-transform duration-200"
                     >
-                      <CardRoteiro name={turma.name} turno={turma.turno} />
+                      <CardRoteiro
+                        name={turma.name}
+                        turno={turma.turno}
+                      />
                     </div>
                   ))
                 ) : (
                   <p className="text-gray-500 text-sm mt-4 text-center">
-                    Nenhuma turma criada ainda. Clique em “Adicionar Turma” para
-                    começar.
+                    Nenhuma turma criada ainda. Clique em “Adicionar Turma” para começar.
                   </p>
                 )}
               </div>
@@ -190,72 +139,31 @@ export default function Turmas() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ duration: 0.3 }}
-            className="fixed top-0 right-0 w-full sm:w-[400px] h-full bg-white shadow-xl p-6 flex flex-col z-50 overflow-y-auto"
+            className="fixed top-0 right-0 w-full sm:w-[400px] h-full bg-white shadow-xl p-6 flex flex-col z-50"
           >
             <h2 className="text-2xl font-semibold mb-4">Nova Turma</h2>
 
-            {/* Campos básicos */}
             <input
               type="text"
               placeholder="Nome da turma"
               value={novaTurma.name}
-              onChange={(e) =>
-                setNovaTurma({ ...novaTurma, name: e.target.value })
-              }
+              onChange={(e) => setNovaTurma({ ...novaTurma, name: e.target.value })}
               className="w-full border p-2 rounded mb-3"
             />
             <input
               type="text"
               placeholder="Escola"
               value={novaTurma.escola}
-              onChange={(e) =>
-                setNovaTurma({ ...novaTurma, escola: e.target.value })
-              }
+              onChange={(e) => setNovaTurma({ ...novaTurma, escola: e.target.value })}
               className="w-full border p-2 rounded mb-3"
             />
             <input
               type="text"
               placeholder="Turno (ex: Matutino)"
               value={novaTurma.turno}
-              onChange={(e) =>
-                setNovaTurma({ ...novaTurma, turno: e.target.value })
-              }
+              onChange={(e) => setNovaTurma({ ...novaTurma, turno: e.target.value })}
               className="w-full border p-2 rounded mb-3"
             />
-
-            {/* Campo de e-mail do responsável */}
-            <input
-              type="email"
-              placeholder="E-mail do responsável"
-              value={emailResponsavel}
-              onChange={(e) => {
-                const email = e.target.value;
-                setEmailResponsavel(email);
-                if (email.length >= 5) searchAlunos(email);
-              }}
-              className="w-full border p-2 rounded mb-3"
-            />
-
-            {/* Lista de alunos */}
-            {loading && (
-              <p className="text-gray-500 text-sm mb-3">🔎 Buscando alunos...</p>
-            )}
-            {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
-
-            {alunos.length > 0 && (
-              <div className="border rounded p-2 max-h-[200px] overflow-y-auto mb-3">
-                {alunos.map((aluno) => (
-                  <label key={aluno.id} className="flex items-center gap-2 py-1">
-                    <input
-                      type="checkbox"
-                      checked={alunosSelecionados.includes(aluno.id)}
-                      onChange={() => toggleAluno(aluno.id)}
-                    />
-                    <span>{aluno.nome}</span>
-                  </label>
-                ))}
-              </div>
-            )}
 
             <div className="flex justify-between mt-6">
               <button
@@ -278,10 +186,7 @@ export default function Turmas() {
       {/* Pop-up de convite existente */}
       <AnimatePresence>
         {turmaSelecionada && (
-          <LinkConvite
-            turma={turmaSelecionada}
-            onClose={() => setTurmaSelecionada(null)}
-          />
+          <LinkConvite turma={turmaSelecionada} onClose={() => setTurmaSelecionada(null)} />
         )}
       </AnimatePresence>
     </>
