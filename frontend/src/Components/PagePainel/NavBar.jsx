@@ -4,9 +4,9 @@ import { useState } from "react";
 
 /* Componente */
 export default function NavBar() {
-    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-    const [ nome, setNome ] = useState( userInfo.nome );
-    const [ email, setEmail ] = useState( userInfo.email );
+    // const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    // const [nome, setNome] = useState(userInfo.nome || "bibi");
+    // const [email, setEmail] = useState(userInfo.email);
     return (
         <nav className="w-full h-25 flex justify-between items-center bg-[#252525] px-3">
             <div className="flex space-x-3 mt-2 ">
@@ -45,16 +45,16 @@ export default function NavBar() {
 
                 <div className="flex items-center space-x-2">
                     <div className="w-8 h-8 border border-white rounded-sm overflow-hidden">
-                        
+
                     </div>
 
                     <div className="hidden sm:flex flex-col justify-center">
                         <p className="text-white text-[13px] font-semibold leading-none tracking-widest">
-                            {nome}
+                            {"bibi"}
                         </p>
-                        <p className="text-[#FEFEFE] text-[11px] font-extralight leading-none">
+                        {/* <p className="text-[#FEFEFE] text-[11px] font-extralight leading-none">
                             {email}
-                        </p>
+                        </p> */}
                     </div>
                 </div>
             </div>
