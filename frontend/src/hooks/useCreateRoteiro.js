@@ -23,12 +23,14 @@ export function useCreateRoteiro() {
 
          setSuccess(result);
          return result;
-     } catch (e) {
-         setError(e.message);
-         console.error('Erro no useCreateRoteiro:', e);
-     } finally {
+      } catch (e) {
+         const message = e instanceof Error ? e.message : String(e);
+         setError(message);
+         console.error(message);
+         return null;
+      } finally {
          setLoading(false);
-     }
+      }
    }
 
    return { createRoteiro, loading, error, success };
