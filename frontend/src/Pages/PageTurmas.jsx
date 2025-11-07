@@ -15,14 +15,14 @@ export default function Turmas() {
   const [status, setStatus] = useState("todas");
   const [data, setData] = useState({ inicio: "2020-01-01", fim: "2020-12-31" });
 
-
-  // 🔹 Agora inicia vazio (sem mock)
+  // Lista de turmas
   const [turmas, setTurmas] = useState([]);
   const [turmasFiltradas, setTurmasFiltradas] = useState([]);
   const [turmaSelecionada, setTurmaSelecionada] = useState(null);
   const [mostrarPopup, setMostrarPopup] = useState(false);
   const [novaTurma, setNovaTurma] = useState({ name: "", escola: "", turno: "" });
 
+  // Função de filtro
   const filtrar = () => {
     const inicio = new Date(data.inicio);
     const fim = new Date(data.fim);
@@ -38,14 +38,15 @@ export default function Turmas() {
     setTurmasFiltradas(filtradas);
   };
 
+  // Adicionar nova turma
   const adicionarTurma = () => {
     if (!novaTurma.name || !novaTurma.escola || !novaTurma.turno)
       return alert("Preencha todos os campos!");
 
     const nova = {
       id: turmas.length + 1,
-      escola: novaTurma.escola,
       name: novaTurma.name,
+      escola: novaTurma.escola,
       turno: novaTurma.turno,
       status: "ativo",
       data: new Date().toISOString().split("T")[0],
@@ -58,6 +59,7 @@ export default function Turmas() {
     setMostrarPopup(false);
   };
 
+  // Opções únicas de escola para o filtro
   const escolasDisponiveis = useMemo(
     () => ["todas", ...new Set(turmas.map((t) => t.escola))],
     [turmas]
@@ -67,10 +69,14 @@ export default function Turmas() {
     <>
       <div className="flex flex-col h-screen w-full bg-[#F9FAFB] relative">
         {/* Navbar */}
-        <NavBar foto="https://i.pravatar.cc/300" nome="Daniela Luisa" email="daniela@gmail.com" />
+        <NavBar
+          foto="https://i.pravatar.cc/300"
+          nome="Daniela Luisa"
+          email="daniela@gmail.com"
+        />
 
         <div className="flex flex-1 flex-col lg:flex-row">
-          {/* Sidebar esquerda */}
+          {/* Sidebar */}
           <div className="w-full lg:w-[250px] bg-white">
             <SideBar setFuncao={setFuncao} funcao={funcao} role="condutor" />
           </div>
@@ -113,6 +119,7 @@ export default function Turmas() {
                     >
                       <CardRoteiro
                         name={turma.name}
+                        escola={turma.escola}
                         turno={turma.turno}
                       />
                     </div>
@@ -183,10 +190,13 @@ export default function Turmas() {
         )}
       </AnimatePresence>
 
-      {/* Pop-up de convite existente */}
+      {/* Pop-up de convite */}
       <AnimatePresence>
         {turmaSelecionada && (
-          <LinkConvite turma={turmaSelecionada} onClose={() => setTurmaSelecionada(null)} />
+          <LinkConvite
+            turma={turmaSelecionada}
+            onClose={() => setTurmaSelecionada(null)}
+          />
         )}
       </AnimatePresence>
     </>
