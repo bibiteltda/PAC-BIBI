@@ -74,37 +74,24 @@ module.exports = {
           .populate('responsavel')
           .populate('motorista');
 
-        const todosResponsaveisIds = [...new Set(pagamentos.map(p => p.responsavel?.id).filter(Boolean))];
-        const alunos = await Aluno.find({ responsavel: todosResponsaveisIds }).populate('escola');
-
         const lista = [];
 
         for (const p of pagamentos) {
-          const alunosDoResponsavel = alunos.filter(a => a.responsavel === p.responsavel.id);
+          if (!p.responsavel) continue;
 
-          if (alunosDoResponsavel.length > 0) {
-            alunosDoResponsavel.forEach(aluno => {
-              lista.push({
-                id_pagamento: p.id,
-                aluno: aluno.nome,
-                escola: aluno.escola?.nome || 'N/A',
-                responsavel: p.responsavel?.nome || 'N/A',
-                valor: p.valor,
-                data: p.dta_pgmt || p.dta_vcto,
-                status: p.status,
-              });
-            });
-          } else {
+          const alunosDoResponsavel = await Aluno.find({
+            responsavel: p.responsavel.id
+          });
+
+          alunosDoResponsavel.forEach(aluno => {
             lista.push({
-              id_pagamento: p.id,
-              aluno: 'N/A',
-              escola: 'N/A',
+              id_transacao: p.id,
+              aluno: aluno.nome,
               responsavel: p.responsavel?.nome || 'N/A',
-              valor: p.valor,
-              data: p.dta_pgmt || p.dta_vcto,
               status: p.status,
+              valor: p.valor,
             });
-          }
+          });
         }
 
         return lista;
