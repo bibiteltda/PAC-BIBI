@@ -1,5 +1,5 @@
 /* Dependências */
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 /* Components */
@@ -15,12 +15,40 @@ export default function Turmas() {
   const [status, setStatus] = useState("todas");
   const [data, setData] = useState({ inicio: "2020-01-01", fim: "2020-12-31" });
 
-  // Lista de turmas
+  // Lista de turmas (roteiros)
   const [turmas, setTurmas] = useState([]);
   const [turmasFiltradas, setTurmasFiltradas] = useState([]);
   const [turmaSelecionada, setTurmaSelecionada] = useState(null);
   const [mostrarPopup, setMostrarPopup] = useState(false);
   const [novaTurma, setNovaTurma] = useState({ name: "", escola: "", turno: "" });
+
+  // Buscar roteiros do banco ao carregar a página
+  useEffect(() => {
+    const carregarRoteiros = async () => {
+      try {
+        const response = await fetch("https://pac-bibi.onrender.com/roteiro");
+        if (!response.ok) throw new Error("Erro ao carregar roteiros");
+        const data = await response.json();
+
+        // Normaliza a estrutura recebida do backend
+        const roteiros = data.map((r) => ({
+          id: r.id,
+          name: r.name || `Turma ${r.id}`,
+          escola: r.escola || "Desconhecida",
+          turno: r.turno || "Não informado",
+          status: "ativo",
+          data: new Date(r.createdAt).toISOString().split("T")[0],
+        }));
+
+        setTurmas(roteiros);
+        setTurmasFiltradas(roteiros);
+      } catch (err) {
+        console.error("Erro ao carregar roteiros:", err);
+      }
+    };
+
+    carregarRoteiros();
+  }, []);
 
   // Função de filtro
   const filtrar = () => {
@@ -38,25 +66,53 @@ export default function Turmas() {
     setTurmasFiltradas(filtradas);
   };
 
-  // Adicionar nova turma
-  const adicionarTurma = () => {
+  // Adicionar nova turma (criar roteiro no backend)
+  const adicionarTurma = async () => {
     if (!novaTurma.name || !novaTurma.escola || !novaTurma.turno)
       return alert("Preencha todos os campos!");
 
-    const nova = {
-      id: turmas.length + 1,
-      name: novaTurma.name,
-      escola: novaTurma.escola,
-      turno: novaTurma.turno,
-      status: "ativo",
-      data: new Date().toISOString().split("T")[0],
-    };
+    try {
+      const response = await fetch("https://pac-bibi.onrender.com/roteiro", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: novaTurma.name,
+          escola: novaTurma.escola,
+          turno: novaTurma.turno,
+          motorista: 1,
+        }),
+      });
 
-    const novaLista = [...turmas, nova];
-    setTurmas(novaLista);
-    setTurmasFiltradas(novaLista);
-    setNovaTurma({ name: "", escola: "", turno: "" });
-    setMostrarPopup(false);
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Erro na resposta:", errorText);
+        throw new Error("Erro ao criar roteiro");
+      }
+
+      const data = await response.json();
+      const novoRoteiro = data.roteiro;
+
+      // Atualiza a lista local com o retorno do backend
+      const novaLista = [
+        ...turmas,
+        {
+          id: novoRoteiro.id,
+          name: novoRoteiro.name || novaTurma.name,
+          escola: novoRoteiro.escola || novaTurma.escola,
+          turno: novoRoteiro.turno || novaTurma.turno,
+          status: "ativo",
+          data: new Date().toISOString().split("T")[0],
+        },
+      ];
+
+      setTurmas(novaLista);
+      setTurmasFiltradas(novaLista);
+      setNovaTurma({ name: "", escola: "", turno: "" });
+      setMostrarPopup(false);
+    } catch (err) {
+      console.error("Erro ao criar roteiro:", err);
+      alert("Erro ao criar roteiro. Verifique o console.");
+    }
   };
 
   // Opções únicas de escola para o filtro
@@ -92,7 +148,7 @@ export default function Turmas() {
                   onClick={() => setMostrarPopup(true)}
                   className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
                 >
-                  Adicionar Turma
+                  Adicionar Roteiro
                 </button>
               </div>
 

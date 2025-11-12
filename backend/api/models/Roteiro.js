@@ -2,7 +2,7 @@ module.exports = {
   tableName: 'roteiro',
   attributes: {
     id: { type: 'number', autoIncrement: true },
-    turno: { type: 'string' },
+    turno: { type: 'number' },
 
     escolas: { collection: 'escola', via: 'roteiros' },
     alunos: { collection: 'aluno', via: 'roteiro' },
