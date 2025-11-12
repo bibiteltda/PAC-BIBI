@@ -14,15 +14,14 @@ module.exports = {
   fn: async function (inputs, exits) {
     try {
       async function obterMelhorEscola() {
-        const pagamentos = await Pagamento.find({ status: 'pago' }).populate('motorista');
+        const pagamentos = await Pagamento.find({ status: 'pago' })
+          .populate('aluno', { populate: 'escola' });
+
         const escolas = {};
 
         for (const p of pagamentos) {
-          const alunos = await Aluno.find({ motorista: p.motorista.id }).populate('escola');
-          for (const aluno of alunos) {
-            const nomeEscola = aluno.escola?.nome || 'Desconhecida';
-            escolas[nomeEscola] = (escolas[nomeEscola] || 0) + p.valor;
-          }
+          const nomeEscola = p.aluno?.escola?.nome || 'Desconhecida';
+          escolas[nomeEscola] = (escolas[nomeEscola] || 0) + p.valor;
         }
 
         const [melhorEscola, valor] = Object.entries(escolas).reduce(
@@ -70,31 +69,25 @@ module.exports = {
       }
 
       async function obterTransacoes() {
-        const pagamentos = await Pagamento.find()
-          .populate('responsavel')
-          .populate('motorista');
-
-        const lista = [];
-
-        for (const p of pagamentos) {
-          if (!p.responsavel) continue;
-
-          const alunosDoResponsavel = await Aluno.find({
-            responsavel: p.responsavel.id
-          });
-
-          alunosDoResponsavel.forEach(aluno => {
-            lista.push({
-              id_transacao: p.id,
-              aluno: aluno.nome,
-              responsavel: p.responsavel?.nome || 'N/A',
-              status: p.status,
-              valor: p.valor,
-            });
-          });
+        try {
+          const pagamentos = await Pagamento.find()
+            .populate('responsavel')
+            .populate('motorista')
+            .populate('aluno');
+      
+          const lista = pagamentos.map(p => ({
+            id_transacao: p.id,
+            aluno: p.aluno?.nome || 'N/A',
+            responsavel: p.responsavel?.nome || 'N/A',
+            status: p.status,
+            valor: p.valor,
+          }));
+      
+          return lista;
+        } catch (error) {
+          sails.log.error('Erro ao obter transações:', error);
+          throw error;
         }
-
-        return lista;
       }
 
       if (!inputs.tipo) {
