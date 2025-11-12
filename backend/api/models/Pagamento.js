@@ -9,6 +9,7 @@ module.exports = {
 
     responsavel: { model: 'responsavel' },
     motorista: { model: 'motorista' },
+    aluno: { model: 'aluno' },
 
     createdAt: { type: 'ref', columnType: 'timestamp without time zone', autoCreatedAt: true },
     updatedAt: { type: 'ref', columnType: 'timestamp without time zone', autoUpdatedAt: true }

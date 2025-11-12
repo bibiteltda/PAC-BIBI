@@ -8,9 +8,8 @@ module.exports = {
 
     bairro: { model: 'bairro' },
     cidade: { model: 'cidade' },
-
     alunos: { collection: 'aluno', via: 'escola' },
-    roteiros: { collection: 'roteiro', via: 'escolas' }, // Many-to-Many automática
+    roteiros: { collection: 'roteiro', via: 'escolas' },
 
     createdAt: { type: 'ref', columnType: 'timestamp without time zone', autoCreatedAt: true },
     updatedAt: { type: 'ref', columnType: 'timestamp without time zone', autoUpdatedAt: true }
