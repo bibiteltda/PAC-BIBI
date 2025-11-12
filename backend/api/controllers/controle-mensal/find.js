@@ -14,13 +14,17 @@ module.exports = {
   fn: async function (inputs, exits) {
     try {
       async function obterMelhorEscola() {
-        const pagamentos = await Pagamento.find({ status: 'pago' })
-          .populate('aluno', { populate: 'escola' });
+        const pagamentos = await Pagamento.find({ status: 'pago' }).populate('aluno');
 
         const escolas = {};
 
         for (const p of pagamentos) {
-          const nomeEscola = p.aluno?.escola?.nome || 'Desconhecida';
+          if (!p.aluno) continue;
+
+          const aluno = await Aluno.findOne({ id: p.aluno.id }).populate('escola');
+          if (!aluno || !aluno.escola) continue;
+
+          const nomeEscola = aluno.escola.nome;
           escolas[nomeEscola] = (escolas[nomeEscola] || 0) + p.valor;
         }
 
