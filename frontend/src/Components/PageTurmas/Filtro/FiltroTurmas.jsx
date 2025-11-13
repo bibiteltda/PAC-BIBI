@@ -51,8 +51,10 @@ export default function FiltroTurmas({
                         {/* Linha 1: Escola + Status */}
                         <div className="flex gap-2">
                             <div className="flex-1 flex flex-col">
-                                <label className="text-sm font-medium text-gray-700">Escola</label>
+                                {/* IDs de Acessibilidade adicionados */}
+                                <label htmlFor="filtro-escola-mobile" className="text-sm font-medium text-gray-700">Escola</label>
                                 <select
+                                    id="filtro-escola-mobile"
                                     className={inputClass}
                                     value={escola}
                                     onChange={(e) => setEscola(e.target.value)}
@@ -68,8 +70,10 @@ export default function FiltroTurmas({
                             </div>
 
                             <div className="flex-1 flex flex-col">
-                                <label className="text-sm font-medium text-gray-700">Status</label>
+                                {/* IDs de Acessibilidade adicionados */}
+                                <label htmlFor="filtro-status-mobile" className="text-sm font-medium text-gray-700">Status</label>
                                 <select
+                                    id="filtro-status-mobile"
                                     className={inputClass}
                                     value={status}
                                     onChange={(e) => setStatus(e.target.value)}
@@ -84,20 +88,26 @@ export default function FiltroTurmas({
                         {/* Linha 2: Data */}
                         <div className="flex gap-2">
                             <div className="flex flex-col">
-                                <label className="text-sm font-medium text-gray-700">Data Início</label>
+                                {/* IDs de Acessibilidade adicionados */}
+                                <label htmlFor="filtro-data-inicio-mobile" className="text-sm font-medium text-gray-700">Data Início</label>
                                 <input
+                                    id="filtro-data-inicio-mobile"
                                     type="date"
                                     className={dateClass}
-                                    value={data.inicio}
+                                    // Programação defensiva: protege contra 'data' nulo
+                                    value={data?.inicio || ""} 
                                     onChange={(e) => setData({ ...data, inicio: e.target.value })}
                                 />
                             </div>
                             <div className="flex flex-col">
-                                <label className="text-sm font-medium text-gray-700">Data Fim</label>
+                                {/* IDs de Acessibilidade adicionados */}
+                                <label htmlFor="filtro-data-fim-mobile" className="text-sm font-medium text-gray-700">Data Fim</label>
                                 <input
+                                    id="filtro-data-fim-mobile"
                                     type="date"
                                     className={dateClass}
-                                    value={data.fim}
+                                    // Programação defensiva: protege contra 'data' nulo
+                                    value={data?.fim || ""}
                                     onChange={(e) => setData({ ...data, fim: e.target.value })}
                                 />
                             </div>
@@ -119,8 +129,10 @@ export default function FiltroTurmas({
             <div className="hidden lg:flex flex-wrap justify-center gap-4 items-end p-4 rounded-lg shadow bg-white mt-2">
                 {/* Filtro Escola */}
                 <div className="flex flex-col">
-                    <label className="text-sm font-medium text-gray-700">Escola</label>
+                    {/* IDs de Acessibilidade adicionados */}
+                    <label htmlFor="filtro-escola-desktop" className="text-sm font-medium text-gray-700">Escola</label>
                     <select
+                        id="filtro-escola-desktop"
                         className={inputClass}
                         value={escola}
                         onChange={(e) => setEscola(e.target.value)}
@@ -135,8 +147,10 @@ export default function FiltroTurmas({
 
                 {/* Filtro Status */}
                 <div className="flex flex-col">
-                    <label className="text-sm font-medium text-gray-700">Status</label>
+                    {/* IDs de Acessibilidade adicionados */}
+                    <label htmlFor="filtro-status-desktop" className="text-sm font-medium text-gray-700">Status</label>
                     <select
+                        id="filtro-status-desktop"
                         className={inputClass}
                         value={status}
                         onChange={(e) => setStatus(e.target.value)}
@@ -149,19 +163,25 @@ export default function FiltroTurmas({
 
                 {/* Filtro Data */}
                 <div className="flex flex-col">
-                    <label className="text-sm font-medium text-gray-700">Data</label>
+                    {/* ID de Acessibilidade aponta para o primeiro input */}
+                    <label htmlFor="filtro-data-inicio-desktop" className="text-sm font-medium text-gray-700">Data</label>
                     <div className="flex gap-2">
                         <input
+                            id="filtro-data-inicio-desktop"
+                            aria-label="Data Início" // 'aria-label' para leitores de tela
                             type="date"
                             className={dateClass}
-                            value={data.inicio}
+                            // Programação defensiva
+                            value={data?.inicio || ""}
                             onChange={(e) => setData({ ...data, inicio: e.target.value })}
                         />
                         <span className="self-center">→</span>
                         <input
+                            aria-label="Data Fim" // 'aria-label' para leitores de tela
                             type="date"
                             className={dateClass}
-                            value={data.fim}
+                            // Programação defensiva
+                            value={data?.fim || ""}
                             onChange={(e) => setData({ ...data, fim: e.target.value })}
                         />
                     </div>
