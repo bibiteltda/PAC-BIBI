@@ -78,6 +78,6 @@ module.exports.routes = {
   'PUT /controle-mensal/:id': { action: 'controle-mensal/update' },
   'DELETE /controle-mensal/:id': { action: 'controle-mensal/delete' },
   // Enviar Email
-  'POST /enviar-email/sendCode': { action: 'enviar-email/sendCode' },
-  'POST /enviar-email/verifyCode': { action: 'enviar-email/verifyCode' },
+  'POST /enviar-email/send': { action: 'enviar-email/send' },
+  'POST /enviar-email/verify': { action: 'enviar-email/verify' },
 };
