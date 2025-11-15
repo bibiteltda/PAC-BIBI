@@ -1,56 +1,38 @@
-const sgMail = require('@sendgrid/mail');
-const Autenticacao = require('../../models/Autenticacao');
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
 
 module.exports = {
-  friendlyName: 'Enviar código',
-  description: 'Envia um código de verificação por e-mail usando SendGrid.',
-
-  inputs: {
-    email: { type: 'string', required: true, description: 'E-mail do usuário para enviar o código de verificação.' },
-  },
-  exits: {
-    success: { description: 'Código enviado com sucesso.' },
-    notFound: { description: 'Usuário não encontrado com este e-mail.' },
-    serverError: { description: 'Erro ao enviar o código.' },
-  },
-  fn: async function (inputs, exits) {
+  enviarCodigo: async (email, code) => {
     try {
-      const { email } = inputs;
-
-      const usuario = await Autenticacao.findOne({ login: email });
-      if (!usuario) {
-        return exits.notFound({ message: 'Usuário não encontrado.' });
-      }
-
-      const code = Math.floor(1000 + Math.random() * 9000).toString();
-
-      const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
-      await Autenticacao.updateOne({ id: usuario.id }).set({
-        resetCode: code,
-        resetCodeExpiresAt: expiresAt
-      });
-
-      sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-
-      const msg = {
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
         to: email,
-        from: process.env.EMAIL_FROM,
-        subject: 'Código de verificação',
-        text: `Seu código de verificação é: ${code}`,
+        subject: 'Seu código de verificação',
         html: `
-          <h2>Verificação de Conta</h2>
-          <p>Olá,</p>
-          <p>Seu código de verificação é: <strong>${code}</strong></p>
-          <p>Ele expira em 5 minutos.</p>
-        `,
+          <div style="font-family: Arial; font-size: 16px;">
+            <p>Olá!</p>
+            <p>Seu código de verificação é:</p>
+            <h2 style="color:#4CAF50; margin: 0;">${code}</h2>
+            <p>O código expira em 10 minutos.</p>
+          </div>
+        `
       };
 
-      await sgMail.send(msg);
+      const info = await transporter.sendMail(mailOptions);
 
-      return exits.success({ message: 'Código enviado com sucesso.' });
+      console.log(`Código enviado para ${email} - ID: ${info.messageId}`);
+      return info;
+
     } catch (error) {
-      sails.log.error('Erro ao enviar código de verificação:', error);
-      return exits.serverError({ message: 'Erro ao enviar o código.' });
+      console.error('Erro ao enviar código:', error);
+      throw error;
     }
   }
 };
