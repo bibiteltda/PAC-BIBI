@@ -1,33 +1,27 @@
 import { useState } from "react";
 
-export function useTurma() { 
-  
+export function useTurma() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [turmas, setTurmas] = useState([]); 
 
-  async function findTurmas(filtros) { 
+  async function findTurmas(filtros = { escola: "todas", turno: "todas" }) {
     setLoading(true);
     setError(null);
-    setTurmas([]); 
+    setTurmas([]);
 
-try {
+    try {
       const params = new URLSearchParams();
 
-      if (filtros.escola && filtros.escola !== 'todas') {
-        params.append('escola', filtros.escola);
-      }
-      if (filtros.status && filtros.status !== 'todas') {
-        params.append('status', filtros.status);
-      }
-      if (filtros.dataInicio) {
-        params.append('dataInicio', filtros.dataInicio);
-      }
-      if (filtros.dataFim) {
-        params.append('dataFim', filtros.dataFim);
+      if (filtros.escola && filtros.escola !== "todas") {
+        params.append("escola", filtros.escola);
       }
 
-      const url = `${process.env.REACT_APP_API_URL}/turma?${params.toString()}`; 
+      if (filtros.turno && filtros.turno !== "todas") {
+        params.append("turno", filtros.turno);
+      }
+
+      const url = `${process.env.REACT_APP_API_URL}/roteiro?${params.toString()}`;
 
       const response = await fetch(url);
       const data = await response.json();
@@ -38,12 +32,12 @@ try {
 
       setTurmas(data);
 
-    } catch (err) { 
+    } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
   }
-  
+
   return { findTurmas, turmas, loading, error };
 }

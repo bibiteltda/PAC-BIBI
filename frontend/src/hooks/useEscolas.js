@@ -1,16 +1,34 @@
-/* 
-    É só para não dar erro no Front
-    Não representa lógica nenhuma
-*/
+import { useState, useEffect } from "react";
 
 export default function useEscolas() {
-    return {
-        escolas: [
-            { id: 1, nome: "Escola A" },
-            { id: 2, nome: "Escola B" },
-            { id: 3, nome: "Escola C" },
-        ],
-        loading: false,
-        error: null,
-    };
+  const [escolas, setEscolas] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  async function loadEscolas() {
+    try {
+      setLoading(true);
+
+      const url = `${process.env.REACT_APP_API_URL}/escola`;
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Erro ao buscar escolas");
+      }
+
+      setEscolas(data);
+
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadEscolas();
+  }, []);
+
+  return { escolas, loading, error };
 }
