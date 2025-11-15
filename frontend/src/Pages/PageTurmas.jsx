@@ -1,5 +1,5 @@
 /* Dependências */
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 /* Components */
@@ -8,111 +8,189 @@ import FiltroTurmas from "../Components/PageTurmas/Filtro/FiltroTurmas";
 import NavBar from "../Components/PagePainel/NavBar";
 import SideBar from "../Components/PagePainel/SideBar";
 import LinkConvite from "../Components/PageTurmas/LinkConvite";
+import { useTurma } from "../hooks/useTurma";
+import useEscolas from "../hooks/useEscolas"; // default import correto
 
 export default function Turmas() {
-  const [funcao, setFuncao] = useState("Turmas");
+  const { findTurmas, turmas, loading } = useTurma();
+
+  // 🔹 Estados do filtro
   const [escola, setEscola] = useState("todas");
-  const [status, setStatus] = useState("todas");
-  const [data, setData] = useState({ inicio: "2020-01-01", fim: "2020-12-31" });
+  const [turno, setTurno] = useState("todas");
 
-
-  // 🔹 Agora inicia vazio (sem mock)
-  const [turmas, setTurmas] = useState([]);
+  // 🔹 Estados auxiliares da página
   const [turmasFiltradas, setTurmasFiltradas] = useState([]);
   const [turmaSelecionada, setTurmaSelecionada] = useState(null);
   const [mostrarPopup, setMostrarPopup] = useState(false);
-  const [novaTurma, setNovaTurma] = useState({ name: "", escola: "", turno: "" });
 
-  const filtrar = () => {
-    const inicio = new Date(data.inicio);
-    const fim = new Date(data.fim);
+  // 🔹 Estado da nova turma/roteiro
+  const [novaTurma, setNovaTurma] = useState({
+  turno: "",      
+  motorista: "",   // ID do motorista
+  escolas: []      // lista de escolas
+});
 
-    const filtradas = turmas.filter((t) => {
-      const dataTurma = new Date(t.data);
-      const matchEscola = escola === "todas" || t.escola === escola;
-      const matchStatus = status === "todas" || t.status === status;
-      const matchData = dataTurma >= inicio && dataTurma <= fim;
-      return matchEscola && matchStatus && matchData;
+  const [funcao, setFuncao] = useState(""); // usado na SideBar
+
+  // 🔹 Escolas vindas do backend
+  const { escolas, loading: loadingEscolas } = useEscolas();
+
+  // 🔹 Motoristas vindos do backend
+  const [motoristas, setMotoristas] = useState([]);
+  const [loadingMotoristas, setLoadingMotoristas] = useState(false);
+
+  // 🔹 Buscar motoristas uma vez ao montar a página
+  useEffect(() => {
+    async function fetchMotoristas() {
+      try {
+        setLoadingMotoristas(true);
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/motorista`);
+        const data = await res.json();
+        setMotoristas(data || []);
+      } catch (err) {
+        console.error("Erro ao carregar motoristas:", err);
+        setMotoristas([]);
+      } finally {
+        setLoadingMotoristas(false);
+      }
+    }
+    fetchMotoristas();
+  }, []);
+
+  // 🔹 Busca turmas (roteiros) do backend sempre que filtros mudam
+  useEffect(() => {
+  findTurmas({ escola, turno });
+}, [escola, turno]);
+
+  // 🔹 Atualiza a lista filtrada sempre que turmas mudar
+  useEffect(() => {
+    setTurmasFiltradas(turmas);
+  }, [turmas]);
+
+  useEffect(() => {
+    console.log("Escolas carregadas:", escolas);
+  }, [escolas]);
+
+  // 🔹 Lista de escolas para o filtro (por nome, sem duplicação)
+  const escolasDisponiveis = useMemo(() => {
+    if (!escolas || escolas.length === 0) return ["todas"];
+    const nomes = escolas.map((e) => e.nome);
+    return ["todas", ...new Set(nomes)];
+  }, [escolas]);
+
+  // 🔹 Adiciona novo roteiro
+  const adicionarTurma = async () => {
+  if (!novaTurma.turno || !novaTurma.motorista || novaTurma.escolas.length === 0) {
+    return alert("Preencha turno, motorista e pelo menos uma escola!");
+  }
+
+  try {
+    // 1. Buscar motorista pelo nome digitado
+    const motoristaRes = await fetch(
+      `${process.env.REACT_APP_API_URL}/motorista?nome=${encodeURIComponent(novaTurma.motorista)}`
+    );
+    const motoristaData = await motoristaRes.json();
+
+    if (!motoristaData || motoristaData.length === 0) {
+      return alert("Motorista não encontrado!");
+    }
+
+    const motoristaId = motoristaData[0].id;
+
+    // 2. Tratar escolas digitadas (ex: "Escola A, Escola B")
+    const nomesEscolas = novaTurma.escolas.split(",").map((e) => e.trim());
+    const escolaIds = [];
+
+    for (const nome of nomesEscolas) {
+      const escolaRes = await fetch(
+        `${process.env.REACT_APP_API_URL}/escola?nome=${encodeURIComponent(nome)}`
+      );
+      const escolaData = await escolaRes.json();
+
+      if (!escolaData || escolaData.length === 0) {
+        return alert(`Escola "${nome}" não encontrada!`);
+      }
+
+      escolaIds.push(escolaData[0].id);
+    }
+
+    // 3. Criar o roteiro
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/roteiro`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        turno: Number(novaTurma.turno),
+        motorista: motoristaId,
+        escolas: escolaIds
+      })
     });
 
-    setTurmasFiltradas(filtradas);
-  };
+    if (!response.ok) {
+      console.error("Erro:", await response.text());
+      return alert("Erro ao criar roteiro!");
+    }
 
-  const adicionarTurma = () => {
-    if (!novaTurma.name || !novaTurma.escola || !novaTurma.turno)
-      return alert("Preencha todos os campos!");
+    await findTurmas({ escola, turno });
 
-    const nova = {
-      id: turmas.length + 1,
-      escola: novaTurma.escola,
-      name: novaTurma.name,
-      turno: novaTurma.turno,
-      status: "ativo",
-      data: new Date().toISOString().split("T")[0],
-    };
-
-    const novaLista = [...turmas, nova];
-    setTurmas(novaLista);
-    setTurmasFiltradas(novaLista);
-    setNovaTurma({ name: "", escola: "", turno: "" });
+    // Resetar
+    setNovaTurma({ turno: "", motorista: "", escolas: "" });
     setMostrarPopup(false);
-  };
 
-  const escolasDisponiveis = useMemo(
-    () => ["todas", ...new Set(turmas.map((t) => t.escola))],
-    [turmas]
-  );
-
+  } catch (err) {
+    console.error(err);
+    alert("Erro ao criar roteiro.");
+  }
+};
   return (
     <>
       <div className="flex flex-col h-screen w-full bg-[#F9FAFB] relative">
-        {/* Navbar */}
-        <NavBar foto="https://i.pravatar.cc/300" nome="Daniela Luisa" email="daniela@gmail.com" />
+        <NavBar
+          foto="https://i.pravatar.cc/300"
+          nome="Daniela Luisa"
+          email="daniela@gmail.com"
+        />
 
         <div className="flex flex-1 flex-col lg:flex-row">
-          {/* Sidebar esquerda */}
           <div className="w-full lg:w-[250px] bg-white">
             <SideBar setFuncao={setFuncao} funcao={funcao} role="condutor" />
           </div>
 
-          {/* Conteúdo principal */}
           <main className="flex-1 flex justify-center items-start bg-[#F3F4F6] p-6 lg:p-8 overflow-y-auto">
             <div className="w-full max-w-[800px] flex flex-col space-y-6">
               <h1 className="text-3xl font-bold text-center">Turmas</h1>
 
-              {/* Botão de adicionar turma */}
               <div className="flex justify-end">
                 <button
                   onClick={() => setMostrarPopup(true)}
                   className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
                 >
-                  Adicionar Turma
+                  Adicionar Roteiro
                 </button>
               </div>
 
-              {/* Filtro */}
+              {/* 🔹 Filtro */}
               <FiltroTurmas
                 escola={escola}
                 setEscola={setEscola}
-                status={status}
-                setStatus={setStatus}
-                data={data}
-                setData={setData}
-                filtrar={filtrar}
+                turno={turno}
+                setTurno={setTurno}
                 escolasDisponiveis={escolasDisponiveis}
               />
 
-              {/* Lista de Turmas */}
+              {/* 🔹 Lista de Turmas / Roteiros */}
               <div className="flex flex-col space-y-4 w-full">
-                {turmasFiltradas.length > 0 ? (
+                {loading ? (
+                  <p className="text-gray-500 text-sm text-center">Carregando...</p>
+                ) : turmasFiltradas.length > 0 ? (
                   turmasFiltradas.map((turma) => (
                     <div
                       key={turma.id}
                       onClick={() => setTurmaSelecionada(turma)}
                       className="cursor-pointer hover:scale-[1.02] transition-transform duration-200"
                     >
+                      {/* Aqui você pode ajustar o "name" para algo mais descritivo */}
                       <CardRoteiro
-                        name={turma.name}
+                        name={`Roteiro ${turma.id}`}
                         turno={turma.turno}
                       />
                     </div>
@@ -126,12 +204,11 @@ export default function Turmas() {
             </div>
           </main>
 
-          {/* Espaço lateral direito */}
           <div className="hidden lg:block w-[250px]" />
         </div>
       </div>
 
-      {/* POP-UP lateral de adicionar turma */}
+      {/* 🔹 Popup lateral de adicionar turma/roteiro */}
       <AnimatePresence>
         {mostrarPopup && (
           <motion.div
@@ -141,30 +218,39 @@ export default function Turmas() {
             transition={{ duration: 0.3 }}
             className="fixed top-0 right-0 w-full sm:w-[400px] h-full bg-white shadow-xl p-6 flex flex-col z-50"
           >
-            <h2 className="text-2xl font-semibold mb-4">Nova Turma</h2>
+            <h2 className="text-2xl font-semibold mb-4">Novo Roteiro</h2>
 
-            <input
-              type="text"
-              placeholder="Nome da turma"
-              value={novaTurma.name}
-              onChange={(e) => setNovaTurma({ ...novaTurma, name: e.target.value })}
-              className="w-full border p-2 rounded mb-3"
-            />
-            <input
-              type="text"
-              placeholder="Escola"
-              value={novaTurma.escola}
-              onChange={(e) => setNovaTurma({ ...novaTurma, escola: e.target.value })}
-              className="w-full border p-2 rounded mb-3"
-            />
-            <input
-              type="text"
-              placeholder="Turno (ex: Matutino)"
+            {/* Turno */}
+            <label className="text-sm font-medium mb-1">Turno</label>
+            <select
               value={novaTurma.turno}
-              onChange={(e) => setNovaTurma({ ...novaTurma, turno: e.target.value })}
+              onChange={(e) =>
+                setNovaTurma({ ...novaTurma, turno: Number(e.target.value) })
+              }
               className="w-full border p-2 rounded mb-3"
-            />
+            >
+              <option value={1}>Matutino</option>
+              <option value={2}>Vespertino</option>
+            </select>
 
+            {/* Motorista */}
+            <label>Motorista</label>
+            <input
+              type="text"
+              placeholder="Digite o nome do motorista"
+              value={novaTurma.motorista}
+              onChange={(e) =>
+                setNovaTurma({ ...novaTurma, motorista: e.target.value })
+  }
+/>
+            <input
+              type="text"
+              placeholder="Digite a Escola"
+              value={novaTurma.escolas}
+              onChange={(e) =>
+              setNovaTurma({ ...novaTurma, escolas: e.target.value })
+  }
+/>
             <div className="flex justify-between mt-6">
               <button
                 onClick={() => setMostrarPopup(false)}
@@ -183,10 +269,13 @@ export default function Turmas() {
         )}
       </AnimatePresence>
 
-      {/* Pop-up de convite existente */}
+      {/* 🔹 Pop-up de convite existente */}
       <AnimatePresence>
         {turmaSelecionada && (
-          <LinkConvite turma={turmaSelecionada} onClose={() => setTurmaSelecionada(null)} />
+          <LinkConvite
+            turma={turmaSelecionada}
+            onClose={() => setTurmaSelecionada(null)}
+          />
         )}
       </AnimatePresence>
     </>

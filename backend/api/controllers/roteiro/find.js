@@ -1,21 +1,11 @@
 module.exports = {
   friendlyName: 'Listar Roteiros (Filtro Direto)',
-  description: 'Lista roteiros filtrando apenas por "escola" (N:M) e "turno" (número).',
+  description: 'Lista roteiros filtrando por turno, motorista e escola (N:M).',
 
   inputs: {
-    // 1. Filtro de Escola
-    escola: {
-      type: 'string',
-      required: false,
-      description: 'Filtra por um ID de escola específico.',
-    },
-    
-    // 2. Filtro de Turno
-    turno: {
-      type: 'string',
-      required: false,
-      description: 'Filtra por um número de turno específico.',
-    },
+    turno: { type: 'string', required: false },
+    motorista: { type: 'string', required: false },
+    escola: { type: 'string', required: false }
   },
 
   exits: {
@@ -25,31 +15,30 @@ module.exports = {
 
   fn: async function (inputs, exits) {
     try {
-      // 1. O objeto de 'criteria' (filtros) começa vazio
-      let criteria = {};
+      const { turno, motorista, escola } = inputs;
 
-      //  FILTRO DE ESCOLA (N:M) 
-      if (inputs.escola && inputs.escola !== 'todas') {
-        criteria.escolas = inputs.escola;
+      const criteria = {};
+      if (turno && turno !== 'todas') criteria.turno = parseInt(turno);
+      if (motorista) criteria.motorista = parseInt(motorista);
+
+      // 🔹 populate real
+      const roteiros = await Roteiro.find(criteria).populate('escolas');
+
+      let filtrados = roteiros;
+
+      // 🔹 filtro por escola
+      if (escola && escola !== 'todas') {
+        filtrados = roteiros.filter(r =>
+          r.escolas.some(e =>
+            e.nome === escola || e.id === parseInt(escola)
+          )
+        );
       }
 
-      // === FILTRO DE TURNO (Número) ===
-      if (inputs.turno && inputs.turno !== 'todas') {
-        // O Waterline vai converter a string "1" para o número 1
-        // para bater com o models ('turno: { type: 'number' }')
-        criteria.turno = inputs.turno;
-      }
-      // 2. Executa a busca com os filtros
-      sails.log.info('Filtrando Roteiros com os critérios (diretos):', criteria);
-
-      const list = await Roteiro.find(criteria)
-                                .populate('escolas'); 
-
-      return exits.success(list);
-
+      return exits.success({ roteiros: filtrados });
     } catch (err) {
-      sails.log.error('Erro ao listar roteiro:', err);
+      sails.log.error('Erro ao listar roteiros:', err);
       return exits.serverError(err);
     }
-  },
+  }
 };
