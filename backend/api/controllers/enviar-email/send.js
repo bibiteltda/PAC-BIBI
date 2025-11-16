@@ -1,38 +1,33 @@
-const nodemailer = require('nodemailer');
-
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
-});
+const sendEmail = require("../../helpers/send-code");
 
 module.exports = {
-  enviarCodigo: async (email, code) => {
+  friendlyName: 'Enviar código',
+  description: 'Enviar um código de verificação para um e-mail.',
+
+  inputs: {
+    email: { type: 'string', required: true }
+  },
+  exits: {
+    success: { description: 'Código enviado com sucesso.' }
+  },
+
+  fn: async function (inputs, exits) {
+
     try {
-      const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: email,
-        subject: 'Seu código de verificação',
-        html: `
-          <div style="font-family: Arial; font-size: 16px;">
-            <p>Olá!</p>
-            <p>Seu código de verificação é:</p>
-            <h2 style="color:#4CAF50; margin: 0;">${code}</h2>
-            <p>O código expira em 10 minutos.</p>
-          </div>
-        `
-      };
+      const { email } = inputs;
 
-      const info = await transporter.sendMail(mailOptions);
+      const code = Math.floor(1000 + Math.random() * 9000);
 
-      console.log(`Código enviado para ${email} - ID: ${info.messageId}`);
-      return info;
+      await sails.helpers.sendCode(inputs.email, code);
+
+      return exits.success({
+        message: 'Código enviado com sucesso!',
+        code,
+      });
 
     } catch (error) {
-      console.error('Erro ao enviar código:', error);
-      throw error;
+      console.error(error);
+      return exits.error(error);
     }
   }
 };
