@@ -23,7 +23,7 @@ module.exports = {
       },
     });
 
-    const mailOptions = {
+    const mail = {
       from: 'bibiteltda@gmail.com',
       to: inputs.email,
       subject: 'Seu código de verificação',
@@ -36,7 +36,7 @@ module.exports = {
     };
 
     try {
-      const info = await transporter.sendMail(mailOptions);
+      const info = await transporter.sendMail(mail);
       return exits.success(info);
     } catch (err) {
       return exits.error(err);

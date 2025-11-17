@@ -28,7 +28,7 @@ module.exports = {
         resetCodeExpiresAt: new Date(Date.now() + 5 * 60 * 1000) // expira em 5 minutos
       });
       
-      await sails.helpers['send-code'].with({
+      await sails.helpers.sendCode.with({
         email: usuario.login,
         code,
       });
