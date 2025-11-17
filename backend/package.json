@@ -10,6 +10,7 @@
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.2",
     "jsonwebtoken": "^9.0.2",
+    "node-fetch": "^3.3.2",
     "nodemailer": "^7.0.10",
     "sails": "^1.5.15",
     "sails-hook-orm": "^4.0.3",
