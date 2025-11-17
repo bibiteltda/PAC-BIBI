@@ -1,4 +1,4 @@
-const fetch = require("node-fetch");
+const fetch = require("node-fetch").default;
 
 module.exports = {
   friendlyName: 'Enviar código',
@@ -40,7 +40,8 @@ module.exports = {
       const data = await response.json();
 
       if (!response.ok) {
-        return exits.error(data);
+        console.error("Erro Brevo:", response.status, data);
+        return exits.error(new Error("Falha ao enviar e-mail"));
       }
 
       return exits.success(data);
