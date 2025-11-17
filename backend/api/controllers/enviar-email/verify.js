@@ -23,17 +23,14 @@ module.exports = {
         return exits.badRequest({ message: 'Usuário não encontrado.' });
       }
 
-      // Verifica se código confere
       if (!usuario.resetCode || usuario.resetCode !== code) {
         return exits.badRequest({ message: 'Código inválido.' });
       }
 
-      // Verifica se expirou
       if (new Date(usuario.resetCodeExpiresAt) < new Date()) {
         return exits.badRequest({ message: 'Código expirado.' });
       }
 
-      // Limpa o código depois de verificar
       await Autenticacao.updateOne({ id: usuario.id }).set({
         resetCode: null,
         resetCodeExpiresAt: null

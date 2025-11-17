@@ -1,28 +1,40 @@
-const sendEmail = require("../../helpers/send-code");
-
 module.exports = {
   friendlyName: 'Enviar código',
   description: 'Enviar um código de verificação para um e-mail.',
 
   inputs: {
-    email: { type: 'string', required: true }
+    login: { type: 'string', required: true } // email
   },
+
   exits: {
-    success: { description: 'Código enviado com sucesso.' }
+    success: { description: 'Código enviado com sucesso.' },
+    notFound: { description: 'Usuário não encontrado.' }
   },
 
   fn: async function (inputs, exits) {
-
     try {
-      const { email } = inputs;
+      const { login } = inputs;
 
-      const code = Math.floor(1000 + Math.random() * 9000);
+      // Verificar se existe usuário
+      const usuario = await Autenticacao.findOne({ login });
+      if (!usuario) {
+        return exits.notFound({ message: 'Usuário não encontrado.' });
+      }
 
-      await sails.helpers.sendCode(inputs.email, code);
+      const code = Math.floor(1000 + Math.random() * 9000).toString();
+
+      await Autenticacao.updateOne({ id: usuario.id }).set({
+        resetCode: code,
+        resetCodeExpiresAt: new Date(Date.now() + 5 * 60 * 1000) // expira em 5 minutos
+      });
+      
+      await sails.helpers['send-code'].with({
+        email: usuario.login,
+        code,
+      });
 
       return exits.success({
         message: 'Código enviado com sucesso!',
-        code,
       });
 
     } catch (error) {
