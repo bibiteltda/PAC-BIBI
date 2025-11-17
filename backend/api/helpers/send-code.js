@@ -1,4 +1,4 @@
-const nodemailer = require('nodemailer');
+const fetch = require("node-fetch");
 
 module.exports = {
   friendlyName: 'Enviar código',
@@ -15,33 +15,37 @@ module.exports = {
   },
 
   fn: async function (inputs, exits) {
-    const transporter = nodemailer.createTransport({
-      host: 'smtp-relay.brevo.com',
-      port: 587,
-      secure: false,
-      auth: {
-        user: process.env.EMAIL_FROM,
-        pass: process.env.PASSWORD_FROM,
-      },
-    });
-
-    const mail = {
-      from: 'bibiteltda@gmail.com',
-      to: inputs.email,
-      subject: 'Seu código de verificação',
-      html: `
+    const mailData = {
+      sender: { name: "BiBi", email: process.env.EMAIL_FROM },
+      to: [{ email: inputs.email }],
+      subject: "Código de verificação",
+      htmlContent: `
         <div style="font-family: Arial; font-size: 16px;">
           <p>Seu código de verificação é:</p>
           <h2 style="color:#4CAF50;">${inputs.code}</h2>
         </div>
-      `
+      `,
     };
 
     try {
-      const info = await transporter.sendMail(mail);
-      return exits.success(info);
+      const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "api-key": process.env.PASSWORD_FROM,
+        },
+        body: JSON.stringify(mailData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return exits.error(data);
+      }
+
+      return exits.success(data);
     } catch (err) {
       return exits.error(err);
     }
   }
-};
+}
