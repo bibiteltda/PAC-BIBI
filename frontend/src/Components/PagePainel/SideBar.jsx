@@ -24,8 +24,8 @@ export default function SideBar({ setFuncao, funcao, role }) {
 
         const rotas = {
             Home: "",
-            Funcoes: "",
-            Sobre: "",
+            Funcoes: "/funcoes",
+            Sobre: "/sobre-nos",
             Estatisticas: "",
             Relatorios: "",
             Financeiro: "/controle-mensal",

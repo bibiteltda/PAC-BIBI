@@ -7,6 +7,8 @@ import PageEsqueceuSuaSenha from './Pages/PageEsqueceuSuaSenha';
 import PageTestComponent from './Pages/PageTestComponent';
 import PageTurmas from './Pages/PageTurmas';
 import PageControleMensal from './Pages/PageControleMensal';
+import PageSobreNos from './Pages/PageSobreNos';
+import PageFuncoes from './Pages/PageFuncoes';
 // import PageRelatorio from "./Pages/PageRelatorio";
 
 function App() {
@@ -22,6 +24,8 @@ function App() {
         <Route path="/test" element={<PageTestComponent />} />
         <Route path="/financeiro" element={<PageEsqueceuSuaSenha />} /> {/* Temq ue ver oque é tbm*/}
         <Route path="/controle-mensal" element={<PageControleMensal />} />
+        <Route path="/sobre-nos" element={<PageSobreNos />} />
+        <Route path="/funcoes" element={<PageFuncoes />} />
         {/* <Route path="/relatorio" element={<PageRelatorio />} /> */}
       </Routes>
     </BrowserRouter>
