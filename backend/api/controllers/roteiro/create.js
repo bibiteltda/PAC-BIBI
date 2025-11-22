@@ -1,18 +1,33 @@
 module.exports = {
-  friendlyName: 'Criar roteiro',
-  description: 'Cria um novo registro de roteiro.',
+  friendlyName: 'Criar Roteiro',
+
   inputs: {
-    turno: { type: 'string', required: false },
-    motorista: { type: 'string', required: false }
+    turno: { type: 'number', required: true },
+    motorista: { type: 'number', required: true },
+    escolas: { type: 'ref', required: true }
   },
-  exits: { success: { description: 'Criado com sucesso.' }, badRequest: { description: 'Erro ao criar.' } },
+
+  exits: {
+    success: { description: 'Roteiro criado com sucesso.' },
+    serverError: { description: 'Erro no servidor.', responseType: 'serverError' }
+  },
+
   fn: async function (inputs, exits) {
     try {
-      const novo = await Roteiro.create(inputs).fetch();
-      return exits.success({ message: 'Roteiro criado com sucesso!', roteiro: novo });
+      // Criar roteiro
+      const novoRoteiro = await Roteiro.create({
+        turno: inputs.turno,
+        motorista: inputs.motorista
+      }).fetch();
+
+      // Associar escolas (N:N)
+      await Roteiro.addToCollection(novoRoteiro.id, 'escolas').members(inputs.escolas);
+
+      return exits.success(novoRoteiro);
+
     } catch (err) {
       sails.log.error('Erro ao criar roteiro:', err);
-      return exits.badRequest({ message: 'Erro ao criar roteiro.' });
+      return exits.serverError({ message: 'Erro ao criar roteiro.', error: err });
     }
   }
 };
