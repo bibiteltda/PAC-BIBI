@@ -93,8 +93,7 @@ O **BiBi – Transporte Escolar** é uma plataforma web para gestão completa do
 ### **1. Clonar o Repositório**
 
 ```bash
-git clone https://github.com/SEU_REPOSITORIO_AQUI
-cd bibi-transporte-escolar
+git clone https://github.com/bibiteltda/PAC-BIBI
 ```
 
 ---
