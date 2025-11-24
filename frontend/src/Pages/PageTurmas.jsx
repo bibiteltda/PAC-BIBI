@@ -9,6 +9,8 @@ import NavBar from "../Components/PagePainel/NavBar";
 import SideBar from "../Components/PagePainel/SideBar";
 import LinkConvite from "../Components/PageTurmas/LinkConvite";
 
+
+
 export default function Turmas() {
   const [funcao, setFuncao] = useState("Turmas");
   const [escola, setEscola] = useState("todas");
@@ -67,7 +69,7 @@ export default function Turmas() {
     <>
       <div className="flex flex-col h-screen w-full bg-[#F9FAFB] relative">
         {/* Navbar */}
-        <NavBar foto="https://i.pravatar.cc/300" nome="Daniela Luisa" email="daniela@gmail.com" />
+        <NavBar />
 
         <div className="flex flex-1 flex-col lg:flex-row">
           {/* Sidebar esquerda */}
@@ -124,6 +126,7 @@ export default function Turmas() {
                 )}
               </div>
             </div>
+            <LoadingSpinner/>
           </main>
 
           {/* Espaço lateral direito */}

@@ -52,7 +52,7 @@ export default function SideBar({ setFuncao, funcao, role }) {
     ];
 
     const recursosGerais = [
-        { nome: "Contratos", icon: <FaFileSignature size={22} /> },
+        
     ];
 
     return (
@@ -144,7 +144,7 @@ function MenuContent({
         <button
             key={item.nome}
             onClick={() => handleSelect(item.nome)}
-            className={`flex items-center py-2 px-3 space-x-3 text-sm font-medium rounded-lg transition-all duration-300 ease-in-out
+            className={`flex items-center cursor-pointer py-2 px-3 space-x-3 text-sm font-medium rounded-lg transition-all duration-300 ease-in-out
                 ${ativo === item.nome
                     ? "bg-[#0369A1] text-white"
                     : "bg-gray-100 text-gray-700 hover:bg-[#0369A1] hover:text-white"
