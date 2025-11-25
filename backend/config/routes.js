@@ -39,9 +39,9 @@ module.exports.routes = {
   'PUT /autenticacao/:id': { action: 'autenticacao/update' },
   'DELETE /autenticacao/:id': { action: 'autenticacao/delete' },
   // Pagamento
-  'GET /pagamento': { action: 'pagamento/find' },
-  'GET /pagamento/:id': { action: 'pagamento/find' },
-  'POST /pagamento': { action: 'pagamento/create' },
+  'GET /pagamento': { controller: 'pagamento/find', action: 'listFilter' }, // <<<< CORREÇÃO AQUI
+  'GET /pagamento/:id': { action: 'pagamento/find' },
+  'POST /pagamento': { action: 'pagamento/create' },
   'PUT /pagamento/:id': { action: 'pagamento/update' },
   'DELETE /pagamento/:id': { action: 'pagamento/delete' },
   // Roteiro
