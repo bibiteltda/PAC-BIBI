@@ -1,121 +1,200 @@
-/* Dependências */
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-// 1. Importar os Hooks que criamos
-import useEscolas from "../../hooks/useEscolas"; 
-import usePagamentos from "../../hooks/usePagamentos";
-// NOTA: Ajuste o caminho "../hooks/" se necessário
+import { motion, AnimatePresence } from "framer-motion";
 
-export default function FiltroTurmas() {
-    // 2. Trazer a lista de escolas
-    const { escolas, loadingEscolas } = useEscolas();
-    
-    // 3. Estados dos Filtros (Inicializados com "Todas" para consistência)
-    const [escola, setEscola] = useState("Todas");
-    const [status, setStatus] = useState("Todas"); 
-    const [data, setData] = useState({ inicio: "2020-01-01", fim: "2020-12-31" });
-    
-    // 4. Estado que armazena os parâmetros para a chamada de API
-    const [parametrosBusca, setParametrosBusca] = useState({});
+export default function FiltroRelatorio({
+    escola,
+    setEscola,
+    status,
+    setStatus,
+    data,
+    setData,
+    filtrar,
+    escolasDisponiveis = ["todas", "escola1", "escola2"],
+}) {
+    const [isOpen, setIsOpen] = useState(false);
 
-    // 5. Lógica de Disparo do Filtro
     const handleFiltrar = () => {
-        // Ao clicar, atualiza o estado que o hook "ouve"
-        setParametrosBusca({
-            // Mapeia o valor do estado local para o nome do parâmetro do backend
-            escolaId: escola, 
-            status: status,
-            dataInicial: data.inicio, 
-            dataFinal: data.fim,     
-        });
+        filtrar();
+        setIsOpen(false); // Fecha o dropdown ao filtrar
     };
 
-    // 6. Hook que executa a busca no backend quando 'parametrosBusca' muda
-    const { pagamentos, loading, error } = usePagamentos(parametrosBusca);
+    // Classe padrão para selects/inputs com foco azul do botão
+    const inputClass =
+        "border rounded-md px-3 py-2 text-sm text-black focus:outline-none focus:ring-0.5 focus:ring-[#0369A1] focus:border-[#0369A1]";
 
-    // LOG PARA VER SE ESTÁ FUNCIONANDO
-    // console.log("Dados de Pagamento Recebidos:", pagamentos);
-    
+    // Classe específica para inputs de data menores
+    const dateClass =
+        "border rounded-md px-3 py-2 text-sm text-black w-[145px] focus:outline-none focus:ring-0.5 focus:ring-[#0369A1] focus:border-[#0369A1]";
+
     return (
-        // O restante do componente pode estar em um componente pai para mostrar a tabela
-        // Mas esta div é a que contém a lógica de filtro
-        <div className="flex flex-col gap-4 p-4 rounded-lg shadow">
-            {/* Linha dos Filtros */}
-            <div className="flex gap-4 items-end">
+        <div className="w-full max-w-[800px] mx-auto">
+            {/* Botão mobile */}
+            <div
+                className="lg:hidden flex justify-center items-center bg-white p-3 rounded-md shadow cursor-pointer"
+                onClick={() => setIsOpen(!isOpen)}
+            >
+                <span className="font-medium text-gray-700 flex items-center gap-2">
+                    Filtros {isOpen ? "▲" : "▼"}
+                </span>
+            </div>
+
+            {/* Dropdown mobile */}
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="lg:hidden bg-white p-4 mt-2 rounded-md shadow flex flex-col gap-4"
+                    >
+                        {/* Linha 1: Escola + Status */}
+                        <div className="flex gap-2">
+                            <div className="flex-1 flex flex-col">
+                                {/* IDs de Acessibilidade adicionados */}
+                                <label htmlFor="filtro-escola-mobile" className="text-sm font-medium text-gray-700">Escola</label>
+                                <select
+                                    id="filtro-escola-mobile"
+                                    className={inputClass}
+                                    value={escola}
+                                    onChange={(e) => setEscola(e.target.value)}
+                                >
+                                    {escolasDisponiveis.map((nome) => (
+                                        <option key={nome} value={nome}>
+                                            {nome === "todas"
+                                                ? "Todas"
+                                                : nome.charAt(0).toUpperCase() + nome.slice(1)}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="flex-1 flex flex-col">
+                                {/* IDs de Acessibilidade adicionados */}
+                                <label htmlFor="filtro-status-mobile" className="text-sm font-medium text-gray-700">Status</label>
+                                <select
+                                    id="filtro-status-mobile"
+                                    className={inputClass}
+                                    value={status}
+                                    onChange={(e) => setStatus(e.target.value)}
+                                >
+                                    <option value="todas">Todas</option>
+                                    <option value="ativo">Ativo</option>
+                                    <option value="inativo">Inativo</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        {/* Linha 2: Data */}
+                        <div className="flex gap-2">
+                            <div className="flex flex-col">
+                                {/* IDs de Acessibilidade adicionados */}
+                                <label htmlFor="filtro-data-inicio-mobile" className="text-sm font-medium text-gray-700">Data Início</label>
+                                <input
+                                    id="filtro-data-inicio-mobile"
+                                    type="date"
+                                    className={dateClass}
+                                    // Programação defensiva: protege contra 'data' nulo
+                                    value={data?.inicio || ""}
+                                    onChange={(e) => setData({ ...data, inicio: e.target.value })}
+                                />
+                            </div>
+                            <div className="flex flex-col">
+                                {/* IDs de Acessibilidade adicionados */}
+                                <label htmlFor="filtro-data-fim-mobile" className="text-sm font-medium text-gray-700">Data Fim</label>
+                                <input
+                                    id="filtro-data-fim-mobile"
+                                    type="date"
+                                    className={dateClass}
+                                    // Programação defensiva: protege contra 'data' nulo
+                                    value={data?.fim || ""}
+                                    onChange={(e) => setData({ ...data, fim: e.target.value })}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Botão Filtrar centralizado */}
+                        <motion.button
+                            onClick={handleFiltrar}
+                            whileTap={{ scale: 0.95 }}
+                            className="bg-[#0369A1] border border-[#0369A1] text-white hover:bg-[#075985] hover:text-white font-medium px-6 py-2 rounded-md self-center"
+                        >
+                            Filtrar
+                        </motion.button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Desktop */}
+            <div className="hidden lg:flex flex-wrap justify-center gap-4 items-end p-4 rounded-lg shadow bg-white mt-2">
                 {/* Filtro Escola */}
                 <div className="flex flex-col">
-                    <label className="text-sm font-medium text-gray-700">Escola</label>
+                    {/* IDs de Acessibilidade adicionados */}
+                    <label htmlFor="filtro-escola-desktop" className="text-sm font-medium text-gray-700">Escola</label>
                     <select
-                        className="border rounded-md px-3 py-2 text-sm text-black"
+                        id="filtro-escola-desktop"
+                        className={inputClass}
                         value={escola}
                         onChange={(e) => setEscola(e.target.value)}
                     >
-                        {loadingEscolas ? (
-                            <option>Carregando...</option>
-                        ) : (
-                            // 7. Renderiza as opções do backend (incluindo 'Todas')
-                            escolas.map(e => (
-                                <option key={e.id} value={e.id}>
-                                    {e.nome}
-                                </option>
-                            ))
-                        )}
+                        {escolasDisponiveis.map((nome) => (
+                            <option key={nome} value={nome}>
+                                {nome === "todas" ? "Todas" : nome.charAt(0).toUpperCase() + nome.slice(1)}
+                            </option>
+                        ))}
                     </select>
                 </div>
 
                 {/* Filtro Status */}
                 <div className="flex flex-col">
-                    <label className="text-sm font-medium text-gray-700">Status</label>
+                    {/* IDs de Acessibilidade adicionados */}
+                    <label htmlFor="filtro-status-desktop" className="text-sm font-medium text-gray-700">Status</label>
                     <select
-                        className="border rounded-md px-3 py-2 text-sm text-black"
+                        id="filtro-status-desktop"
+                        className={inputClass}
                         value={status}
                         onChange={(e) => setStatus(e.target.value)}
                     >
-                        {/* 8. Corrigido para "Todas" (capitalizado) */}
-                        <option value="Todas">Todos</option>
-                        <option value="PAGO">Pago</option>
-                        <option value="PENDENTE">Pendente</option>
-                        <option value="ATRASADO">Atrasado</option>
+                        <option value="todas">Todas</option>
+                        <option value="ativo">Ativo</option>
+                        <option value="inativo">Inativo</option>
                     </select>
                 </div>
 
                 {/* Filtro Data */}
                 <div className="flex flex-col">
-                    <label className="text-sm font-medium text-gray-700">Data</label>
+                    {/* ID de Acessibilidade aponta para o primeiro input */}
+                    <label htmlFor="filtro-data-inicio-desktop" className="text-sm font-medium text-gray-700">Data</label>
                     <div className="flex gap-2">
-                        {/* Input Início */}
                         <input
+                            id="filtro-data-inicio-desktop"
+                            aria-label="Data Início" // 'aria-label' para leitores de tela
                             type="date"
-                            className="border rounded-md px-3 py-2 text-sm text-black"
-                            value={data.inicio}
+                            className={dateClass}
+                            // Programação defensiva
+                            value={data?.inicio || ""}
                             onChange={(e) => setData({ ...data, inicio: e.target.value })}
                         />
                         <span className="self-center">→</span>
-                        {/* Input Fim */}
                         <input
+                            aria-label="Data Fim" // 'aria-label' para leitores de tela
                             type="date"
-                            className="border rounded-md px-3 py-2 text-sm text-black"
-                            value={data.fim}
+                            className={dateClass}
+                            // Programação defensiva
+                            value={data?.fim || ""}
                             onChange={(e) => setData({ ...data, fim: e.target.value })}
                         />
                     </div>
                 </div>
 
-                {/* 9. Botão Filtrar (Conectado ao handleFiltrar) */}
-                <button 
-                    onClick={handleFiltrar}
-                    className="bg-[rgba(3,105,161,0.9)] border border-[#0369A1] text-white hover:bg-[#0369A1] hover:text-white font-medium px-6 py-2 rounded-md"
+                {/* Botão Filtrar */}
+                <motion.button
+                    onClick={filtrar}
+                    whileTap={{ scale: 0.95 }}
+                    className="bg-[#0369A1] border border-[#0369A1] text-white hover:bg-[#075985] hover:text-white font-medium px-6 py-2 rounded-md"
                 >
                     Filtrar
-                </button>
-            </div>
-            
-            {/* Seção de Exibição de Erros e Carregamento (Opcional) */}
-            <div className="mt-4">
-                {loading && <p className="text-blue-500">Buscando transações...</p>}
-                {error && <p className="text-red-500">Erro: {error}</p>}
-                {/* Você pode renderizar a tabela aqui, usando a variável 'pagamentos' */}
+                </motion.button>
             </div>
         </div>
     );
