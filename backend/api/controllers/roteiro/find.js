@@ -43,7 +43,7 @@ module.exports = {
       sails.log.info('Filtrando Roteiros com os critérios (diretos):', criteria);
 
       const list = await Roteiro.find(criteria)
-                                .populate('escolas'); 
+                                
 
       return exits.success(list);
 
