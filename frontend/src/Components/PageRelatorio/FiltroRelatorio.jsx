@@ -3,8 +3,8 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 // 1. Importar os Hooks que criamos
-import useEscolas from "../hooks/useEscolas"; 
-import usePagamentos from "../hooks/usePagamentos"; 
+import useEscolas from "../../hooks/useEscolas"; 
+import usePagamentos from "../../hooks/usePagamentos";
 // NOTA: Ajuste o caminho "../hooks/" se necessário
 
 export default function FiltroTurmas() {
