@@ -1,82 +1,62 @@
+// Localização: api/controllers/pagamento/find.js
+
 module.exports = {
 
-  async find(req, res) {
-    // Parâmetros de filtro
-    const { escolaId, status, data_inicial, data_final } = req.query; 
+    // 1. AÇÃO DE FILTRO CUSTOMIZADA (Nova Action)
+    listFilter: async function (req, res) { // Usa req, res para ser um controlador tradicional para esta action
+        const { escolaId, status, data_inicial, data_final } = req.query;
+        // Sua lógica de filtro usará o req.query
 
-    // Objeto 'where' para buscar Alunos
-    let alunoWhere = {};  
-    
-    // ============================
-    // 1. FILTRO POR ESCOLA (Alvo: Modelo Aluno)
-    // ============================
-    if (escolaId && escolaId !== 'Todas') {
-        alunoWhere.escola = Number(escolaId);
-    }
-    
-    // ============================
-    // 2. FILTROS DE PAGAMENTO (Alvo: Coleção Pagamentos)
-    // ============================
-    let pagamentoWhere = {};
+        let alunoWhere = {};
+        let pagamentoWhere = { aluno: { '!=': null } };
 
-    if (status && status !== 'Todas') { 
-      pagamentoWhere.status = status;
-    }
+        // [Seu Código de Consulta Reversa com Filtros]
+        if (escolaId && escolaId !== 'Todas') {
+            alunoWhere.escola = Number(escolaId);
+        }
+        if (status && status !== 'Todas') { 
+            pagamentoWhere.status = status;
+        }
+        if (data_inicial && data_final) {
+            pagamentoWhere.dta_vcto = { '>=': data_inicial, '<=': data_final };
+        }
 
-    if (data_inicial && data_final) {
-      // Filtra por vencimento (dta_vcto)
-      pagamentoWhere.dta_vcto = { '>=': data_inicial, '<=': data_final };
-    }
-    
-    // Garante que apenas pagamentos com aluno definido sejam buscados
-    pagamentoWhere.aluno = { '!=': null }; 
-
-    // ============================
-    // 3. CONSULTA REVERSA E POPULAÇÃO
-    // ============================
-    try {
-        // Encontra os ALUNOS que atendem ao filtro de escola
-        const alunos = await Aluno.find({ where: alunoWhere })
-            // Popula a coleção de PAGAMENTOS aplicando os filtros de status/data na sub-consulta
-            .populate('pagamentos', { 
-                where: pagamentoWhere 
-            })
-            // Popula os demais relacionamentos do Aluno (se necessário)
-            .populate('escola'); 
-        
-        
-        let pagamentosFinais = [];
-
-        // 4. Mapear e Extrair os Pagamentos
-        alunos.forEach(aluno => {
-            if (aluno.pagamentos && aluno.pagamentos.length > 0) {
-                // Para cada pagamento encontrado no aluno, o adicionamos à lista final
-                aluno.pagamentos.forEach(pagamento => {
-                    // Retorna o objeto Pagamento, incluindo o Aluno populado
-                    pagamentosFinais.push({
-                        ...pagamento,
-                        // Você precisará fazer uma consulta adicional (ou usar a versão com SQL Bruto) 
-                        // se quiser que 'motorista' e 'responsavel' sejam populados na mesma requisição.
-                        // Para simplificar, vou garantir que o Aluno esteja visível na resposta.
-                        aluno: { 
-                            id: aluno.id,
-                            nome: aluno.nome,
-                            escola: aluno.escola 
-                        }
+        try {
+            const alunos = await Aluno.find({ where: alunoWhere })
+                .populate('pagamentos', { where: pagamentoWhere })
+                .populate('escola'); 
+            
+            let pagamentosFinais = [];
+            alunos.forEach(aluno => {
+                if (aluno.pagamentos && aluno.pagamentos.length > 0) {
+                    aluno.pagamentos.forEach(pagamento => {
+                        pagamentosFinais.push({
+                            ...pagamento,
+                            aluno: { id: aluno.id, nome: aluno.nome, escola: aluno.escola }
+                        });
                     });
-                });
-            }
-        });
+                }
+            });
 
-        // NOTA: Os campos 'motorista' e 'responsavel' não são populados nessa consulta reversa.
-        // Para incluí-los, você precisaria de uma segunda consulta `Pagamento.find({ id: idsPagamentos }).populate(...)`.
-        
-        return res.json(pagamentosFinais);
+            return res.json(pagamentosFinais);
 
-    } catch (err) {
-        console.error('Erro na consulta reversa:', err);
-        return res.status(500).json({ error: "Erro ao buscar pagamentos" });
+        } catch (err) {
+            sails.log.error('Erro na action pagamento/listFilter:', err);
+            return res.status(500).json({ error: "Erro ao buscar pagamentos" });
+        }
+    },
+
+    // 2. AÇÃO PADRÃO DE BUSCA (A que a sua rota GET /pagamento/:id usa)
+    // Manter isso separado garante que a rota com ID funcione.
+    async find(req, res) {
+        // Se houver um ID na rota, busca um único item (padrão)
+        if (req.params.id) {
+            const item = await Pagamento.findOne({ id: req.params.id }).populateAll();
+            if (!item) return res.notFound();
+            return res.json(item);
+        }
+        // Se não houver ID e não for redirecionado, busca todos sem filtro customizado.
+        const list = await Pagamento.find().populateAll();
+        return res.json(list);
     }
-  }
-
 };
