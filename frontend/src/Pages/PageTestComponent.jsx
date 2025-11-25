@@ -26,6 +26,7 @@ import TopEscolas from "../Components/PageControleMensal/TopEscolas";
 
 import Recibo from "../Components/PageRecibo/Recibo";
 import CardRoteiro from "../Components/PageTurmas/CardRoteiro";
+import CardRelatorio from "../Components/PageRelatorio/CardRelatorio";
 
 
 
@@ -54,14 +55,15 @@ export default function PageEsqueceuSenha() {
 
             {/* Gráficos */}
 
-            <GraficoDistribuicaoPagamentos />
-            {/* <TabelaTransacao />    Provável que vou ter que fazer */}
+            {/* <GraficoDistribuicaoPagamentos /> */}
+            {/* <TabelaTransacao /> */}
             {/* <TopEscolas />  Provável que vou ter que fazer */}
 
             {/* Recebem Informação */}
 
             {/* <Recibo /> */}
             {/* <CardRoteiro name={"Roteiro 1"} quantAlunos={21} turno={"Matutino"} /> */}
+            <CardRelatorio />
 
 
         </section>
