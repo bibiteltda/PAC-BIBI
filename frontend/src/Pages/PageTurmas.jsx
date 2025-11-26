@@ -31,12 +31,19 @@ export default function Turmas() {
     vespertino: 2,
   };
 
-
   const [novaTurma, setNovaTurma] = useState({
     name: "",
     escola: "",
     turno: "",
   });
+
+  // 👤 Usuário logado (salvo no login pelo useAuth)
+  const storedUserInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
+  const autenticacaoId =
+    storedUserInfo?.autenticacao?.id ?? storedUserInfo?.autenticacao ?? null;
+
+  // 🚌 Motorista vinculado ao usuário logado
+  const [motoristaId, setMotoristaId] = useState(null);
 
   // Hook para criar roteiro no backend
   const {
@@ -59,17 +66,23 @@ export default function Turmas() {
           return;
         }
 
-        // Ajuste de mapeamento conforme o que o back retorna
-        // Aqui eu assumo que o back retorna algo como:
-        // [{ id, nome, turno, escola, status, data }]
-        const mapeadas = data.map((item, index) => ({
-          id: item.id ?? index + 1,
-          name: item.nome ?? "Sem nome",
-          escola: item.escola ?? "Não informado",
-          turno: item.turno ?? "Não informado",
-          status: item.status ?? "ativo",
-          data: item.data ?? new Date().toISOString().split("T")[0],
-        }));
+        const mapeadas = data.map((item, index) => {
+          const turnoTexto =
+            item.turno === 1
+              ? "Matutino"
+              : item.turno === 2
+              ? "Vespertino"
+              : "Não informado";
+
+          return {
+            id: item.id ?? index + 1,
+            name: item.nome ?? "Sem nome",
+            escola: item.escola ?? "Não informado",
+            turno: turnoTexto,
+            status: item.status ?? "ativo",
+            data: item.data ?? new Date().toISOString().split("T")[0],
+          };
+        });
 
         setTurmas(mapeadas);
         setTurmasFiltradas(mapeadas);
@@ -80,6 +93,47 @@ export default function Turmas() {
 
     carregarTurmas();
   }, []);
+
+  // ==========================
+  // 🔹 Busca o MOTORISTA do usuário logado
+  // ==========================
+  useEffect(() => {
+    async function carregarMotoristaDoUsuario() {
+      if (!autenticacaoId) {
+        console.warn("Nenhum autenticacaoId encontrado para o usuário logado.");
+        return;
+      }
+
+      try {
+        const resp = await fetch(`${API_URL}/motorista`);
+        const lista = await resp.json();
+
+        if (!resp.ok) {
+          console.error("Erro ao buscar motoristas:", lista);
+          return;
+        }
+
+        const motoristaEncontrado = lista.find((m) => {
+          const mAuthId = m.autenticacao?.id ?? m.autenticacao;
+          return mAuthId === autenticacaoId;
+        });
+
+        if (!motoristaEncontrado) {
+          console.warn(
+            "Nenhum motorista encontrado com autenticacaoId =",
+            autenticacaoId
+          );
+          return;
+        }
+
+        setMotoristaId(motoristaEncontrado.id);
+      } catch (err) {
+        console.error("Erro ao buscar motorista do usuário logado:", err);
+      }
+    }
+
+    carregarMotoristaDoUsuario();
+  }, [autenticacaoId]);
 
   const filtrar = () => {
     const inicio = new Date(data.inicio);
@@ -96,51 +150,54 @@ export default function Turmas() {
     setTurmasFiltradas(filtradas);
   };
 
-const adicionarTurma = async () => {
-  if (!novaTurma.name || !novaTurma.escola || !novaTurma.turno) {
-    alert("Preencha todos os campos!");
-    return;
-  }
+  const adicionarTurma = async () => {
+    if (!novaTurma.name || !novaTurma.escola || !novaTurma.turno) {
+      alert("Preencha todos os campos!");
+      return;
+    }
 
-  // normaliza o texto pra evitar problema com maiúsculas / espaços
-  const turnoKey = novaTurma.turno.trim().toLowerCase();
-  const turnoNumero = TURNO_MAP[turnoKey];
+    if (!motoristaId) {
+      alert("Erro: motorista não identificado para o usuário logado.");
+      return;
+    }
 
-  if (!turnoNumero) {
-    alert('Turno inválido. Use "Matutino" ou "Vespertino".');
-    return;
-  }
+    // normaliza o texto pra evitar problema com maiúsculas / espaços
+    const turnoKey = novaTurma.turno.trim().toLowerCase();
+    const turnoNumero = TURNO_MAP[turnoKey];
 
-  const payload = {
-    nome: novaTurma.name,
-    escola: novaTurma.escola,
-    turno: turnoNumero, // <<< aqui vai o número
+    if (!turnoNumero) {
+      alert('Turno inválido. Use "Matutino" ou "Vespertino".');
+      return;
+    }
+
+    const payload = {
+      nome: novaTurma.name,
+      escola: novaTurma.escola,
+      turno: turnoNumero,
+      motorista: motoristaId, // 👉 agora o back recebe o motorista certo
+    };
+
+    const result = await createRoteiro(payload);
+    if (!result || !result.roteiro) return;
+
+    const r = result.roteiro;
+
+    const turmaCriada = {
+      id: r.id ?? turmas.length + 1,
+      name: r.nome ?? novaTurma.name,
+      escola: novaTurma.escola,
+      turno: novaTurma.turno, // texto pra UI
+      status: "ativo",
+      data: new Date().toISOString().split("T")[0],
+    };
+
+    const novaLista = [...turmas, turmaCriada];
+    setTurmas(novaLista);
+    setTurmasFiltradas(novaLista);
+
+    setNovaTurma({ name: "", escola: "", turno: "" });
+    setMostrarPopup(false);
   };
-
-  const result = await createRoteiro(payload);
-  if (!result || !result.roteiro) return;
-
-  const r = result.roteiro;
-
-  const turmaCriada = {
-    id: r.id ?? turmas.length + 1,
-    name: r.nome ?? novaTurma.name,
-    escola: novaTurma.escola,
-    // aqui você pode escolher o que mostrar na UI:
-    // o texto original digitado, ou reverter o mapa
-    turno: novaTurma.turno,
-    status: "ativo",
-    data: new Date().toISOString().split("T")[0],
-  };
-
-  const novaLista = [...turmas, turmaCriada];
-  setTurmas(novaLista);
-  setTurmasFiltradas(novaLista);
-
-  setNovaTurma({ name: "", escola: "", turno: "" });
-  setMostrarPopup(false);
-};
-
 
   const escolasDisponiveis = useMemo(
     () => ["todas", ...new Set(turmas.map((t) => t.escola))],
