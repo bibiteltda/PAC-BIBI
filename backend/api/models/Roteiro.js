@@ -3,6 +3,7 @@ module.exports = {
   attributes: {
     id: { type: 'number', autoIncrement: true },
     turno: { type: 'number' },
+    nome: { type: 'string', required: true, maxLength: 50 },
 
     motorista: { model: 'motorista' },
     escolas: { collection: 'escola', via: 'roteiros' },
