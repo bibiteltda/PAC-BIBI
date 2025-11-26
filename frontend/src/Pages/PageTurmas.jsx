@@ -249,13 +249,13 @@ export default function Turmas() {
               />
 
               {/* Área rolável só dos cards */}
-              <div className="flex flex-col w-full max-h-[60vh] overflow-y-auto space-y-4 pr-1">
+              <div className="flex flex-col w-full max-h-[60vh] overflow-y-auto overflow-x-hidden space-y-4 pr-1 pb-2">
                 {turmasFiltradas.length > 0 ? (
                   turmasFiltradas.map((turma) => (
                     <div
                       key={turma.id}
                       onClick={() => setTurmaSelecionada(turma)}
-                      className="cursor-pointer hover:scale-[1.02] transition-transform duration-200"
+                      className="cursor-pointer transition-transform duration-200 hover:-translate-y-0.5"
                     >
                       <CardRoteiro name={turma.name} turno={turma.turno} />
                     </div>
