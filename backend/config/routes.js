@@ -39,8 +39,8 @@ module.exports.routes = {
   'PUT /autenticacao/:id': { action: 'autenticacao/update' },
   'DELETE /autenticacao/:id': { action: 'autenticacao/delete' },
   // Pagamento
-  'GET /pagamento': { action: 'pagamento/find/listFilter' },
-  'GET /pagamento/:id': { action: 'pagamento/find' },
+  'GET /pagamento': { action: 'pagamento/find' },
+  'GET /pagamento/:id': { action: 'pagamento/find-one' },
   'POST /pagamento': { action: 'pagamento/create' },
   'PUT /pagamento/:id': { action: 'pagamento/update' },
   'DELETE /pagamento/:id': { action: 'pagamento/delete' },
