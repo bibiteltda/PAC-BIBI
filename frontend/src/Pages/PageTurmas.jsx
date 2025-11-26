@@ -214,7 +214,7 @@ export default function Turmas() {
             <SideBar setFuncao={setFuncao} funcao={funcao} role="condutor" />
           </div>
 
-          <main className="flex-1 flex justify-center items-start bg-[#F3F4F6] p-6 lg:p-8 overflow-y-auto">
+          <main className="flex-1 flex justify-center items-start bg-[#F3F4F6] p-6 lg:p-8">
             <div className="w-full max-w-[800px] flex flex-col space-y-6">
               <h1 className="text-3xl font-bold text-center">Turmas</h1>
 
@@ -248,7 +248,8 @@ export default function Turmas() {
                 escolasDisponiveis={escolasDisponiveis}
               />
 
-              <div className="flex flex-col space-y-4 w-full">
+              {/* Área rolável só dos cards */}
+              <div className="flex flex-col w-full max-h-[60vh] overflow-y-auto space-y-4 pr-1">
                 {turmasFiltradas.length > 0 ? (
                   turmasFiltradas.map((turma) => (
                     <div
