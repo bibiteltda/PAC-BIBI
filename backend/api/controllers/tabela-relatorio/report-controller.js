@@ -1,21 +1,28 @@
 module.exports = {
-  list: async function (req, res) {
+  listar: async function (req, res) {
     try {
-      const registros = await Pagamento.find()
+      const pagamentos = await Pagamento.find()
         .populate('aluno')
+        .populate('responsavel')
         .populate('escola');
 
-        const tabela = registros.map(r => ({
-          aluno: r.aluno.nome,
-          escola: r.escola.nome,
-          valor: r.valor,
-          data: r.data,
-          status: r.status
-        }));
+        const tabela = await Promise.all(
+          pagamentos.map(async (pg) => {
+            const escola = pg.aluno ? await Escola.findOne({ id: pg.aluno.escola }) : null;
+
+            return {
+              aluno: pg.aluno ? pg.aluno.nome : 'Aluno não encontrado',
+              escola: escola ? escola.nome : 'Escola não encontrada',
+              valor: pg.valor,
+              data: pg.dta_pgmt || pg.dta_vcto,
+              status: pg.status
+            };
+          })
+        );
 
         return res.json(tabela);
-    } catch (err) {
-      return res.ServerError(err);
+    } catch (error) {
+      return res.serverError(error);
     }
   }
-}
+};
