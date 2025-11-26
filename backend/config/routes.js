@@ -77,8 +77,12 @@ module.exports.routes = {
   'POST /controle-mensal': { action: 'controle-mensal/create' },
   'PUT /controle-mensal/:id': { action: 'controle-mensal/update' },
   'DELETE /controle-mensal/:id': { action: 'controle-mensal/delete' },
-  // Enviar código por e-mail
+  // Enviar email (código de verificação)
   'POST /enviar-email/code': { action: 'enviar-email/code' },
   // Verificar código recebido
   'POST /enviar-email/verify': { action: 'enviar-email/verify' },
+  // Enviar email (link de convite)
+  'POST /enviar-email/link': { action: 'enviar-email/link' },
+  // Confirmar link de convite
+  'POST /enviar-email/confirm-link': { action: 'enviar-email/confirm-link' },
 };

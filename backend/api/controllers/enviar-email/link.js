@@ -26,8 +26,7 @@ module.exports = {
       // Token de 32 bytes
       const token = crypto.randomBytes(32).toString("hex");
 
-      // Expira em 24h
-      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // Expira em 24h
 
       // Salvar token no Autenticacao
       const usuario = await Autenticacao.findOne({ login });
