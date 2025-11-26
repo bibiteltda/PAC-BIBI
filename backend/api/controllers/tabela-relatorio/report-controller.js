@@ -14,7 +14,7 @@ module.exports = {
               aluno: pg.aluno ? pg.aluno.nome : 'Aluno não encontrado',
               escola: escola ? escola.nome : 'Escola não encontrada',
               valor: pg.valor,
-              data: pg.dta_pgmt || pg.dta_vcto,
+              data: pg.dta_pgmt,
               status: pg.status
             };
           })
