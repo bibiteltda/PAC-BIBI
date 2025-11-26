@@ -26,6 +26,12 @@ export default function Turmas() {
   const [turmaSelecionada, setTurmaSelecionada] = useState(null);
   const [mostrarPopup, setMostrarPopup] = useState(false);
 
+  const TURNO_MAP = {
+    matutino: 1,
+    vespertino: 2,
+  };
+
+
   const [novaTurma, setNovaTurma] = useState({
     name: "",
     escola: "",
@@ -90,39 +96,51 @@ export default function Turmas() {
     setTurmasFiltradas(filtradas);
   };
 
-  const adicionarTurma = async () => {
-    if (!novaTurma.name || !novaTurma.escola || !novaTurma.turno) {
-      alert("Preencha todos os campos!");
-      return;
-    }
+const adicionarTurma = async () => {
+  if (!novaTurma.name || !novaTurma.escola || !novaTurma.turno) {
+    alert("Preencha todos os campos!");
+    return;
+  }
 
-    const payload = {
-      nome: novaTurma.name,
-      escola: novaTurma.escola,
-      turno: novaTurma.turno,
-      // adiciona aqui outros campos obrigatórios do model Roteiro, se tiver
-    };
+  // normaliza o texto pra evitar problema com maiúsculas / espaços
+  const turnoKey = novaTurma.turno.trim().toLowerCase();
+  const turnoNumero = TURNO_MAP[turnoKey];
 
-    const result = await createRoteiro(payload);
-    if (!result) return;
+  if (!turnoNumero) {
+    alert('Turno inválido. Use "Matutino" ou "Vespertino".');
+    return;
+  }
 
-    // Mapeia retorno pra estrutura da UI
-    const turmaCriada = {
-      id: result.id ?? turmas.length + 1,
-      name: result.nome ?? novaTurma.name,
-      escola: result.escola ?? novaTurma.escola,
-      turno: result.turno ?? novaTurma.turno,
-      status: result.status ?? "ativo",
-      data: result.data ?? new Date().toISOString().split("T")[0],
-    };
-
-    const novaLista = [...turmas, turmaCriada];
-    setTurmas(novaLista);
-    setTurmasFiltradas(novaLista);
-
-    setNovaTurma({ name: "", escola: "", turno: "" });
-    setMostrarPopup(false);
+  const payload = {
+    nome: novaTurma.name,
+    escola: novaTurma.escola,
+    turno: turnoNumero, // <<< aqui vai o número
   };
+
+  const result = await createRoteiro(payload);
+  if (!result || !result.roteiro) return;
+
+  const r = result.roteiro;
+
+  const turmaCriada = {
+    id: r.id ?? turmas.length + 1,
+    name: r.nome ?? novaTurma.name,
+    escola: novaTurma.escola,
+    // aqui você pode escolher o que mostrar na UI:
+    // o texto original digitado, ou reverter o mapa
+    turno: novaTurma.turno,
+    status: "ativo",
+    data: new Date().toISOString().split("T")[0],
+  };
+
+  const novaLista = [...turmas, turmaCriada];
+  setTurmas(novaLista);
+  setTurmasFiltradas(novaLista);
+
+  setNovaTurma({ name: "", escola: "", turno: "" });
+  setMostrarPopup(false);
+};
+
 
   const escolasDisponiveis = useMemo(
     () => ["todas", ...new Set(turmas.map((t) => t.escola))],
@@ -226,14 +244,6 @@ export default function Turmas() {
                 <h2 className="text-xl font-semibold text-gray-900">
                   Nova Turma
                 </h2>
-
-                <button
-                  onClick={() => !loadingRoteiro && setMostrarPopup(false)}
-                  className="text-sm text-gray-500 hover:text-gray-800 transition-colors disabled:opacity-50"
-                  disabled={loadingRoteiro}
-                >
-                  Fechar
-                </button>
               </div>
 
               {/* Erro da API */}
@@ -282,17 +292,19 @@ export default function Turmas() {
                   <label className="text-sm text-gray-700 mb-1 block">
                     Turno
                   </label>
-                  <input
-                    type="text"
-                    placeholder="Matutino / Vespertino"
+                  <select
                     value={novaTurma.turno}
                     onChange={(e) =>
                       setNovaTurma({ ...novaTurma, turno: e.target.value })
                     }
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm 
-                               focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
+                              focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
                     disabled={loadingRoteiro}
-                  />
+                  >
+                    <option value="">Selecione...</option>
+                    <option value="Matutino">Matutino</option>
+                    <option value="Vespertino">Vespertino</option>
+                  </select>
                 </div>
               </div>
 
@@ -300,7 +312,9 @@ export default function Turmas() {
                 <button
                   onClick={() => setMostrarPopup(false)}
                   className="w-full py-2 rounded-lg border border-gray-300 text-gray-700 
-                             text-sm font-medium hover:bg-gray-50 transition-colors disabled:opacity-50"
+                             text-sm font-medium hover:bg-gray-50 transition-colors disabled:opacity-50
+                             cursor-pointer
+                             "
                   disabled={loadingRoteiro}
                 >
                   Cancelar
@@ -309,7 +323,9 @@ export default function Turmas() {
                 <button
                   onClick={adicionarTurma}
                   className="w-full py-2 rounded-lg bg-[rgba(3,105,161,0.95)] text-white 
-                             text-sm font-semibold hover:bg-[rgba(3,105,161,1)] transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                             text-sm font-semibold hover:bg-[rgba(3,105,161,1)] transition-colors disabled:opacity-70 disabled:cursor-not-allowed
+                             cursor-pointer
+                             "
                   disabled={loadingRoteiro}
                 >
                   {loadingRoteiro ? "Salvando..." : "Salvar"}
