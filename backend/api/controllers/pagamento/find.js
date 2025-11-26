@@ -13,7 +13,16 @@ module.exports = async function find(req, res) {
     }
 
     if (data_inicial && data_final) {
-        pagamentoWhere.dta_vcto = { '>=': data_inicial, '<=': data_final };
+        const inicio = new Date(data_inicial);
+        const fim = new Date(data_final);
+
+        // Adiciona 23:59:59 no final para incluir o dia inteiro
+        fim.setHours(23, 59, 59, 999);
+
+        pagamentoWhere.dta_vcto = {
+            '>=': inicio,
+            '<=': fim
+        };
     }
 
     try {
