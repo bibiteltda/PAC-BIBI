@@ -102,7 +102,6 @@ export default function FormLogin({ form, setForm, setEtapa }) {
     const usuario = await login(payload);
 
     if (usuario) {
-      alert("Login realizado com sucesso!");
       navigate("/turmas"); // Redireciona pro dashboard
     } else {
       setErroGeral("Usuário ou senha inválidos.");
@@ -188,7 +187,7 @@ export default function FormLogin({ form, setForm, setEtapa }) {
           Fazer Login
         </motion.button>
 
-        <motion.button
+        {/* <motion.button
           type="button"
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
@@ -203,7 +202,7 @@ export default function FormLogin({ form, setForm, setEtapa }) {
           <p className="text-[#0077FF] font-semibold text-1xl">
             Continuar com o Google
           </p>
-        </motion.button>
+        </motion.button> */}  
 
         <motion.div
           initial={{ opacity: 0, x: -50 }}
@@ -213,7 +212,7 @@ export default function FormLogin({ form, setForm, setEtapa }) {
         >
           <p>Não tem uma conta?</p>
           <Link
-            to={"/login"}
+            to={"/cadastro"}
             className="inline-block font-semibold text-[rgba(3,105,161,1)] transition-transform transform hover:scale-110"
           >
             Registrar
