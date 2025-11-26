@@ -1,48 +1,53 @@
-const crypto = require('crypto');
+const crypto = require("crypto");
 
 module.exports = {
-  friendlyName: 'Enviar link de verificação',
-  description: 'Enviar um link de verificação para um e-mail.',
+  friendlyName: 'Enviar link de convite',
 
   inputs: {
-    login: { type: 'string', required: true }, // email
+    login: { type: 'string', required: true },
+    turmaId: { type: 'number', required: true }
   },
 
   exits: {
-    success: { description: 'Link enviado com sucesso.' },
+    success: { description: 'Convite enviado.' },
     notFound: { description: 'Usuário não encontrado.' }
   },
 
   fn: async function (inputs, exits) {
     try {
-      const { login } = inputs;
+      const { login, turmaId } = inputs;
 
-      // Verificar se existe usuário
-      const usuario = await Autenticacao.findOne({ login });
-      if (!usuario) {
-        return exits.notFound({ message: 'Usuário não encontrado.' });
+      // Verificar se a turma existe
+      const turma = await Roteiro.findOne({ id: turmaId });
+      if (!turma) {
+        return exits.notFound({ message: 'Turma não encontrada.' });
       }
 
-      const token = crypto.randomBytes(32).toString('hex');
+      // Token de 32 bytes
+      const token = crypto.randomBytes(32).toString("hex");
+
+      // Expira em 24h
+      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+      // Salvar token no Autenticacao
+      const usuario = await Autenticacao.findOne({ login });
+      if (!usuario) {
+        return exits.notFound({ message: "Usuário não encontrado." });
+      }
 
       await Autenticacao.updateOne({ id: usuario.id }).set({
-        resetToken: token,
-        resetTokenExpiresAt: new Date(Date.now() + 10 * 60 * 1000) // expira em 10 minutos
+        inviteToken: token,
+        inviteExpiresAt: expiresAt
       });
 
-      // Montar link (troque a URL pelo seu frontend real)
-      const link = `https://seusite.com/reset/${token}`;
+      const inviteUrl = `${process.env.FRONTEND_URL}/convite?token=${token}&turma=${turmaId}`;
 
-      // Enviar e-mail
-      await sails.helpers.sendEmail.with({
+      await sails.helpers.sendInvitation.with({
         email: usuario.login,
-        subject: 'Recuperação de senha',
-        message: `Clique no link para continuar: ${link}`
+        url: inviteUrl
       });
 
-      return exits.success({
-        message: 'Link enviado com sucesso!',
-      });
+      return exits.success({ message: "Convite enviado!" });
 
     } catch (error) {
       console.error(error);
