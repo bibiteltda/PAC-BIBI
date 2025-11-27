@@ -87,4 +87,7 @@ module.exports.routes = {
   'POST /enviar-email/link': { action: 'enviar-email/link' },
   // Confirmar link de convite
   'POST /enviar-email/confirm-link': { action: 'enviar-email/confirm-link' },
+
+  // Rota para exposição das métricas
+  'GET /metrics': { action: 'metrics/get-metrics' },
 };
