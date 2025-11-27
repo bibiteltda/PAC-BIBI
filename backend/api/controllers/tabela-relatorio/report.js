@@ -17,7 +17,7 @@ module.exports = {
       const pagamentos = await Pagamento.find()
         .populate('aluno')
         .populate('responsavel')
-        .populate('escola');
+        .populate('motorista');
 
       const tabela = await Promise.all(
         pagamentos.map(async (pg) => {
