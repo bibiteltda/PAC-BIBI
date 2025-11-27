@@ -7,7 +7,8 @@ import PageEsqueceuSuaSenha from './Pages/PageEsqueceuSuaSenha';
 import PageTestComponent from './Pages/PageTestComponent';
 import PageTurmas from './Pages/PageTurmas';
 import PageControleMensal from './Pages/PageControleMensal';
-// import PageRelatorio from "./Pages/PageRelatorio";
+import PageRelatorio from "./Pages/PageRelatorio";
+import PageRecibo from "./Pages/PageRecibo";
 
 function App() {
   return (
@@ -17,12 +18,13 @@ function App() {
         <Route path="/cadastro" element={<PageCadastro />} />
         <Route path="/login" element={<PageLogin />} />
         <Route path="/recuperarSenha" element={<PageEsqueceuSuaSenha />} />
-        <Route path="/recuperarSenha" element={<PageEsqueceuSuaSenha />} />
+        {/* <Route path="/recuperarSenha" element={<PageEsqueceuSuaSenha />} /> */}
         <Route path="/turmas" element={<PageTurmas />} />
         <Route path="/test" element={<PageTestComponent />} />
-        <Route path="/financeiro" element={<PageEsqueceuSuaSenha />} /> {/* Temq ue ver oque é tbm*/}
+        {/* <Route path="/financeiro" element={<PageEsqueceuSuaSenha />} />  */}
         <Route path="/controle-mensal" element={<PageControleMensal />} />
-        {/* <Route path="/relatorio" element={<PageRelatorio />} /> */}
+        <Route path="/relatorio" element={<PageRelatorio />} />
+        <Route path="/recibo" element={<PageRecibo />} />
       </Routes>
     </BrowserRouter>
   )

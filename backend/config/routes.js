@@ -40,10 +40,12 @@ module.exports.routes = {
   'DELETE /autenticacao/:id': { action: 'autenticacao/delete' },
   // Pagamento
   'GET /pagamento': { action: 'pagamento/find' },
-  'GET /pagamento/:id': { action: 'pagamento/find' },
+  'GET /pagamento/:id': { action: 'pagamento/find-one' },
   'POST /pagamento': { action: 'pagamento/create' },
   'PUT /pagamento/:id': { action: 'pagamento/update' },
   'DELETE /pagamento/:id': { action: 'pagamento/delete' },
+  //Recibo
+  'GET /recibo/:pagamentoId': {action: 'pagamento/recibo'},
   // Roteiro
   'GET /roteiro': { action: 'roteiro/find' },
   'GET /roteiro/:id': { action: 'roteiro/find' },
@@ -77,6 +79,8 @@ module.exports.routes = {
   'POST /controle-mensal': { action: 'controle-mensal/create' },
   'PUT /controle-mensal/:id': { action: 'controle-mensal/update' },
   'DELETE /controle-mensal/:id': { action: 'controle-mensal/delete' },
+  // Relatório de Tabela de Pagamentos
+  'GET /tabela-relatorio': { action: 'tabela-relatorio/report' },
   // Enviar email (código de verificação)
   'POST /enviar-email/code': { action: 'enviar-email/code' },
   // Verificar código recebido
@@ -85,4 +89,7 @@ module.exports.routes = {
   'POST /enviar-email/link': { action: 'enviar-email/link' },
   // Confirmar link de convite
   'POST /enviar-email/confirm-link': { action: 'enviar-email/confirm-link' },
+
+  // Rota para exposição das métricas
+  'GET /metrics': { action: 'metrics/get-metrics' },
 };
