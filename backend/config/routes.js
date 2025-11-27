@@ -79,6 +79,8 @@ module.exports.routes = {
   'POST /controle-mensal': { action: 'controle-mensal/create' },
   'PUT /controle-mensal/:id': { action: 'controle-mensal/update' },
   'DELETE /controle-mensal/:id': { action: 'controle-mensal/delete' },
+  // Relatório de Tabela de Pagamentos
+  'GET /tabela-relatorio': { action: 'tabela-relatorio/report' },
   // Enviar email (código de verificação)
   'POST /enviar-email/code': { action: 'enviar-email/code' },
   // Verificar código recebido
@@ -87,4 +89,7 @@ module.exports.routes = {
   'POST /enviar-email/link': { action: 'enviar-email/link' },
   // Confirmar link de convite
   'POST /enviar-email/confirm-link': { action: 'enviar-email/confirm-link' },
+
+  // Rota para exposição das métricas
+  'GET /metrics': { action: 'metrics/get-metrics' },
 };
