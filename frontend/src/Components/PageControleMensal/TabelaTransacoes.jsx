@@ -26,7 +26,7 @@ export default function TabelaTransacoes({ filtros }) {
             <h2 className="text-gray-800 text-lg font-semibold mb-3">Transações</h2>
 
             {/* Wrapper com scroll interno */}
-            <div className="mt-1 overflow-x-auto max-h-[300px] overflow-y-auto">
+            <div className="mt-1 overflow-x-auto max-h-[250px] overflow-y-auto">
             <table className="w-full border-collapse text-sm">
                 <thead>
                 <tr className="bg-gray-100 text-gray-700 text-left">
