@@ -22,6 +22,7 @@ module.exports.policies = {
   AuthController: {
     '*': true
   },
+  '*': 'requestLogger'
 
   // OrcamentoController: {
   //   '*': 'isAuthenticated'

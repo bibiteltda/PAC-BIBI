@@ -1,20 +1,56 @@
-module.exports = {
-  friendlyName: 'Listar pagamento',
-  description: 'Lista todos os pagamento ou um específico.',
-  inputs: { id: { type: 'number', required: false } },
-  exits: { success: { description: 'Retornado com sucesso.' }, notFound: { description: 'Não encontrado.', responseType: 'notFound' } },
-  fn: async function (inputs, exits) {
-    try {
-      if (inputs.id) {
-        const item = await Pagamento.findOne({ id: inputs.id }).populateAll();
-        if (!item) return exits.notFound({ message: 'Pagamento não encontrado.' });
-        return exits.success(item);
-      }
-      const list = await Pagamento.find().populateAll();
-      return exits.success(list);
-    } catch (err) {
-      sails.log.error('Erro ao listar pagamento:', err);
-      throw 'serverError';
+module.exports = async function find(req, res) {
+    const { escolaId, status, data_inicial, data_final } = req.query;
+
+    let alunoWhere = {};
+    let pagamentoWhere = { aluno: { '!=': null } };
+
+    if (escolaId && escolaId !== 'Todas') {
+        alunoWhere.escola = Number(escolaId);
     }
-  }
+
+    if (status && status !== 'Todas') {
+        pagamentoWhere.status = status;
+    }
+
+    if (data_inicial && data_final) {
+        const inicio = new Date(data_inicial);
+        const fim = new Date(data_final);
+
+        // Adiciona 23:59:59 no final para incluir o dia inteiro
+        fim.setHours(23, 59, 59, 999);
+
+        pagamentoWhere.dta_vcto = {
+            '>=': inicio,
+            '<=': fim
+        };
+    }
+
+    try {
+        const alunos = await Aluno.find({ where: alunoWhere })
+            .populate('pagamentos', { where: pagamentoWhere })
+            .populate('escola');
+
+        let pagamentosFinais = [];
+
+        alunos.forEach(aluno => {
+            if (aluno.pagamentos?.length > 0) {
+                aluno.pagamentos.forEach(pagamento => {
+                    pagamentosFinais.push({
+                        ...pagamento,
+                        aluno: {
+                            id: aluno.id,
+                            nome: aluno.nome,
+                            escola: aluno.escola
+                        }
+                    });
+                });
+            }
+        });
+
+        return res.json(pagamentosFinais);
+
+    } catch (err) {
+        sails.log.error('Erro em pagamento/find:', err);
+        return res.status(500).json({ error: 'Erro ao buscar pagamentos' });
+    }
 };
