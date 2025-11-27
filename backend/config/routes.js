@@ -78,7 +78,7 @@ module.exports.routes = {
   'PUT /controle-mensal/:id': { action: 'controle-mensal/update' },
   'DELETE /controle-mensal/:id': { action: 'controle-mensal/delete' },
   // Relatório de Tabela de Pagamentos
-  'GET /tabela-relatorio': { action: 'tabela-relatorio/report-controller/listar' },
+  'GET /tabela-relatorio': { action: 'tabela-relatorio/report/listar' },
   // Enviar código por e-mail
   'POST /enviar-email/send': { action: 'enviar-email/send' },
   // Verificar código recebido
