@@ -8,6 +8,7 @@ import BarraDeProgresso from "../Components/PageCadastro/BarraDeProgresso";
 import InfoLogin from "../Components/PageCadastro/InfoLogin";
 import ValidaEmail from "../Components/PageCadastro/ValidaEmail.jsx";
 import InfoAdicionais from "../Components/PageCadastro/InfoAdicionais";
+import { LoadingSpinner } from "../Components/Geral/LoadingSpinner";
 
 /* Icons */
 import { FaCircleArrowLeft } from "react-icons/fa6";
@@ -45,7 +46,7 @@ export default function PageCadastro() {
 
         const usuario = await register(payload);
         if (usuario) {
-            navigate("/dashboard");
+            navigate("/controle-mensal");
         }
     };
 
@@ -72,25 +73,30 @@ export default function PageCadastro() {
 
             {/* Lado direito */}
             <div className="w-full lg:w-1/2 h-full flex justify-center items-center">
-                <div className="space-y-4">
-                    <div className="px-8">
-                        <FaCircleArrowLeft
-                            onClick={voltarEtapa}
-                            className="text-[#0369A1] text-2xl cursor-pointer hover:scale-120 transition-all duration-300 ease-in-out"
-                        />
+                {loading ? (
+                    <LoadingSpinner/>
+                ) : (
+                    <div className="space-y-4">
+                        <div className="px-8">
+                            <FaCircleArrowLeft
+                                onClick={voltarEtapa}
+                                className="text-[#0369A1] text-2xl cursor-pointer hover:scale-120 transition-all duration-300 ease-in-out"
+                            />
+                        </div>
+
+                        <BarraDeProgresso indexEtapa={etapa}/>
+                        <p className="font-semibold text-3xl select-none px-8">Crie uma conta</p>
+
+                        {/* Etapas */}
+                        
+                        {etapa === 0 && <InfoLogin form={form} setForm={setForm} setEtapa={setEtapa} />}
+                        {etapa === 1 && <ValidaEmail form={form} setEtapa={avancarEtapa} />}  
+                        {etapa === 2 && <InfoAdicionais form={form} setForm={setForm} handleSubmit={handleSubmit} />}
+
+                        {error && <p className="text-red-500 px-8">{error}</p>}
                     </div>
-
-                    <BarraDeProgresso indexEtapa={etapa}/>
-                    <p className="font-semibold text-3xl select-none px-8">Crie uma conta</p>
-
-                    {/* Etapas */}
-                    {etapa === 0 && <InfoLogin form={form} setForm={setForm} setEtapa={setEtapa} />}
-                    {etapa === 1 && <ValidaEmail form={form} setEtapa={avancarEtapa} />}  
-                    {etapa === 2 && <InfoAdicionais form={form} setForm={setForm} handleSubmit={handleSubmit} />}
-
-                    {loading && <p className="text-blue-500 px-8">Cadastrando...</p>}
-                    {error && <p className="text-red-500 px-8">{error}</p>}
-                </div>
+                )}
+                
             </div>
         </section>
     )

@@ -40,7 +40,7 @@ module.exports.routes = {
   'DELETE /autenticacao/:id': { action: 'autenticacao/delete' },
   // Pagamento
   'GET /pagamento': { action: 'pagamento/find' },
-  'GET /pagamento/:id': { action: 'pagamento/find' },
+  'GET /pagamento/:id': { action: 'pagamento/find-one' },
   'POST /pagamento': { action: 'pagamento/create' },
   'PUT /pagamento/:id': { action: 'pagamento/update' },
   'DELETE /pagamento/:id': { action: 'pagamento/delete' },
@@ -79,8 +79,12 @@ module.exports.routes = {
   'DELETE /controle-mensal/:id': { action: 'controle-mensal/delete' },
   // Relatório de Tabela de Pagamentos
   'GET /tabela-relatorio': { action: 'tabela-relatorio/report/listar' },
-  // Enviar código por e-mail
-  'POST /enviar-email/send': { action: 'enviar-email/send' },
+  // Enviar email (código de verificação)
+  'POST /enviar-email/code': { action: 'enviar-email/code' },
   // Verificar código recebido
   'POST /enviar-email/verify': { action: 'enviar-email/verify' },
+  // Enviar email (link de convite)
+  'POST /enviar-email/link': { action: 'enviar-email/link' },
+  // Confirmar link de convite
+  'POST /enviar-email/confirm-link': { action: 'enviar-email/confirm-link' },
 };
