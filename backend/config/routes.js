@@ -44,6 +44,8 @@ module.exports.routes = {
   'POST /pagamento': { action: 'pagamento/create' },
   'PUT /pagamento/:id': { action: 'pagamento/update' },
   'DELETE /pagamento/:id': { action: 'pagamento/delete' },
+  //Recibo
+  'GET /recibo/:pagamentoId': {action: 'pagamento/recibo'},
   // Roteiro
   'GET /roteiro': { action: 'roteiro/find' },
   'GET /roteiro/:id': { action: 'roteiro/find' },

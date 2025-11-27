@@ -1,96 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
-// Função para converter número para extenso em português (0–9999)
-function numeroPorExtenso(valor) {
-    const unidade = [
-        "zero", "um", "dois", "três", "quatro", "cinco",
-        "seis", "sete", "oito", "nove"
-    ];
+export default function Recibo({ recibo }) {
 
-    const dezenaEspecial = [
-        "dez", "onze", "doze", "treze", "quatorze", "quinze",
-        "dezesseis", "dezessete", "dezoito", "dezenove"
-    ];
+    if (!recibo) return null;
 
-    const dezena = [
-        "", "dez", "vinte", "trinta", "quarenta", "cinquenta",
-        "sessenta", "setenta", "oitenta", "noventa"
-    ];
+    const { id, pagante, valor, data, assinatura, ref } = recibo;
 
-    const centena = [
-        "", "cem", "duzentos", "trezentos",
-        "quatrocentos", "quinhentos", "seiscentos",
-        "setecentos", "oitocentos", "novecentos"
-    ];
-
-    function extenso(n) {
-        if (n === 0) return "zero";
-        if (n === 100) return "cem";
-
-        let milhares = Math.floor(n / 1000);
-        let resto = n % 1000;
-
-        let c = Math.floor(resto / 100);
-        let d = Math.floor((resto % 100) / 10);
-        let u = resto % 10;
-
-        let texto = "";
-
-        // MILHAR
-        if (milhares > 0) {
-            texto += milhares === 1 ? "mil" : unidade[milhares] + " mil";
-            if (resto > 0) texto += " e ";
-        }
-
-        // CENTENA
-        if (c > 0) {
-            texto += c === 1 ? "cem" : centena[c];
-        }
-
-        // 10–19
-        if (d === 1) {
-            texto += (texto ? " e " : "") + dezenaEspecial[u];
-            return texto;
-        }
-
-        // DEZENA NORMAL
-        if (d > 1) {
-            texto += (texto ? " e " : "") + dezena[d];
-        }
-
-        // UNIDADE
-        if (u > 0) {
-            texto += (texto ? " e " : "") + unidade[u];
-        }
-
-        return texto;
-    }
-
-    const numero = parseInt(valor, 10);
-    if (isNaN(numero) || numero < 0 || numero > 9999) return "";
-
-    return extenso(numero) + " reais";
-}
-
-export default function Recibo({
-    numero = "",
-    valor = 0,
-    recebidoDe = "",
-    ref = "",
-    data = { dia: "", mes: "", ano: "" },
-    assinatura = ""
-}) {
-    const [quantiaExtenso, setQuantiaExtenso] = useState("");
-
-    useEffect(() => {
-        if (!valor) return;
-
-        const numeroLimpo = Number(valor);
-        if (isNaN(numeroLimpo)) return;
-
-        const extenso = numeroPorExtenso(numeroLimpo);
-        setQuantiaExtenso(extenso.replace(/^\w/, c => c.toUpperCase()));
-    }, [valor]);
+    const [dia, mes, ano] = data.split("/");
 
     return (
         <div
@@ -101,7 +17,6 @@ export default function Recibo({
                 max-sm:w-[360px] max-sm:min-h-[440px] max-sm:p-5
             "
         >
-
             {/* Logo */}
             <div className="absolute top-5 left-5 flex items-center space-x-1 max-sm:top-4 max-sm:left-4">
                 <p className="text-4xl font-bold italic max-sm:text-2xl">BIBI</p>
@@ -111,7 +26,7 @@ export default function Recibo({
             <div className="absolute top-5 right-5 flex flex-col items-end text-sm space-y-2 max-sm:text-xs max-sm:top-4 max-sm:right-4">
                 <div className="flex items-center justify-end space-x-2">
                     <span className="font-bold">N°</span>
-                    <span className="text-sm mr-11 max-sm:mr-2">{numero}</span>
+                    <span className="text-sm mr-11 max-sm:mr-2">{id}</span>
                 </div>
 
                 <div className="flex items-center space-x-2">
@@ -123,7 +38,7 @@ export default function Recibo({
                             max-sm:w-16 max-sm:h-4 max-sm:text-xs
                         "
                     >
-                        {Number(valor).toLocaleString("pt-BR")}
+                        {valor}
                     </div>
                 </div>
             </div>
@@ -146,11 +61,11 @@ export default function Recibo({
                 <div className="flex items-end space-x-2 max-sm:flex-col max-sm:items-start max-sm:space-y-1">
                     <p className="max-sm:font-semibold">Recebi(emos) de:</p>
                     <div className="border-b border-[#0369A1] px-2 w-[452px] max-sm:w-full">
-                        {recebidoDe}
+                        {pagante}
                     </div>
                 </div>
 
-                {/* QUANTIA */}
+                {/* QUANTIA SUPRA */}
                 <div className="flex flex-col space-y-2 max-sm:space-y-2">
                     <div className="flex items-center space-x-2 max-sm:flex-col max-sm:items-start max-sm:space-y-1">
                         <p className="max-sm:font-semibold">a quantia supra de:</p>
@@ -161,12 +76,8 @@ export default function Recibo({
                                 max-sm:w-full max-sm:h-auto max-sm:py-2
                             "
                         >
-                            {quantiaExtenso}
+                            {valor}
                         </div>
-                    </div>
-
-                    <div className="flex items-center space-x-2 max-sm:hidden">
-                        <div className="w-[582px] h-5 border border-[#0369A1] rounded-sm px-2"></div>
                     </div>
                 </div>
 
@@ -194,12 +105,11 @@ export default function Recibo({
                     <div className="w-[150px] max-sm:w-full">
                         <div className="flex items-center space-x-1 pb-0">
                             <p>Data:</p>
-                            <span>{data.dia}/</span>
-                            <span>{data.mes}/</span>
-                            <span>{data.ano}</span>
+                            <span>{dia}/</span>
+                            <span>{mes}/</span>
+                            <span>{ano}</span>
                         </div>
 
-                        {/* Linha da data */}
                         <div className="h-[1px] bg-[#0369A1] w-full max-sm:w-[60%]"></div>
                     </div>
 
@@ -209,7 +119,6 @@ export default function Recibo({
                             {assinatura}
                         </div>
 
-                        {/* Linha */}
                         <div className="h-[0.3px] bg-[#0369A1] w-[80%] ml-auto max-sm:w-[67%] max-sm:ml-0"></div>
                     </div>
                 </div>
