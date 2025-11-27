@@ -10,7 +10,7 @@ module.exports = {
 
   exits: {
     success: { description: 'Convite enviado.' },
-    notFound: { description: 'Usuário não encontrado.' }
+    notFound: { description: 'Usuário ou responsável não encontrado.' }
   },
 
   fn: async function (inputs, exits) {
@@ -23,30 +23,53 @@ module.exports = {
         return exits.notFound({ message: 'Turma não encontrada.' });
       }
 
-      // Token de 32 bytes
-      const token = crypto.randomBytes(32).toString("hex");
-
-      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // Expira em 24h
-
-      // Salvar token no Autenticacao
+      // Verificar se o usuário existe
       const usuario = await Autenticacao.findOne({ login });
       if (!usuario) {
         return exits.notFound({ message: "Usuário não encontrado." });
       }
 
+      // Verificar se esse usuário é um responsável
+      const responsavel = await Responsavel.findOne({ autenticacao: usuario.id });
+
+      if (!responsavel) {
+        return exits.notFound({
+          message: "Este usuário não é um responsável e não pode receber convite."
+        });
+      }
+
+      // Evitar envio duplicado de convite válido
+      if (usuario.inviteToken && usuario.inviteExpiresAt > new Date()) {
+        return exits.success({
+          message: "Convite já foi enviado e ainda está válido.",
+          aindaValidoAte: usuario.inviteExpiresAt
+        });
+      }
+
+      // Gerar token e preparar expiração
+      const token = crypto.randomBytes(32).toString("hex");
+      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24h
+
+      // Salvar token, expiração e turma vinculada
       await Autenticacao.updateOne({ id: usuario.id }).set({
         inviteToken: token,
-        inviteExpiresAt: expiresAt
+        inviteExpiresAt: expiresAt,
+        inviteTurma: turmaId // 🔥 agora a turma fica registrada no banco
       });
 
-      const inviteUrl = `${process.env.FRONTEND_URL}/convite?token=${token}&turma=${turmaId}`;
+      // Criar URL segura (turma será ignorada no frontend, só token importa)
+      const inviteUrl = `${process.env.FRONTEND_URL}/convite?token=${token}`;
 
+      // Enviar email
       await sails.helpers.sendInvitation.with({
         email: usuario.login,
         url: inviteUrl
       });
 
-      return exits.success({ message: "Convite enviado!" });
+      return exits.success({
+        message: "Convite enviado com sucesso!",
+        conviteExpiraEm: expiresAt
+      });
 
     } catch (error) {
       console.error(error);
