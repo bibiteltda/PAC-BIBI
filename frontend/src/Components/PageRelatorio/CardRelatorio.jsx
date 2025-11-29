@@ -2,6 +2,15 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import usePagamentos from "../../hooks/usePagamentos";
 
+// classes de status fora do componente
+const statusClasses = {
+  PAGO: "bg-green-600 text-white px-2 py-0.5 text-xs font-semibold rounded-md",
+  PENDENTE:
+    "bg-gray-500 text-white px-2 py-0.5 text-xs font-semibold rounded-md",
+  ATRASADO:
+    "bg-red-600 text-white px-2 py-0.5 text-xs font-semibold rounded-md",
+};
+
 export default function CardRelatorio({ filtros }) {
   const navigate = useNavigate();
 
@@ -21,6 +30,22 @@ export default function CardRelatorio({ filtros }) {
     const alunoObj = p.aluno || {};
     const escolaObj = alunoObj.escola || p.escola || {};
 
+    // tenta vários campos de data que podem existir no back
+    const rawDate =
+      p.data_pagamento ||
+      p.data_vencimento ||
+      p.data ||
+      p.vencimento ||
+      p.createdAt;
+
+    let dataFormatada = "--/--/----";
+    if (rawDate) {
+      const d = new Date(rawDate);
+      if (!isNaN(d.getTime())) {
+        dataFormatada = d.toLocaleDateString("pt-BR");
+      }
+    }
+
     return {
       id: p.id_pagamento ?? p.id ?? Math.random(),
       aluno: alunoObj.nome || p.nome_aluno || "Aluno não informado",
@@ -38,8 +63,8 @@ export default function CardRelatorio({ filtros }) {
 
   const semDados = !loading && !error && data.length === 0;
 
-  // Mostrar só os 5 mais recentes
-  const dataLimitada = data.slice(0, 5);
+  // vamos usar todas as linhas (scroll cuida do excesso)
+  const linhas = data;
 
   // ==========================
   // RENDER
@@ -71,53 +96,58 @@ export default function CardRelatorio({ filtros }) {
   return (
     <div className="w-full flex flex-col items-center">
       {/* --- DESKTOP TABLE --- */}
-      <table className="hidden md:table w-full max-w-[770px] bg-white shadow-md text-sm border border-gray-300 rounded-md overflow-hidden">
-        <thead>
-          <tr className="bg-gray-100 text-black border-b border-gray-300">
-            <th className="p-2">Aluno</th>
-            <th className="p-2">Escola</th>
-            <th className="p-2">Valor</th>
-            <th className="p-2">Data</th>
-            <th className="p-2">Status</th>
-            <th className="p-2">Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {dataLimitada.map((item) => (
-            <tr
-              key={item.id}
-              className="text-black border-b border-gray-200 last:border-none"
-            >
-              <td className="p-3">{item.aluno}</td>
-              <td className="p-3">{item.escola}</td>
-              <td className="p-3">
-                R{"$ "}
-                {item.valorNumero.toLocaleString("pt-BR", {
-                  minimumFractionDigits: 2,
-                })}
-              </td>
-              <td className="p-3">{item.data}</td>
-              <td className="p-3">
-                <span className={statusClasses[item.status]}>
-                  {item.status}
-                </span>
-              </td>
-              <td className="p-3">
-                <button
-                  onClick={() => navigate("/recibo")}
-                  className="px-3 py-1 rounded-lg border border-blue-300 text-blue-500 hover:bg-blue-50 transition"
+      <div className="hidden md:block w-full max-w-[770px] bg-white shadow-md text-sm border border-gray-300 rounded-md">
+        {/* área rolável: altura pensada pra ~5 linhas */}
+        <div className="max-h-[260px] overflow-y-auto">
+          <table className="w-full border-collapse">
+            <thead className="bg-gray-100 text-black border-b border-gray-300 sticky top-0">
+              <tr>
+                <th className="p-2 text-left">Aluno</th>
+                <th className="p-2 text-left">Escola</th>
+                <th className="p-2 text-left">Valor</th>
+                <th className="p-2 text-left">Data</th>
+                <th className="p-2 text-left">Status</th>
+                <th className="p-2 text-left">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {linhas.map((item) => (
+                <tr
+                  key={item.id}
+                  className="text-black border-b border-gray-200 last:border-none"
                 >
-                  Emitir Recibo
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                  <td className="p-3">{item.aluno}</td>
+                  <td className="p-3">{item.escola}</td>
+                  <td className="p-3">
+                    R{"$ "}
+                    {item.valorNumero.toLocaleString("pt-BR", {
+                      minimumFractionDigits: 2,
+                    })}
+                  </td>
+                  <td className="p-3">{item.data}</td>
+                  <td className="p-3">
+                    <span className={statusClasses[item.status]}>
+                      {item.status}
+                    </span>
+                  </td>
+                  <td className="p-3">
+                    <button
+                      onClick={() => navigate("/recibo")}
+                      className="px-3 py-1 rounded-lg border border-blue-300 text-blue-500 hover:bg-blue-50 transition"
+                    >
+                      Emitir Recibo
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
 
       {/* --- MOBILE (cards) --- */}
       <div className="flex flex-col gap-3 md:hidden w-full max-w-[770px] px-2 mt-2">
-        {dataLimitada.map((item) => (
+        {linhas.map((item) => (
           <section
             key={item.id}
             className="w-full bg-gradient-to-br from-[#1267A0] to-[#082F49] rounded-xl text-white shadow-lg p-4"
@@ -161,12 +191,3 @@ export default function CardRelatorio({ filtros }) {
     </div>
   );
 }
-
-// fora do componente, mantém as classes:
-const statusClasses = {
-  PAGO: "bg-green-600 text-white px-2 py-0.5 text-xs font-semibold rounded-md",
-  PENDENTE:
-    "bg-gray-500 text-white px-2 py-0.5 text-xs font-semibold rounded-md",
-  ATRASADO:
-    "bg-red-600 text-white px-2 py-0.5 text-xs font-semibold rounded-md",
-};
