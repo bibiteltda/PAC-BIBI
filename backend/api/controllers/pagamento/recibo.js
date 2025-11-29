@@ -1,8 +1,24 @@
 module.exports = {
+
   friendlyName: 'Gerar recibo',
   description: 'Gera um recibo simples baseado em um pagamento.',
-  inputs: { pagamentoId: { type: 'number', required: true, description: 'ID do pagamento para gerar o recibo.' } },
-  exits: { success: { description: 'Recibo gerado com sucesso.' }, notFound: { description: 'Pagamento não encontrado.' } },
+
+  inputs: {
+    pagamentoId: {
+      type: 'number',
+      required: true,
+      description: 'ID do pagamento para gerar o recibo.'
+    }
+  },
+
+  exits: {
+    success: {
+      description: 'Recibo gerado com sucesso.'
+    },
+    notFound: {
+      description: 'Pagamento não encontrado.'
+    }
+  },
 
   fn: async function (inputs, exits) {
     const pagamento = await Pagamento
@@ -11,12 +27,20 @@ module.exports = {
       .populate('motorista');
 
     if (!pagamento) {
-      return exits.notFound({ error: 'Pagamento não encontrado.' });
+      return exits.notFound({
+        error: 'Pagamento não encontrado.'
+      });
     }
 
+    const { porExtenso, estilo } = require('numero-por-extenso');
+
     function numeroParaExtenso(valor) {
-      const extenso = require('numero-por-extenso').porExtenso;
-      return extenso(valor, numero-por-extenso.estilo.real);
+      try {
+        return porExtenso(valor, estilo.real);
+      } catch (err) {
+        sails.log.error('Erro ao converter número para extenso:', err);
+        return `${valor} (erro ao converter)`;
+      }
     }
 
     const dataAtual = new Date();

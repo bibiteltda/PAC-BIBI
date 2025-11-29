@@ -24,7 +24,7 @@ function App() {
         {/* <Route path="/financeiro" element={<PageEsqueceuSuaSenha />} />  */}
         <Route path="/controle-mensal" element={<PageControleMensal />} />
         <Route path="/relatorio" element={<PageRelatorio />} />
-        <Route path="/recibo" element={<PageRecibo />} />
+        <Route path="/recibo/:id" element={<PageRecibo />} />
       </Routes>
     </BrowserRouter>
   )
