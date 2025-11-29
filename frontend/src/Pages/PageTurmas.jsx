@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { API_URL } from "../services/api";
 import { useCreateRoteiro } from "../hooks/useCreateTurma";
@@ -43,12 +43,26 @@ export default function Turmas() {
 
         setTurmas(mapeadas);
         setTurmasFiltradas(mapeadas);
-        setEscolas([...new Set(mapeadas.map(t => t.escola))]);
       } catch (err) {
         console.error("Erro ao carregar turmas:", err);
       }
     }
     carregarTurmas();
+  }, []);
+
+  useEffect(() => {
+    async function carregarEscolas() {
+      try {
+        const resp = await fetch(`${API_URL}/escola`);
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data.message || "Erro ao buscar escolas");
+
+        setEscolas(data.map(e => e.nome));
+      } catch (err) {
+        console.error("Erro ao carregar escolas:", err);
+      }
+    }
+    carregarEscolas();
   }, []);
 
   useEffect(() => {
@@ -199,7 +213,6 @@ export default function Turmas() {
                     value={novaTurma.escola}
                     onChange={(e) => setNovaTurma({ ...novaTurma, escola: e.target.value })}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
-                    disabled={loadingRoteiro}
                   >
                     <option value="">Selecione...</option>
                     {escolas.map((escola) => (
