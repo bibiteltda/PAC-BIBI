@@ -29,8 +29,8 @@ export default function CardRelatorio({ filtros }) {
       data:
         p.data_pagamento || p.data_vencimento
           ? new Date(p.data_pagamento || p.data_vencimento).toLocaleDateString(
-              "pt-BR"
-            )
+            "pt-BR"
+          )
           : "--/--/----",
       status: normalizarStatus(p.status),
     };
@@ -45,11 +45,7 @@ export default function CardRelatorio({ filtros }) {
   // RENDER
   // ==========================
   if (loading) {
-    return (
-      <div className="w-full flex justify-center items-center py-10">
-        <p className="text-gray-500 text-sm">Carregando pagamentos...</p>
-      </div>
-    );
+    return { pagamentos: [], loading: true, error: null };
   }
 
   if (error) {
