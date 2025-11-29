@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { API_URL } from "../services/api";
 import { useCreateRoteiro } from "../hooks/useCreateTurma";
+import useEscolas from "../hooks/useEscolas";
 import CardRoteiro from "../Components/PageTurmas/CardRoteiro";
 import NavBar from "../Components/PagePainel/NavBar";
 import SideBar from "../Components/PagePainel/SideBar";
@@ -15,7 +16,6 @@ export default function Turmas() {
   const [mostrarPopup, setMostrarPopup] = useState(false);
   const [motoristaId, setMotoristaId] = useState(null);
   const [novaTurma, setNovaTurma] = useState({ name: "", escola: "", turno: "" });
-  const [escolas, setEscolas] = useState([]);
 
   const TURNO_MAP = { matutino: 1, vespertino: 2 };
 
@@ -24,7 +24,9 @@ export default function Turmas() {
     storedUserInfo?.autenticacao?.id ?? storedUserInfo?.autenticacao ?? null;
 
   const { createRoteiro, loading: loadingRoteiro, error: errorRoteiro } = useCreateRoteiro();
+  const { escolas, loading: loadingEscolas } = useEscolas(); // usa nosso hook
 
+  // Carrega turmas
   useEffect(() => {
     async function carregarTurmas() {
       try {
@@ -50,21 +52,7 @@ export default function Turmas() {
     carregarTurmas();
   }, []);
 
-  useEffect(() => {
-    async function carregarEscolas() {
-      try {
-        const resp = await fetch(`${API_URL}/escola`);
-        const data = await resp.json();
-        if (!resp.ok) throw new Error(data.message || "Erro ao buscar escolas");
-
-        setEscolas(data.map(e => e.nome));
-      } catch (err) {
-        console.error("Erro ao carregar escolas:", err);
-      }
-    }
-    carregarEscolas();
-  }, []);
-
+  // Carrega motorista do usuário logado
   useEffect(() => {
     async function carregarMotorista() {
       if (!autenticacaoId) return;
@@ -83,6 +71,7 @@ export default function Turmas() {
     carregarMotorista();
   }, [autenticacaoId]);
 
+  // Adiciona nova turma
   const adicionarTurma = async () => {
     if (!novaTurma.name || !novaTurma.escola || !novaTurma.turno) {
       alert("Preencha todos os campos!");
@@ -120,8 +109,7 @@ export default function Turmas() {
       data: new Date().toISOString().split("T")[0],
     };
 
-    const novaLista = [...turmas, turmaCriada];
-    setTurmas(novaLista);
+    setTurmas([...turmas, turmaCriada]);
     setNovaTurma({ name: "", escola: "", turno: "" });
     setMostrarPopup(false);
   };
@@ -147,7 +135,7 @@ export default function Turmas() {
               </div>
               <div className="flex flex-col w-full max-h-[60vh] overflow-y-auto overflow-x-hidden space-y-4 pr-1 pb-2">
                 {turmasFiltradas.length > 0 ? (
-                  turmasFiltradas.map((turma) => (
+                  turmasFiltradas.map(turma => (
                     <div
                       key={turma.id}
                       onClick={() => setTurmaSelecionada(turma)}
@@ -213,11 +201,12 @@ export default function Turmas() {
                     value={novaTurma.escola}
                     onChange={(e) => setNovaTurma({ ...novaTurma, escola: e.target.value })}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
+                    disabled={loadingEscolas}
                   >
                     <option value="">Selecione...</option>
                     {escolas.map((escola) => (
-                      <option key={escola} value={escola}>
-                        {escola}
+                      <option key={escola.id} value={escola.nome}>
+                        {escola.nome}
                       </option>
                     ))}
                   </select>
