@@ -54,6 +54,6 @@ module.exports = {
       assinatura: pagamento.motorista?.nome || 'Não informado'
     };
 
-    return exits.success(recibo);
+    return exits.success({ recibo });
   }
 };
