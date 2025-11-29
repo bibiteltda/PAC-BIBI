@@ -124,7 +124,7 @@ export default function CardRelatorio({ filtros }) {
                   </td>
                   <td className="p-3">
                     <button
-                      onClick={() => navigate("/recibo")}
+                      onClick={() => navigate("/recibo/")}
                       className="px-3 py-1 rounded-lg border border-blue-300 text-blue-500 hover:bg-blue-50 transition"
                     >
                       Emitir Recibo
@@ -152,7 +152,7 @@ export default function CardRelatorio({ filtros }) {
               </div>
 
               <button
-                onClick={() => navigate("/recibo")}
+                onClick={() => navigate(`/recibo/${item.id}`)}
                 className="text-white/70 hover:text-white text-xl px-1"
               >
                 ⋮
