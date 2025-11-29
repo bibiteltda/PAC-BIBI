@@ -37,7 +37,7 @@ export default function Turmas() {
         const mapeadas = data.map((item, index) => ({
           id: item.id ?? index + 1,
           name: item.nome ?? "Sem nome",
-          escola: item.escola ?? "Não informado",
+          escola: escolas.find(e => e.id === item.escola)?.nome ?? "Não informado",
           turno: item.turno === 1 ? "Matutino" : item.turno === 2 ? "Vespertino" : "Não informado",
           status: item.status ?? "ativo",
           data: item.data ?? new Date().toISOString().split("T")[0],
@@ -91,7 +91,7 @@ export default function Turmas() {
 
     const payload = {
       nome: novaTurma.name,
-      escola: novaTurma.escola,
+      escola: Number(novaTurma.escola),
       turno: turnoNumero,
       motorista: motoristaId,
     };
@@ -103,7 +103,7 @@ export default function Turmas() {
     const turmaCriada = {
       id: r.id ?? turmas.length + 1,
       name: r.nome ?? novaTurma.name,
-      escola: novaTurma.escola,
+      escola: Number(novaTurma.escola),
       turno: novaTurma.turno,
       status: "ativo",
       data: new Date().toISOString().split("T")[0],
@@ -205,7 +205,7 @@ export default function Turmas() {
                   >
                     <option value="">Selecione...</option>
                     {escolas.map((escola) => (
-                      <option key={escola.id} value={escola.nome}>
+                      <option key={escola.id} value={escola.id}>
                         {escola.nome}
                       </option>
                     ))}
