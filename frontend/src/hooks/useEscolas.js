@@ -1,39 +1,39 @@
-// Localização: frontend/src/hooks/useEscolas.js
-
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_URL } from '../services/api';
+const ESCOLA_API_URL = `${API_URL}/escola`;
 
-// URL do seu endpoint do Sails.js para escolas
-const ESCOLA_API_URL = 'http://localhost:1337/escola'; 
+/**
+ * Hook para buscar escolas.
+ * @param {object} filtros - 
+ */
+export default function useEscolas(filtros) {
+  const [escolas, setEscolas] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-export default function useEscolas() {
-    const [escolas, setEscolas] = useState([]);
-    const [loadingEscolas, setLoadingEscolas] = useState(true);
-    const [errorEscolas, setErrorEscolas] = useState(null);
+  useEffect(() => {
+    async function fetchEscolas() {
+      setLoading(true);
+      setError(null);
+      setEscolas([]);
 
-    useEffect(() => {
-        async function fetchEscolas() {
-            setLoadingEscolas(true);
-            setErrorEscolas(null);
+      try {
+        const response = await axios.get(ESCOLA_API_URL);
+        
+        const opcoes = [{ id: 'Todas', nome: 'Todas' }, ...response.data];
+        setEscolas(opcoes);
+      } catch (err) {
+        console.error("Erro ao carregar escolas:", err);
+        setError("Falha ao carregar opções de escola.");
+        setEscolas([{ id: 'Todas', nome: 'Todas' }]);
+      } finally {
+        setLoading(false);
+      }
+    }
 
-            try {
-                const response = await axios.get(ESCOLA_API_URL);
-                
-                // 1. Adiciona a opção "Todas" no início da lista (importante para o filtro)
-                const opcoes = [{ id: 'Todas', nome: 'Todas' }, ...response.data];
-                
-                setEscolas(opcoes);
-            } catch (err) {
-                console.error("Erro ao carregar escolas:", err);
-                setErrorEscolas("Falha ao carregar opções de escola.");
-                // Retorna apenas a opção "Todas" em caso de erro
-                setEscolas([{ id: 'Todas', nome: 'Todas' }]); 
-            } finally {
-                setLoadingEscolas(false);
-            }
-        }
-        fetchEscolas();
-    }, []);
+    fetchEscolas();
+  }, [filtros]);
 
-    return { escolas, loadingEscolas, errorEscolas };
+  return { escolas, loading, error };
 }
