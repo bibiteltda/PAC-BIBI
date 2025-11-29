@@ -1,17 +1,29 @@
 module.exports = {
-  friendlyName: 'Listar escola',
-  description: 'Lista todos os escola ou um específico.',
-  inputs: { id: { type: 'number', required: false } },
-  exits: { success: { description: 'Retornado com sucesso.' }, notFound: { description: 'Não encontrado.', responseType: 'notFound' } },
+  friendlyName: 'Listar escolas',
+  description: 'Lista todas as escolas ou uma específica.',
+
+  inputs: {
+    id: { type: 'number' }
+  },
+
+  exits: {
+    success: { description: 'Retornado com sucesso.' },
+    notFound: { description: 'Escola não encontrada.', responseType: 'notFound' }
+  },
+
   fn: async function (inputs, exits) {
     try {
       if (inputs.id) {
-        const item = await Escola.findOne({ id: inputs.id }).populateAll();
-        if (!item) return exits.notFound({ message: 'Escola não encontrado.' });
-        return exits.success(item);
+        const escola = await Escola.findOne({ id: inputs.id });
+        if (!escola) {
+          return exits.notFound({ message: 'Escola não encontrada.' });
+        }
+        return exits.success(escola);
       }
-      const list = await Escola.find().populateAll();
-      return exits.success(list);
+
+      const escolas = await Escola.find().select(['id', 'nome']);
+      return exits.success(escolas);
+
     } catch (err) {
       sails.log.error('Erro ao listar escola:', err);
       throw 'serverError';
