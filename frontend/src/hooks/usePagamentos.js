@@ -1,9 +1,9 @@
-// Localização: frontend/src/hooks/usePagamentos.js
-
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_URL } from '../services/api';
 
-const PAGAMENTO_API_URL = 'http://localhost:1337/pagamento'; 
+const PAGAMENTO_API_URL = `${API_URL}/pagamento`; 
+
 
 /**
  * Hook para buscar pagamentos com base em filtros.
