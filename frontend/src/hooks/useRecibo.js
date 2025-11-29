@@ -12,21 +12,23 @@ export default function useRecibo() {
 
     try {
       const response = await fetch(`${API_URL}/recibo/${pagamentoId}`);
-      const result = await response.json();
 
-      if (!response.ok) {
-        throw new Error(result.message || "Erro ao carregar recibo.");
-      }
+        if (!response.ok) {
+          const text = await response.text();
+          throw new Error(text || "Erro ao carregar recibo.");
+        }
 
-      setRecibo(result.recibo || null);
-      return result.recibo;
+        const result = await response.json();
+        setRecibo(result.recibo || result || null);
+        return result.recibo || result;
+
     } catch (err) {
-      console.error(err);
-      setError(err.message || "Erro ao conectar com o servidor.");
-      return null;
+        console.error(err);
+        setError(err.message || "Erro ao conectar com o servidor.");
+        return null;
     } finally {
-      setLoading(false);
-    }
+        setLoading(false);
+      }
   }, []);
 
   return { loading, error, recibo, find, };
