@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import usePagamentos from "../../hooks/usePagamentos"; // ajusta o caminho se precisar
+import usePagamentos from "../../hooks/usePagamentos";
 
 export default function CardRelatorio({ filtros }) {
   const navigate = useNavigate();
@@ -16,31 +16,29 @@ export default function CardRelatorio({ filtros }) {
     return "PENDENTE";
   };
 
-  // 🎨 Classes de cada status
-  const statusClasses = {
-    PAGO: "bg-green-600 text-white px-2 py-0.5 text-xs font-semibold rounded-md",
-    PENDENTE: "bg-gray-500 text-white px-2 py-0.5 text-xs font-semibold rounded-md",
-    ATRASADO: "bg-red-600 text-white px-2 py-0.5 text-xs font-semibold rounded-md",
-  };
+  // 🔁 Normaliza o que vem da API para o formato usado na UI
+  const data = (pagamentos || []).map((p) => {
+    const alunoObj = p.aluno || {};
+    const escolaObj = alunoObj.escola || p.escola || {};
 
-  // 🔁 Mapeia o que vem da API para o formato usado na UI
-  const data = (pagamentos || []).map((p) => ({
-    id: p.id_pagamento ?? p.id ?? Math.random(),
-    aluno: p.aluno || p.nome_aluno || "Aluno não informado",
-    escola: p.escola || p.nome_escola || "Escola não informada",
-    valorNumero: Number(p.valor || 0),
-    data:
-      p.data_pagamento || p.data_vencimento
-        ? new Date(p.data_pagamento || p.data_vencimento).toLocaleDateString(
-            "pt-BR"
-          )
-        : "--/--/----",
-    status: normalizarStatus(p.status),
-  }));
+    return {
+      id: p.id_pagamento ?? p.id ?? Math.random(),
+      aluno: alunoObj.nome || p.nome_aluno || "Aluno não informado",
+      escola: escolaObj.nome || p.nome_escola || "Escola não informada",
+      valorNumero: Number(p.valor ?? 0),
+      data:
+        p.data_pagamento || p.data_vencimento
+          ? new Date(p.data_pagamento || p.data_vencimento).toLocaleDateString(
+              "pt-BR"
+            )
+          : "--/--/----",
+      status: normalizarStatus(p.status),
+    };
+  });
 
   const semDados = !loading && !error && data.length === 0;
 
-  // Se quiser mostrar só os 5 últimos:
+  // Mostrar só os 5 mais recentes
   const dataLimitada = data.slice(0, 5);
 
   // ==========================
@@ -129,13 +127,11 @@ export default function CardRelatorio({ filtros }) {
             className="w-full bg-gradient-to-br from-[#1267A0] to-[#082F49] rounded-xl text-white shadow-lg p-4"
           >
             <div className="flex justify-between items-start">
-              {/* Escola + Aluno */}
               <div>
                 <p className="text-sm opacity-80">{item.escola}</p>
                 <p className="text-base font-semibold -mt-1">{item.aluno}</p>
               </div>
 
-              {/* Opções (rota /recibo) */}
               <button
                 onClick={() => navigate("/recibo")}
                 className="text-white/70 hover:text-white text-xl px-1"
@@ -144,9 +140,7 @@ export default function CardRelatorio({ filtros }) {
               </button>
             </div>
 
-            {/* Parte inferior */}
             <div className="mt-3 flex justify-between items-end">
-              {/* Valor + Data */}
               <div>
                 <p className="text-xs opacity-70">{item.data}</p>
                 <p className="text-sm font-semibold">
@@ -157,7 +151,6 @@ export default function CardRelatorio({ filtros }) {
                 </p>
               </div>
 
-              {/* Status */}
               <span
                 className={`${statusClasses[item.status]} text-[10px] px-2 py-0.5 rounded-md`}
               >
@@ -172,3 +165,12 @@ export default function CardRelatorio({ filtros }) {
     </div>
   );
 }
+
+// fora do componente, mantém as classes:
+const statusClasses = {
+  PAGO: "bg-green-600 text-white px-2 py-0.5 text-xs font-semibold rounded-md",
+  PENDENTE:
+    "bg-gray-500 text-white px-2 py-0.5 text-xs font-semibold rounded-md",
+  ATRASADO:
+    "bg-red-600 text-white px-2 py-0.5 text-xs font-semibold rounded-md",
+};
