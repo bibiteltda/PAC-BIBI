@@ -199,13 +199,13 @@ export default function Turmas() {
                   <label className="text-sm text-gray-700 mb-1 block">Escola</label>
                   <select
                     value={novaTurma.escola}
-                    onChange={(e) => setNovaTurma({ ...novaTurma, escola: e.target.value })}
+                    onChange={(e) => setNovaTurma({ ...novaTurma, escola: Number(e.target.value) })}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
                     disabled={loadingEscolas}
                   >
                     <option value="">Selecione...</option>
                     {escolas.map((escola) => (
-                      <option key={escola.id} value={escola.nome}>
+                      <option key={escola.id} value={escola.id}>
                         {escola.nome}
                       </option>
                     ))}
