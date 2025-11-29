@@ -2,43 +2,42 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import usePagamentos from "../../hooks/usePagamentos";
 
-// classes de status fora do componente
+// classes de status
 const statusClasses = {
   PAGO: "bg-green-600 text-white px-2 py-0.5 text-xs font-semibold rounded-md",
-  PENDENTE:
-    "bg-gray-500 text-white px-2 py-0.5 text-xs font-semibold rounded-md",
-  ATRASADO:
-    "bg-red-600 text-white px-2 py-0.5 text-xs font-semibold rounded-md",
+  PENDENTE: "bg-gray-500 text-white px-2 py-0.5 text-xs font-semibold rounded-md",
+  ATRASADO: "bg-red-600 text-white px-2 py-0.5 text-xs font-semibold rounded-md",
 };
 
 export default function CardRelatorio({ filtros }) {
   const navigate = useNavigate();
-
-  // 🔄 Busca pagamentos da API com base nos filtros
   const { pagamentos, loading, error } = usePagamentos(filtros);
 
-  // 🔎 Normaliza status vindo do back
+  // normaliza status
   const normalizarStatus = (status) => {
     if (!status) return "PENDENTE";
     const s = String(status).toUpperCase();
-    if (s === "PAGO" || s === "PENDENTE" || s === "ATRASADO") return s;
+    if (["PAGO", "PENDENTE", "ATRASADO"].includes(s)) return s;
     return "PENDENTE";
   };
 
-  // 🔁 Normaliza o que vem da API para o formato usado na UI
+  // trata dados vindos do backend
   const data = (pagamentos || []).map((p) => {
     const alunoObj = p.aluno || {};
     const escolaObj = alunoObj.escola || p.escola || {};
 
-    // tenta vários campos de data que podem existir no back
+    // CAMPOS REAIS DO BANCO (corrigido)
     const rawDate =
-      p.data_pagamento ||
+      p.dta_pgmt ||       // pagamento
+      p.dta_vcto ||       // vencimento
+      p.data_pagamento || // fallback
       p.data_vencimento ||
       p.data ||
       p.vencimento ||
       p.createdAt;
 
     let dataFormatada = "--/--/----";
+
     if (rawDate) {
       const d = new Date(rawDate);
       if (!isNaN(d.getTime())) {
@@ -57,22 +56,20 @@ export default function CardRelatorio({ filtros }) {
   });
 
   const semDados = !loading && !error && data.length === 0;
-
-  // vamos usar todas as linhas (scroll cuida do excesso)
   const linhas = data;
 
   // ==========================
   // RENDER
   // ==========================
-  if (loading) {
+
+  if (loading)
     return (
       <div className="w-full flex justify-center items-center py-10">
         <p className="text-gray-500 text-sm">Carregando pagamentos...</p>
       </div>
     );
-  }
 
-  if (error) {
+  if (error)
     return (
       <div className="w-full flex justify-center items-center py-10">
         <p className="text-red-500 text-sm">
@@ -80,9 +77,8 @@ export default function CardRelatorio({ filtros }) {
         </p>
       </div>
     );
-  }
 
-  if (semDados) {
+  if (semDados)
     return (
       <div className="w-full flex justify-center items-center py-10">
         <p className="text-gray-400 text-sm">
@@ -90,13 +86,14 @@ export default function CardRelatorio({ filtros }) {
         </p>
       </div>
     );
-  }
 
   return (
     <div className="w-full flex flex-col items-center">
+
       {/* --- DESKTOP TABLE --- */}
       <div className="hidden md:block w-full max-w-[770px] bg-white shadow-md text-sm border border-gray-300 rounded-md">
-        {/* área rolável: altura pensada pra ~5 linhas */}
+
+        {/* área rolável (limite ~5 linhas) */}
         <div className="max-h-[260px] overflow-y-auto">
           <table className="w-full border-collapse">
             <thead className="bg-gray-100 text-black border-b border-gray-300 sticky top-0">
@@ -109,12 +106,10 @@ export default function CardRelatorio({ filtros }) {
                 <th className="p-2 text-left">Ações</th>
               </tr>
             </thead>
+
             <tbody>
               {linhas.map((item) => (
-                <tr
-                  key={item.id}
-                  className="text-black border-b border-gray-200 last:border-none"
-                >
+                <tr key={item.id} className="text-black border-b border-gray-200 last:border-none">
                   <td className="p-3">{item.aluno}</td>
                   <td className="p-3">{item.escola}</td>
                   <td className="p-3">
@@ -125,9 +120,7 @@ export default function CardRelatorio({ filtros }) {
                   </td>
                   <td className="p-3">{item.data}</td>
                   <td className="p-3">
-                    <span className={statusClasses[item.status]}>
-                      {item.status}
-                    </span>
+                    <span className={statusClasses[item.status]}>{item.status}</span>
                   </td>
                   <td className="p-3">
                     <button
@@ -140,6 +133,7 @@ export default function CardRelatorio({ filtros }) {
                 </tr>
               ))}
             </tbody>
+
           </table>
         </div>
       </div>
