@@ -1,186 +1,72 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import usePagamentos from "../../hooks/usePagamentos";
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { API_URL } from '../services/api';
 
-// classes de status
-const statusClasses = {
-  PAGO: "bg-green-600 text-white px-2 py-0.5 text-xs font-semibold rounded-md",
-  PENDENTE: "bg-gray-500 text-white px-2 py-0.5 text-xs font-semibold rounded-md",
-  ATRASADO: "bg-red-600 text-white px-2 py-0.5 text-xs font-semibold rounded-md",
-};
+const PAGAMENTO_API_URL = `${API_URL}/pagamento`; 
 
-export default function CardRelatorio({ filtros }) {
-  const navigate = useNavigate();
-  const { pagamentos, loading, error } = usePagamentos(filtros);
 
-  // normaliza status
-  const normalizarStatus = (status) => {
-    if (!status) return "PENDENTE";
-    const s = String(status).toUpperCase();
-    if (["PAGO", "PENDENTE", "ATRASADO"].includes(s)) return s;
-    return "PENDENTE";
-  };
+/**
+ * Hook para buscar pagamentos com base em filtros.
+ * @param {object} filtros - Objeto contendo os filtros.
+ * @param {string} [filtros.escolaId] - ID da escola ('Todas' ou ID numérico).
+ * @param {string} [filtros.status] - Status do pagamento ('Todas' ou status real).
+ * @param {string} [filtros.dataInicial] - Data de início do vencimento (YYYY-MM-DD).
+ * @param {string} [filtros.dataFinal] - Data final do vencimento (YYYY-MM-DD).
+ */
+export default function usePagamentos(filtros) {
+    const [pagamentos, setPagamentos] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-  // trata dados vindos do backend
-  const data = (pagamentos || []).map((p) => {
-    const alunoObj = p.aluno || {};
-    const escolaObj = alunoObj.escola || p.escola || {};
+    // O useEffect será re-executado sempre que o objeto 'filtros' mudar
+    useEffect(() => {
+        // Se o objeto filtros for null ou vazio, não faz a busca inicial
+        if (!filtros || Object.keys(filtros).length === 0) {
+            setPagamentos([]);
+            return;
+        }
 
-    // CAMPOS REAIS DO BANCO (corrigido)
-    const rawDate =
-      p.dta_pgmt ||       // pagamento
-      p.dta_vcto ||       // vencimento
-      p.data_pagamento || // fallback
-      p.data_vencimento ||
-      p.data ||
-      p.vencimento ||
-      p.createdAt;
+        async function fetchPagamentos() {
+            setLoading(true);
+            setError(null);
+            
+            // 1. Construir a URL com Query Parameters
+            const params = new URLSearchParams();
+            
+            // Adicionar filtros válidos (apenas se não for 'Todas' e o valor existir)
+            if (filtros.escolaId && filtros.escolaId !== 'Todas') {
+                params.append('escolaId', filtros.escolaId);
+            }
+            if (filtros.status && filtros.status !== 'Todas') {
+                params.append('status', filtros.status);
+            }
+            if (filtros.dataInicial) {
+                params.append('data_inicial', filtros.dataInicial);
+            }
+            if (filtros.dataFinal) {
+                params.append('data_final', filtros.dataFinal);
+            }
 
-    let dataFormatada = "--/--/----";
+            // 2. Montar a URL final (Ex: /pagamento?escolaId=X&status=Y)
+            const urlCompleta = `${PAGAMENTO_API_URL}?${params.toString()}`;
 
-    if (rawDate) {
-      const d = new Date(rawDate);
-      if (!isNaN(d.getTime())) {
-        dataFormatada = d.toLocaleDateString("pt-BR");
-      }
-    }
+            try {
+                const response = await axios.get(urlCompleta);
+                setPagamentos(response.data);
+            } catch (err) {
+                console.error("Erro ao buscar pagamentos:", err);
+                // Exibe a mensagem de erro da API se possível, senão uma genérica
+                const errMsg = err.response?.data?.error || "Erro ao carregar transações.";
+                setError(errMsg);
+                setPagamentos([]);
+            } finally {
+                setLoading(false);
+            }
+        }
 
-    return {
-      id: p.id_pagamento ?? p.id ?? Math.random(),
-      aluno: alunoObj.nome || p.nome_aluno || "Aluno não informado",
-      escola: escolaObj.nome || p.nome_escola || "Escola não informada",
-      valorNumero: Number(p.valor ?? 0),
-      data: dataFormatada,
-      status: normalizarStatus(p.status),
-    };
-  });
+        fetchPagamentos();
+        
+    }, [filtros]); 
 
-  const semDados = !loading && !error && data.length === 0;
-  const linhas = data;
-
-  // ==========================
-  // RENDER
-  // ==========================
-
-  if (loading)
-    return (
-      <div className="w-full flex justify-center items-center py-10">
-        <p className="text-gray-500 text-sm">Carregando pagamentos...</p>
-      </div>
-    );
-
-  if (error)
-    return (
-      <div className="w-full flex justify-center items-center py-10">
-        <p className="text-red-500 text-sm">
-          Erro ao carregar pagamentos: {error}
-        </p>
-      </div>
-    );
-
-  if (semDados)
-    return (
-      <div className="w-full flex justify-center items-center py-10">
-        <p className="text-gray-400 text-sm">
-          Nenhum pagamento encontrado para os filtros selecionados.
-        </p>
-      </div>
-    );
-
-  return (
-    <div className="w-full flex flex-col items-center">
-
-      {/* --- DESKTOP TABLE --- */}
-      <div className="hidden md:block w-full max-w-[770px] bg-white shadow-md text-sm border border-gray-300 rounded-md">
-
-        {/* área rolável (limite ~5 linhas) */}
-        <div className="max-h-[260px] overflow-y-auto">
-          <table className="w-full border-collapse">
-            <thead className="bg-gray-100 text-black border-b border-gray-300 sticky top-0">
-              <tr>
-                <th className="p-2 text-left">Aluno</th>
-                <th className="p-2 text-left">Escola</th>
-                <th className="p-2 text-left">Valor</th>
-                <th className="p-2 text-left">Data</th>
-                <th className="p-2 text-left">Status</th>
-                <th className="p-2 text-left">Ações</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {linhas.map((item) => (
-                <tr key={item.id} className="text-black border-b border-gray-200 last:border-none">
-                  <td className="p-3">{item.aluno}</td>
-                  <td className="p-3">{item.escola}</td>
-                  <td className="p-3">
-                    R{"$ "}
-                    {item.valorNumero.toLocaleString("pt-BR", {
-                      minimumFractionDigits: 2,
-                    })}
-                  </td>
-                  <td className="p-3">{item.data}</td>
-                  <td className="p-3">
-                    <span className={statusClasses[item.status]}>{item.status}</span>
-                  </td>
-                  <td className="p-3">
-                    <button
-                      onClick={() => navigate("/recibo")}
-                      className="px-3 py-1 rounded-lg border border-blue-300 text-blue-500 hover:bg-blue-50 transition"
-                    >
-                      Emitir Recibo
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-
-          </table>
-        </div>
-      </div>
-
-      {/* --- MOBILE (cards) --- */}
-      <div className="flex flex-col gap-3 md:hidden w-full max-w-[770px] px-2 mt-2">
-        {linhas.map((item) => (
-          <section
-            key={item.id}
-            className="w-full bg-gradient-to-br from-[#1267A0] to-[#082F49] rounded-xl text-white shadow-lg p-4"
-          >
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-sm opacity-80">{item.escola}</p>
-                <p className="text-base font-semibold -mt-1">{item.aluno}</p>
-              </div>
-
-              <button
-                onClick={() => navigate("/recibo")}
-                className="text-white/70 hover:text-white text-xl px-1"
-              >
-                ⋮
-              </button>
-            </div>
-
-            <div className="mt-3 flex justify-between items-end">
-              <div>
-                <p className="text-xs opacity-70">{item.data}</p>
-                <p className="text-sm font-semibold">
-                  R{"$ "}
-                  {item.valorNumero.toLocaleString("pt-BR", {
-                    minimumFractionDigits: 2,
-                  })}
-                </p>
-              </div>
-
-              <span
-                className={`${statusClasses[item.status]} text-[10px] px-2 py-0.5 rounded-md`}
-              >
-                {item.status}
-              </span>
-            </div>
-          </section>
-        ))}
-      </div>
-
-      <div className="h-10" />
-    </div>
-  );
+    return { pagamentos, loading, error };
 }
