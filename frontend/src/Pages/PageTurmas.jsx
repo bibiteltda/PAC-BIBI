@@ -24,9 +24,8 @@ export default function Turmas() {
     storedUserInfo?.autenticacao?.id ?? storedUserInfo?.autenticacao ?? null;
 
   const { createRoteiro, loading: loadingRoteiro, error: errorRoteiro } = useCreateRoteiro();
-  const { escolas, loading: loadingEscolas } = useEscolas(); // usa nosso hook
+  const { escolas, loading: loadingEscolas } = useEscolas();
 
-  // Carrega turmas
   useEffect(() => {
     async function carregarTurmas() {
       try {
@@ -45,14 +44,11 @@ export default function Turmas() {
 
         setTurmas(mapeadas);
         setTurmasFiltradas(mapeadas);
-      } catch (err) {
-        console.error("Erro ao carregar turmas:", err);
-      }
+      } catch (err) {}
     }
     carregarTurmas();
   }, []);
 
-  // Carrega motorista do usuário logado
   useEffect(() => {
     async function carregarMotorista() {
       if (!autenticacaoId) return;
@@ -61,37 +57,25 @@ export default function Turmas() {
         const lista = await resp.json();
         if (!resp.ok) throw new Error(lista.message || "Erro ao buscar motoristas");
 
-        const motorista = lista.find(m => (m.autenticacao?.id ?? m.autenticacao) === autenticacaoId);
+        const motorista = lista.find((m) => (m.autenticacao?.id ?? m.autenticacao) === autenticacaoId);
         if (!motorista) return;
         setMotoristaId(motorista.id);
-      } catch (err) {
-        console.error("Erro ao buscar motorista:", err);
-      }
+      } catch (err) {}
     }
     carregarMotorista();
   }, [autenticacaoId]);
 
-  // Adiciona nova turma
   const adicionarTurma = async () => {
-    if (!novaTurma.name || !novaTurma.escola || !novaTurma.turno) {
-      alert("Preencha todos os campos!");
-      return;
-    }
-    if (!motoristaId) {
-      alert("Motorista não identificado para o usuário logado.");
-      return;
-    }
+    if (!novaTurma.name || !novaTurma.escola || !novaTurma.turno) return;
+    if (!motoristaId) return;
 
     const turnoKey = novaTurma.turno.trim().toLowerCase();
     const turnoNumero = TURNO_MAP[turnoKey];
-    if (!turnoNumero) {
-      alert('Turno inválido. Use "Matutino" ou "Vespertino".');
-      return;
-    }
+    if (!turnoNumero) return;
 
     const payload = {
       nome: novaTurma.name,
-      escola: novaTurma.escola,
+      escola: Number(novaTurma.escola),
       turno: turnoNumero,
       motorista: motoristaId,
     };
@@ -100,10 +84,11 @@ export default function Turmas() {
     if (!result || !result.roteiro) return;
 
     const r = result.roteiro;
+
     const turmaCriada = {
       id: r.id ?? turmas.length + 1,
       name: r.nome ?? novaTurma.name,
-      escola: novaTurma.escola,
+      escola: Number(novaTurma.escola),
       turno: novaTurma.turno,
       status: "ativo",
       data: new Date().toISOString().split("T")[0],
@@ -135,7 +120,7 @@ export default function Turmas() {
               </div>
               <div className="flex flex-col w-full max-h-[60vh] overflow-y-auto overflow-x-hidden space-y-4 pr-1 pb-2">
                 {turmasFiltradas.length > 0 ? (
-                  turmasFiltradas.map(turma => (
+                  turmasFiltradas.map((turma) => (
                     <div
                       key={turma.id}
                       onClick={() => setTurmaSelecionada(turma)}
@@ -188,7 +173,6 @@ export default function Turmas() {
                   <label className="text-sm text-gray-700 mb-1 block">Nome da turma</label>
                   <input
                     type="text"
-                    placeholder="Ex: 301-A"
                     value={novaTurma.name}
                     onChange={(e) => setNovaTurma({ ...novaTurma, name: e.target.value })}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
@@ -205,7 +189,7 @@ export default function Turmas() {
                   >
                     <option value="">Selecione...</option>
                     {escolas.map((escola) => (
-                      <option key={escola.id} value={escola.nome}>
+                      <option key={escola.id} value={escola.id}>
                         {escola.nome}
                       </option>
                     ))}
@@ -247,7 +231,9 @@ export default function Turmas() {
       </AnimatePresence>
 
       <AnimatePresence>
-        {turmaSelecionada && <LinkConvite turma={turmaSelecionada} onClose={() => setTurmaSelecionada(null)} />}
+        {turmaSelecionada && (
+          <LinkConvite turma={turmaSelecionada} onClose={() => setTurmaSelecionada(null)} />
+        )}
       </AnimatePresence>
     </>
   );
