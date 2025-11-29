@@ -9,7 +9,7 @@ module.exports = {
     bairro: { model: 'bairro' },
     cidade: { model: 'cidade' },
     alunos: { collection: 'aluno', via: 'escola' },
-    roteiros: { collection: 'roteiro', via: 'escolas' },
+    roteiros: { collection: 'roteiro', via: 'escola' },
 
     createdAt: { type: 'ref', columnType: 'timestamp without time zone', autoCreatedAt: true },
     updatedAt: { type: 'ref', columnType: 'timestamp without time zone', autoUpdatedAt: true }

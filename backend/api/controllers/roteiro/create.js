@@ -6,6 +6,7 @@ module.exports = {
     nome: { type: "string", required: true },
     turno: { type: "number", required: true },
     motorista: { type: "number", required: true },
+    escola: { type: "number", required: true },
   },
 
   exits: {
@@ -19,6 +20,7 @@ module.exports = {
         nome: inputs.nome,
         turno: inputs.turno,
         motorista: inputs.motorista,
+        escola: inputs.escola,
       }).fetch();
 
       return exits.success({

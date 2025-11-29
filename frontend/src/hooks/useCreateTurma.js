@@ -12,16 +12,22 @@ export function useCreateRoteiro() {
     setSuccess(null);
 
     try {
-      const response = await fetch(`${API_URL}/roteiro`, {  // <<< AQUI
+      const payload = {
+        ...data,
+        escola: Number(data.escola),
+      };
+
+      const response = await fetch(`${API_URL}/roteiro`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
 
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.message || 'Erro ao criar roteiro');
+        setError(result.message || 'Erro ao criar roteiro');
+        return { error: result.message || 'Erro ao criar roteiro' };
       }
 
       setSuccess(result);
@@ -29,6 +35,7 @@ export function useCreateRoteiro() {
     } catch (e) {
       setError(e.message);
       console.error('Erro no useCreateRoteiro:', e);
+      return { error: e.message };
     } finally {
       setLoading(false);
     }
