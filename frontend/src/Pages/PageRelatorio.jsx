@@ -46,7 +46,7 @@ export default function PageRelatorio() {
                         <p className="font-medium text-gray-700 text-lg text-center lg:text-left">Transações</p>
 
                         {/* Card de Relatório */}
-                        <CardRelatorio />
+                        <CardRelatorio filtros={{ status: "Todas" }}/>
                     </div>
                 </main>
 
