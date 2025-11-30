@@ -61,9 +61,9 @@ export default function PageEsqueceuSenha() {
 
             {/* Recebem Informação */}
 
-            {/* <Recibo /> */}
+            <Recibo />
             {/* <CardRoteiro name={"Roteiro 1"} quantAlunos={21} turno={"Matutino"} /> */}
-            <CardRelatorio />
+            {/* <CardRelatorio /> */}
 
 
         </section>

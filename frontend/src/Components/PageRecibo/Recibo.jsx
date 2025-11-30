@@ -237,78 +237,6 @@
 import React, { useEffect, useState } from "react";
 import { formatAssinatura } from "./EstiloAss";
 
-// Função para converter número para extenso em português (0–9999)
-function numeroPorExtenso(valor) {
-    const unidade = [
-        "zero", "um", "dois", "três", "quatro", "cinco",
-        "seis", "sete", "oito", "nove"
-    ];
-
-    const dezenaEspecial = [
-        "dez", "onze", "doze", "treze", "quatorze", "quinze",
-        "dezesseis", "dezessete", "dezoito", "dezenove"
-    ];
-
-    const dezena = [
-        "", "dez", "vinte", "trinta", "quarenta", "cinquenta",
-        "sessenta", "setenta", "oitenta", "noventa"
-    ];
-
-    const centena = [
-        "", "cem", "duzentos", "trezentos",
-        "quatrocentos", "quinhentos", "seiscentos",
-        "setecentos", "oitocentos", "novecentos"
-    ];
-
-    function extenso(n) {
-        if (n === 0) return "zero";
-        if (n === 100) return "cem";
-
-        let milhares = Math.floor(n / 1000);
-        let resto = n % 1000;
-
-        let c = Math.floor(resto / 100);
-        let d = Math.floor((resto % 100) / 10);
-        let u = resto % 10;
-
-        let texto = "";
-
-        // MILHAR
-        if (milhares > 0) {
-            texto += milhares === 1 ? "mil" : unidade[milhares] + " mil";
-            if (resto > 0) texto += " e ";
-        }
-
-        // CENTENA
-        if (c > 0) {
-            texto += c === 1 ? "cem" : centena[c];
-        }
-
-        // 10–19
-        if (d === 1) {
-            texto += (texto ? " e " : "") + dezenaEspecial[u];
-            return texto;
-        }
-
-        // DEZENA NORMAL
-        if (d > 1) {
-            texto += (texto ? " e " : "") + dezena[d];
-        }
-
-        // UNIDADE
-        if (u > 0) {
-            texto += (texto ? " e " : "") + unidade[u];
-        }
-
-        return texto;
-    }
-
-    const numero = parseInt(valor, 10);
-    if (isNaN(numero) || numero < 0 || numero > 9999) return "";
-
-    return extenso(numero) + " reais";
-}
-
 export default function Recibo({ recibo }) {
 
     if (!recibo) return null;
@@ -323,7 +251,7 @@ export default function Recibo({ recibo }) {
                 relative bg-white rounded-lg font-sans text-[#0369A1]
                 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.3),0_4px_6px_-2px_rgba(0,0,0,0.2)]
                 w-[650px] h-[350px]
-                max-sm:w-[360px] max-sm:min-h-[440px] max-sm:p-5
+                max-sm:w-[360px] max-sm:min-h-[570px] max-sm:p-5
             "
         >
             {/* Logo */}
