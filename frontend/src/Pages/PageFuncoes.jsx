@@ -31,8 +31,8 @@ export default function PageFuncoes() {
 
                             <FuncaoCard
                                 icon={FaChartLine}
-                                titulo="Estatísticas"
-                                descricao="Veja gráficos e dados sobre o desempenho geral da autoescola."
+                                titulo="Sobre nós"
+                                descricao="Criado por alunos, pensado para transportadores, feito para melhorar vidas."
                             />
 
                             <FuncaoCard

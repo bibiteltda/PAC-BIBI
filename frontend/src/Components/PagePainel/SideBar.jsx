@@ -23,16 +23,14 @@ export default function SideBar({ setFuncao, funcao, role }) {
         setIsOpen(false);
 
         const rotas = {
-            Home: "",
+            Home: "/",
             Funcoes: "/funcoes",
             Sobre: "/sobre-nos",
-            Estatisticas: "",
-            Relatorios: "",
+            Relatorios: "/relatorio",
             Financeiro: "/controle-mensal",
             Turmas: "/turmas",
-            Contratos: "",
         };
- 
+
         if (rotas[nome]) {
             navigate(rotas[nome]);
         }
@@ -45,14 +43,13 @@ export default function SideBar({ setFuncao, funcao, role }) {
     ];
 
     const recursosCondutor = [
-        { nome: "Estatisticas", icon: <GoGraph size={22} /> },
         { nome: "Relatorios", icon: <FaFileLines size={22} /> },
-        { nome: "Financeiro", icon: <GrMoney size={22} />,  },
+        { nome: "Financeiro", icon: <GrMoney size={22} />, },
         { nome: "Turmas", icon: <BsFillPersonVcardFill size={22} /> },
     ];
 
     const recursosGerais = [
-        
+
     ];
 
     return (
