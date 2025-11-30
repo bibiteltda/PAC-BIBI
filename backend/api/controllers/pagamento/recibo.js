@@ -36,7 +36,7 @@ module.exports = {
 
     function numeroParaExtenso(valor) {
       try {
-        return porExtenso(valor, estilo.real);
+        return porExtenso(valor, estilo.monetario);
       } catch (err) {
         sails.log.error('Erro ao converter número para extenso:', err);
         return `${valor} (erro ao converter)`;
@@ -49,7 +49,9 @@ module.exports = {
     const recibo = {
       id: pagamento.id,
       pagante: pagamento.responsavel?.nome || 'Não informado',
-      valor: numeroParaExtenso(pagamento.valor),
+      valor: pagamento.valor,
+      valorExtenso: numeroParaExtenso(pagamento.valor),
+      ref: "Ao pagamento da mensalidade de transporte escolar",
       data: dataFormatada,
       assinatura: pagamento.motorista?.nome || 'Não informado'
     };
