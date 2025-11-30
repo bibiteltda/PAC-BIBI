@@ -19,7 +19,7 @@ export default function PageFuncoes() {
             <div className="flex flex-1 flex-col lg:flex-row">
 
                 <div className="w-full lg:w-[250px] bg-white">
-                    <SideBar funcao={funcao} setFuncao={setFuncao} />
+                    <SideBar funcao={funcao} setFuncao={setFuncao} role="condutor" />
                 </div>
 
                 <main className="flex-1 bg-[#F3F4F6] p-6 lg:p-12 overflow-y-auto">
