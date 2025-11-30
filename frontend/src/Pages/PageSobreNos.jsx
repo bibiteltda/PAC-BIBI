@@ -40,7 +40,7 @@ export default function PageSobreNos() {
             <motion.section
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="bg-white shadow-md rounded-xl p-8 leading-relaxed text-gray-700"
+              className="bg-white shadow-md rounded-xl p-8 leading-relaxed text-gray-700 text-justify "
             >
               <p>
                 O BiBi – Transporte Escolar é um projeto acadêmico desenvolvido no contexto do PAC – Projeto de Aprendizagem Colaborativa Extensionista, do curso de Engenharia de Software da Católica de Santa Catarina.
@@ -66,7 +66,7 @@ export default function PageSobreNos() {
               className="bg-white shadow-md rounded-xl p-8"
             >
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Nossa Missão</h2>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-gray-700 leading-relaxed text-justify ">
                 Nossa missão é tornar o transporte escolar mais seguro, eficiente e organizado, oferecendo uma plataforma que simplifica atividades essenciais do dia a dia do transportador.
                 Buscamos reduzir falhas de comunicação, atrasos, perda de informações e dificuldades no controle de pagamentos — problemas comuns quando o processo é manual.
 
@@ -78,7 +78,7 @@ export default function PageSobreNos() {
             <motion.section
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="bg-white shadow-md rounded-xl p-8"
+              className="bg-white shadow-md rounded-xl p-8 text-justify"
             >
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Princípios</h2>
 
@@ -128,7 +128,7 @@ export default function PageSobreNos() {
         </main>
 
         {/* Espaço lateral direito */}
-        <div className="hidden lg:block w-[250px]" />
+        <div className="hidden bg-[#F9FAFB]  lg:block w-[250px]" />
       </div>
     </div>
   );
