@@ -43,10 +43,19 @@ export default function PageSobreNos() {
               className="bg-white shadow-md rounded-xl p-8 leading-relaxed text-gray-700"
             >
               <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-                incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet,
-                consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore
-                magna aliqua.
+                O BiBi – Transporte Escolar é um projeto acadêmico desenvolvido no contexto do PAC – Projeto de Aprendizagem Colaborativa Extensionista, do curso de Engenharia de Software da Católica de Santa Catarina.
+                Criamos uma solução digital para modernizar e facilitar a rotina de transportadores escolares, oferecendo ferramentas práticas para organização de rotas, controle de alunos, comunicação com responsáveis e gestão financeira.
+
+                O projeto é desenvolvido pelos alunos:
+                Eric Gabriel Caetano,
+                Felipe da Silva Chawischi,
+                Francisco Marcelo Caetano Costa,
+                Gabriel Felipe Alves Bandoch,
+                João Guilherme Tamanini Dalmarco,
+                Lucas Grimes Ceola,
+
+                Sob orientação dos professores:
+                Luiz Carlos Camargo e Claudinei Dias.
               </p>
             </motion.section>
 
@@ -58,9 +67,10 @@ export default function PageSobreNos() {
             >
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Nossa Missão</h2>
               <p className="text-gray-700 leading-relaxed">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-                incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet,
-                consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore.
+                Nossa missão é tornar o transporte escolar mais seguro, eficiente e organizado, oferecendo uma plataforma que simplifica atividades essenciais do dia a dia do transportador.
+                Buscamos reduzir falhas de comunicação, atrasos, perda de informações e dificuldades no controle de pagamentos — problemas comuns quando o processo é manual.
+
+                O BiBi foi criado para ser simples e acessível, ajudando tanto o transportador quanto os responsáveis a acompanhar o deslocamento e a rotina escolar de forma mais clara e confiável.
               </p>
             </motion.section>
 
@@ -74,23 +84,42 @@ export default function PageSobreNos() {
 
               <ul className="space-y-4 text-gray-700">
                 <li className="flex items-start">
-                  <span className="text-blue-600 text-lg mr-2">•</span>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                  O BiBi nasce com o propósito de beneficiar transportadores escolares autônomos, pais e responsáveis, e
+                  principalmente os alunos que dependem de um serviço organizado e seguro.
+                </li>
+
+                <li className="flex items-start">
+                  Nossos princípios se baseiam em:
                 </li>
 
                 <li className="flex items-start">
                   <span className="text-blue-600 text-lg mr-2">•</span>
-                  Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                  Segurança: reduzir riscos e aumentar a confiabilidade do transporte escolar.
                 </li>
 
                 <li className="flex items-start">
                   <span className="text-blue-600 text-lg mr-2">•</span>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                  Transparência: melhorar a comunicação entre transportadores e responsáveis.
                 </li>
 
                 <li className="flex items-start">
                   <span className="text-blue-600 text-lg mr-2">•</span>
-                  Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                  Organização: centralizar informações e pagamentos em um único lugar.
+                </li>
+
+                <li className="flex items-start">
+                  <span className="text-blue-600 text-lg mr-2">•</span>
+                  Acessibilidade: oferecer uma ferramenta prática para qualquer dispositivo.
+                </li>
+
+                <li className="flex items-start">
+                  <span className="text-blue-600 text-lg mr-2">•</span>
+                  Extensão social: contribuir com soluções reais para necessidades reais da comunidade.
+                </li>
+
+                <li className="flex items-start">
+                  Acreditamos que tecnologia e educação caminham juntas — e nosso compromisso é facilitar o
+                  trabalho dos profissionais que cuidam diariamente do transporte das crianças.
                 </li>
               </ul>
             </motion.section>

@@ -9,6 +9,8 @@ import PageTurmas from './Pages/PageTurmas';
 import PageControleMensal from './Pages/PageControleMensal';
 import PageRelatorio from "./Pages/PageRelatorio";
 import PageRecibo from "./Pages/PageRecibo";
+import PageFuncoes from "./Pages/PageFuncoes";
+import PageSobreNos from "./Pages/PageSobreNos";
 
 function App() {
   return (
@@ -18,13 +20,14 @@ function App() {
         <Route path="/cadastro" element={<PageCadastro />} />
         <Route path="/login" element={<PageLogin />} />
         <Route path="/recuperarSenha" element={<PageEsqueceuSuaSenha />} />
-        {/* <Route path="/recuperarSenha" element={<PageEsqueceuSuaSenha />} /> */}
         <Route path="/turmas" element={<PageTurmas />} />
         <Route path="/test" element={<PageTestComponent />} />
-        {/* <Route path="/financeiro" element={<PageEsqueceuSuaSenha />} />  */}
         <Route path="/controle-mensal" element={<PageControleMensal />} />
         <Route path="/relatorio" element={<PageRelatorio />} />
         <Route path="/recibo" element={<PageRecibo />} />
+        <Route path="/funcoes" element={<PageFuncoes />} />
+        <Route path="/funcoes" element={<PageFuncoes />} />
+        <Route path="/sobre-nos" element={<PageSobreNos />} />
       </Routes>
     </BrowserRouter>
   )
