@@ -156,7 +156,7 @@ Interface inicial para autenticação de motoristas, responsáveis e administrad
 ### **Dashboard**
 
 Resumo geral do transporte, rotas, alunos e notificações importantes.
-![dashboard](./docs/prints/dashboard.png)
+![dashboard](./docs/prints/relatorio.png)
 
 ---
 
