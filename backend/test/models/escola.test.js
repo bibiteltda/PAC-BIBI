@@ -28,7 +28,7 @@ describe('Model: Escola', () => {
     expect(Escola.attributes.alunos.via).toBe('escola');
 
     expect(Escola.attributes.roteiros.collection).toBe('roteiro');
-    expect(Escola.attributes.roteiros.via).toBe('escolas');
+    expect(Escola.attributes.roteiros.via).toBe('escola');
   });
 
   it('deve ter timestamps automáticos', () => {

@@ -1,109 +1,186 @@
 import React from "react";
-import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import usePagamentos from "../../hooks/usePagamentos";
 
-export default function CardRelatorio() {
-    const navigate = useNavigate();
+// classes de status
+const statusClasses = {
+  PAGO: "bg-green-600 text-white px-2 py-0.5 text-xs font-semibold rounded-md",
+  PENDENTE: "bg-gray-500 text-white px-2 py-0.5 text-xs font-semibold rounded-md",
+  ATRASADO: "bg-red-600 text-white px-2 py-0.5 text-xs font-semibold rounded-md",
+};
 
-    const data = Array.from({ length: 5 }).map(() => ({
-        aluno: "Daniela Luisa da C.",
-        escola: "Escola Primavera",
-        valor: "R$250,00",
-        data: "03/05/2025",
-        status: ["PAGO", "PENDENTE", "ATRASADO"][Math.floor(Math.random() * 3)]
-    }));
+export default function CardRelatorio({ filtros }) {
+  const navigate = useNavigate();
+  const { pagamentos, loading, error } = usePagamentos(filtros);
 
-    const statusClasses = {
-        PAGO: "bg-green-600 text-white px-2 py-0.5 text-xs font-semibold rounded-md",
-        PENDENTE: "bg-gray-500 text-white px-2 py-0.5 text-xs font-semibold rounded-md",
-        ATRASADO: "bg-red-600 text-white px-2 py-0.5 text-xs font-semibold rounded-md"
+  // normaliza status
+  const normalizarStatus = (status) => {
+    if (!status) return "PENDENTE";
+    const s = String(status).toUpperCase();
+    if (["PAGO", "PENDENTE", "ATRASADO"].includes(s)) return s;
+    return "PENDENTE";
+  };
+
+  // trata dados vindos do backend
+  const data = (pagamentos || []).map((p) => {
+    const alunoObj = p.aluno || {};
+    const escolaObj = alunoObj.escola || p.escola || {};
+
+    // CAMPOS REAIS DO BANCO (corrigido)
+    const rawDate =
+      p.dta_pgmt ||       // pagamento
+      p.dta_vcto ||       // vencimento
+      p.data_pagamento || // fallback
+      p.data_vencimento ||
+      p.data ||
+      p.vencimento ||
+      p.createdAt;
+
+    let dataFormatada = "--/--/----";
+
+    if (rawDate) {
+      const d = new Date(rawDate);
+      if (!isNaN(d.getTime())) {
+        dataFormatada = d.toLocaleDateString("pt-BR");
+      }
+    }
+
+    return {
+      id: p.id_pagamento ?? p.id ?? Math.random(),
+      aluno: alunoObj.nome || p.nome_aluno || "Aluno não informado",
+      escola: escolaObj.nome || p.nome_escola || "Escola não informada",
+      valorNumero: Number(p.valor ?? 0),
+      data: dataFormatada,
+      status: normalizarStatus(p.status),
     };
+  });
 
+  const semDados = !loading && !error && data.length === 0;
+  const linhas = data;
+
+  // ==========================
+  // RENDER
+  // ==========================
+
+  if (loading)
     return (
-        <div className="w-full flex flex-col items-center">
+      <div className="w-full flex justify-center items-center py-10">
+        <p className="text-gray-500 text-sm">Carregando pagamentos...</p>
+      </div>
+    );
 
-            {/* --- DESKTOP TABLE --- */}
-            <table className="hidden md:table w-[770px] bg-white shadow-md p-4 text-sm border border-gray-300 rounded-md overflow-hidden">
-                <thead>
-                    <tr className="bg-gray-100 text-black border-b border-gray-300">
-                        <th className="p-2">Aluno</th>
-                        <th className="p-2">Escola</th>
-                        <th className="p-2">Valor</th>
-                        <th className="p-2">Data</th>
-                        <th className="p-2">Status</th>
-                        <th className="p-2">Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {data.map((item, idx) => (
-                        <tr key={idx} className="text-black border-b border-gray-200">
-                            <td className="p-3">{item.aluno}</td>
-                            <td className="p-3">{item.escola}</td>
-                            <td className="p-3">{item.valor}</td>
-                            <td className="p-3">{item.data}</td>
-                            <td className="p-3">
-                                <span className={statusClasses[item.status]}>{item.status}</span>
-                            </td>
-                            <td className="p-3">
-                                <button
-                                    onClick={() => navigate("/recibo")}
-                                    className="px-3 py-1 rounded-lg border border-blue-300 text-blue-500 hover:bg-blue-50 transition"
-                                >
-                                    Emitir Recibo
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+  if (error)
+    return (
+      <div className="w-full flex justify-center items-center py-10">
+        <p className="text-red-500 text-sm">
+          Erro ao carregar pagamentos: {error}
+        </p>
+      </div>
+    );
 
-            {/* --- MOBILE (cards) --- */}
-            <div className="flex flex-col gap-3 md:hidden w-full max-w-[770px] px-2">
-                {data.map((item, idx) => (
-                    <section
-                        key={idx}
-                        className="w-full bg-gradient-to-br from-[#1267A0] to-[#082F49] rounded-xl text-white shadow-lg p-4"
+  if (semDados)
+    return (
+      <div className="w-full flex justify-center items-center py-10">
+        <p className="text-gray-400 text-sm">
+          Nenhum pagamento encontrado para os filtros selecionados.
+        </p>
+      </div>
+    );
+
+  return (
+    <div className="w-full flex flex-col items-center">
+
+      {/* --- DESKTOP TABLE --- */}
+      <div className="hidden md:block w-full max-w-[770px] bg-white shadow-md text-sm border border-gray-300 rounded-md">
+
+        {/* área rolável (limite ~5 linhas) */}
+        <div className="max-h-[260px] overflow-y-auto">
+          <table className="w-full border-collapse">
+            <thead className="bg-gray-100 text-black border-b border-gray-300 sticky top-0">
+              <tr>
+                <th className="p-2 text-left">Aluno</th>
+                <th className="p-2 text-left">Escola</th>
+                <th className="p-2 text-left">Valor</th>
+                <th className="p-2 text-left">Data</th>
+                <th className="p-2 text-left">Status</th>
+                <th className="p-2 text-left">Ações</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {linhas.map((item) => (
+                <tr key={item.id} className="text-black border-b border-gray-200 last:border-none">
+                  <td className="p-3">{item.aluno}</td>
+                  <td className="p-3">{item.escola}</td>
+                  <td className="p-3">
+                    R{"$ "}
+                    {item.valorNumero.toLocaleString("pt-BR", {
+                      minimumFractionDigits: 2,
+                    })}
+                  </td>
+                  <td className="p-3">{item.data}</td>
+                  <td className="p-3">
+                    <span className={statusClasses[item.status]}>{item.status}</span>
+                  </td>
+                  <td className="p-3">
+                    <button
+                      onClick={() => navigate(`/recibo/${item.id}`)}
+                      className="px-3 py-1 rounded-lg border border-blue-300 text-blue-500 hover:bg-blue-50 transition"
                     >
-                        <div className="flex justify-between items-start">
+                      Emitir Recibo
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
 
-                            {/* Escola + Aluno */}
-                            <div>
-                                <p className="text-sm opacity-80">{item.escola}</p>
-                                <p className="text-base font-semibold -mt-1">{item.aluno}</p>
-                            </div>
+          </table>
+        </div>
+      </div>
 
-                            {/* Opções (rota /recibo) */}
-                            <button
-                                onClick={() => navigate("/recibo")}
-                                className="text-white/70 hover:text-white text-xl px-1"
-                            >
-                                ⋮
-                            </button>
-                        </div>
+      {/* --- MOBILE (cards) --- */}
+      <div className="flex flex-col gap-3 md:hidden w-full max-w-[770px] px-2 mt-2">
+        {linhas.map((item) => (
+          <section
+            key={item.id}
+            className="w-full bg-gradient-to-br from-[#1267A0] to-[#082F49] rounded-xl text-white shadow-lg p-4"
+          >
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-sm opacity-80">{item.escola}</p>
+                <p className="text-base font-semibold -mt-1">{item.aluno}</p>
+              </div>
 
-                        {/* Parte inferior */}
-                        <div className="mt-3 flex justify-between items-end">
-
-                            {/* Valor + Data */}
-                            <div>
-                                <p className="text-xs opacity-70">{item.data}</p>
-                                <p className="text-sm font-semibold">{item.valor}</p>
-                            </div>
-
-                            {/* Status */}
-                            <span
-                                className={`${statusClasses[item.status]} text-[10px] px-2 py-0.5 rounded-md`}
-                            >
-                                {item.status}
-                            </span>
-                        </div>
-                    </section>
-                ))}
+              <button
+                onClick={() => navigate(`/recibo/${item.id}`)}
+                className="text-white/70 hover:text-white text-xl px-1"
+              >
+                ⋮
+              </button>
             </div>
 
-            <div className="h-10"></div>
-        </div>
-    );
+            <div className="mt-3 flex justify-between items-end">
+              <div>
+                <p className="text-xs opacity-70">{item.data}</p>
+                <p className="text-sm font-semibold">
+                  R{"$ "}
+                  {item.valorNumero.toLocaleString("pt-BR", {
+                    minimumFractionDigits: 2,
+                  })}
+                </p>
+              </div>
+
+              <span
+                className={`${statusClasses[item.status]} text-[10px] px-2 py-0.5 rounded-md`}
+              >
+                {item.status}
+              </span>
+            </div>
+          </section>
+        ))}
+      </div>
+
+      <div className="h-10" />
+    </div>
+  );
 }
-
-

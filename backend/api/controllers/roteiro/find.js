@@ -1,21 +1,10 @@
 module.exports = {
-  friendlyName: 'Listar Roteiros (Filtro Direto)',
-  description: 'Lista roteiros filtrando apenas por "escola" (N:M) e "turno" (número).',
+  friendlyName: 'Listar Roteiros',
+  description: 'Lista roteiros filtrando por escola e turno.',
 
   inputs: {
-    // 1. Filtro de Escola
-    escola: {
-      type: 'string',
-      required: false,
-      description: 'Filtra por um ID de escola específico.',
-    },
-    
-    // 2. Filtro de Turno
-    turno: {
-      type: 'string',
-      required: false,
-      description: 'Filtra por um número de turno específico.',
-    },
+    escola: { type: 'string', required: false },
+    turno: { type: 'string', required: false },
   },
 
   exits: {
@@ -25,25 +14,17 @@ module.exports = {
 
   fn: async function (inputs, exits) {
     try {
-      // 1. O objeto de 'criteria' (filtros) começa vazio
       let criteria = {};
 
-      //  FILTRO DE ESCOLA (N:M) 
       if (inputs.escola && inputs.escola !== 'todas') {
-        criteria.escolas = inputs.escola;
+        criteria.escola = Number(inputs.escola);
       }
 
-      // === FILTRO DE TURNO (Número) ===
       if (inputs.turno && inputs.turno !== 'todas') {
-        // O Waterline vai converter a string "1" para o número 1
-        // para bater com o models ('turno: { type: 'number' }')
-        criteria.turno = inputs.turno;
+        criteria.turno = Number(inputs.turno);
       }
-      // 2. Executa a busca com os filtros
-      sails.log.info('Filtrando Roteiros com os critérios (diretos):', criteria);
 
-      const list = await Roteiro.find(criteria)
-                                
+      const list = await Roteiro.find(criteria).populate('escola').populate('motorista');
 
       return exits.success(list);
 

@@ -28,6 +28,7 @@ function App() {
         <Route path="/funcoes" element={<PageFuncoes />} />
         <Route path="/funcoes" element={<PageFuncoes />} />
         <Route path="/sobre-nos" element={<PageSobreNos />} />
+        <Route path="/recibo/:id" element={<PageRecibo />} />
       </Routes>
     </BrowserRouter>
   )
