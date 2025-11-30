@@ -4,7 +4,7 @@ export default function Recibo({ recibo }) {
 
     if (!recibo) return null;
 
-    const { id, pagante, valor, data, assinatura, ref } = recibo;
+    const { id, pagante, valor, valorExtenso, data, assinatura, ref } = recibo;
 
     const [dia, mes, ano] = data.split("/");
 
@@ -76,7 +76,7 @@ export default function Recibo({ recibo }) {
                                 max-sm:w-full max-sm:h-auto max-sm:py-2
                             "
                         >
-                            {valor}
+                            {valorExtenso}
                         </div>
                     </div>
                 </div>
