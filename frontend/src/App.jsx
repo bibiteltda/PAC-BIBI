@@ -26,7 +26,6 @@ function App() {
         <Route path="/relatorio" element={<PageRelatorio />} />
         <Route path="/recibo" element={<PageRecibo />} />
         <Route path="/funcoes" element={<PageFuncoes />} />
-        <Route path="/funcoes" element={<PageFuncoes />} />
         <Route path="/sobre-nos" element={<PageSobreNos />} />
         <Route path="/recibo/:id" element={<PageRecibo />} />
       </Routes>
