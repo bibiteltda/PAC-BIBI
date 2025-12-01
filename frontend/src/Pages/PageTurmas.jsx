@@ -35,7 +35,6 @@ export default function Turmas() {
     loading: loadingEscolas,
     error: errorEscolas,
     createEscola,
-    // deleteEscola // vamos IGNORAR por enquanto
   } = useEscolas();
 
   // Carrega turmas
@@ -141,7 +140,6 @@ export default function Turmas() {
     const nova = await createEscola({ nome: novaEscolaNome.trim() });
     if (nova) {
       setNovaEscolaNome("");
-      // o hook já atualiza a lista de escolas internamente (setEscolas)
     }
   };
 
