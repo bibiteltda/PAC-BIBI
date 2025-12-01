@@ -44,7 +44,7 @@ export default function Turmas() {
                             {/* Título */}
                             <h1 className="text-3xl font-bold text-center">Controle Mensal</h1>
 
-                            <div className="flex justify-between w-full gap-5">
+                            <div className="flex flex-col md:flex-row justify-between items-center md:items-start w-full gap-5">
                                 <DistribuicaoPagamentos
                                     ganhosMensais={data?.graficos?.ganhosMensais ?? 0}
                                     perdasMensais={data?.graficos?.perdasMensais ?? 0}
