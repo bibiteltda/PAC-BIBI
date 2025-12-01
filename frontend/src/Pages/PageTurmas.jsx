@@ -20,6 +20,10 @@ export default function Turmas() {
   const [motoristaId, setMotoristaId] = useState(null);
   const [novaTurma, setNovaTurma] = useState({ name: "", escola: "", turno: "" });
   const [novaEscolaNome, setNovaEscolaNome] = useState("");
+  const [novaEscolaTelefone, setNovaEscolaTelefone] = useState("");
+  const [novaEscolaLogradouro, setNovaEscolaLogradouro] = useState("");
+  const [novaEscolaBairro, setNovaEscolaBairro] = useState("");
+  const [novaEscolaCidade, setNovaEscolaCidade] = useState("");
 
   const TURNO_MAP = { matutino: 1, vespertino: 2 };
 
@@ -32,10 +36,13 @@ export default function Turmas() {
   // agora usamos também erro e createEscola
   const {
     escolas,
+    bairros,
+    cidades,
     loading: loadingEscolas,
     error: errorEscolas,
     createEscola,
   } = useEscolas();
+
 
   // Carrega turmas
   useEffect(() => {
@@ -135,11 +142,25 @@ export default function Turmas() {
 
   // Criar escola (apenas nome por enquanto)
   const handleCriarEscola = async () => {
-    if (!novaEscolaNome.trim()) return;
+    if (!novaEscolaNome.trim() || !novaEscolaBairro || !novaEscolaCidade) {
+      alert("Preencha nome, bairro e cidade.");
+      return;
+    }
 
-    const nova = await createEscola({ nome: novaEscolaNome.trim() });
+    const nova = await createEscola({
+      nome: novaEscolaNome.trim(),
+      telefone: novaEscolaTelefone.trim(),
+      logradouro: novaEscolaLogradouro.trim(),
+      bairroId: Number(novaEscolaBairro),
+      cidadeId: Number(novaEscolaCidade),
+    });
+
     if (nova) {
       setNovaEscolaNome("");
+      setNovaEscolaTelefone("");
+      setNovaEscolaLogradouro("");
+      setNovaEscolaBairro("");
+      setNovaEscolaCidade("");
     }
   };
 
@@ -304,10 +325,13 @@ export default function Turmas() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
+            {/* fundo escuro / overlay */}
             <div
               className="absolute inset-0 bg-black/30"
               onClick={() => setMostrarPopupEscola(false)}
             />
+
+            {/* SIDEBAR */}
             <motion.div
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
@@ -325,22 +349,89 @@ export default function Turmas() {
                 </div>
               )}
 
+              {/* FORM NOVA ESCOLA */}
               <div className="space-y-3 mb-4">
-                <label className="text-sm text-gray-700 mb-1 block">
-                  Nome da nova escola
-                </label>
-                <input
-                  type="text"
-                  placeholder="Ex: Escola Municipal Centro"
-                  value={novaEscolaNome}
-                  onChange={(e) => setNovaEscolaNome(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
-                  disabled={loadingEscolas}
-                />
+                <div>
+                  <label className="text-sm text-gray-700 mb-1 block">
+                    Nome da nova escola
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Ex: Escola Municipal Centro"
+                    value={novaEscolaNome}
+                    onChange={(e) => setNovaEscolaNome(e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
+                    disabled={loadingEscolas}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm text-gray-700 mb-1 block">Telefone</label>
+                  <input
+                    type="text"
+                    placeholder="Ex: (47) 3333-3333"
+                    value={novaEscolaTelefone}
+                    onChange={(e) => setNovaEscolaTelefone(e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
+                    disabled={loadingEscolas}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm text-gray-700 mb-1 block">Logradouro</label>
+                  <input
+                    type="text"
+                    placeholder="Ex: Rua A, 123"
+                    value={novaEscolaLogradouro}
+                    onChange={(e) => setNovaEscolaLogradouro(e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
+                    disabled={loadingEscolas}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm text-gray-700 mb-1 block">Cidade</label>
+                  <select
+                    value={novaEscolaCidade}
+                    onChange={(e) => setNovaEscolaCidade(e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
+                    disabled={loadingEscolas}
+                  >
+                    <option value="">Selecione a cidade...</option>
+                    {cidades.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.nome}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-sm text-gray-700 mb-1 block">Bairro</label>
+                  <select
+                    value={novaEscolaBairro}
+                    onChange={(e) => setNovaEscolaBairro(e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
+                    disabled={loadingEscolas}
+                  >
+                    <option value="">Selecione o bairro...</option>
+                    {bairros.map((b) => (
+                      <option key={b.id} value={b.id}>
+                        {b.nome}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
                 <button
                   onClick={handleCriarEscola}
                   className="w-full py-2 rounded-lg bg-[rgba(3,105,161,0.95)] text-white text-sm font-semibold hover:bg-[rgba(3,105,161,1)] transition-colors disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
-                  disabled={loadingEscolas || !novaEscolaNome.trim()}
+                  disabled={
+                    loadingEscolas ||
+                    !novaEscolaNome.trim() ||
+                    !novaEscolaCidade ||
+                    !novaEscolaBairro
+                  }
                 >
                   {loadingEscolas ? "Salvando..." : "Criar Escola"}
                 </button>
@@ -348,6 +439,7 @@ export default function Turmas() {
 
               <hr className="my-2" />
 
+              {/* LISTA DE ESCOLAS CADASTRADAS */}
               <div className="flex-1 overflow-y-auto space-y-2">
                 <h3 className="text-sm font-semibold text-gray-700 mb-1">
                   Escolas cadastradas
@@ -361,13 +453,17 @@ export default function Turmas() {
                   escolas.map((escola) => (
                     <div
                       key={escola.id}
-                      className="flex items-center justify-between border border-gray-200 rounded-md px-3 py-2"
+                      className="flex items-center justify-between border border-gray-200 rounded-md px-3 py-2 bg-gray-50"
                     >
-                      <span className="text-sm text-gray-800 truncate">
-                        {escola.nome}
-                      </span>
-                      {/* X APENAS VISUAL, sem lógica de delete por enquanto */}
-                      <span className="text-xs font-bold text-red-400 select-none">
+                      <div className="flex flex-col">
+                        <span className="text-sm text-gray-900 font-medium">
+                          {escola.nome}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          {escola.logradouro} • {escola.telefone}
+                        </span>
+                      </div>
+                      <span className="text-xs font-bold text-red-400 select-none px-1">
                         X
                       </span>
                     </div>
@@ -387,6 +483,7 @@ export default function Turmas() {
           </motion.div>
         )}
       </AnimatePresence>
+
 
       {/* LINK CONVITE */}
       <AnimatePresence>
