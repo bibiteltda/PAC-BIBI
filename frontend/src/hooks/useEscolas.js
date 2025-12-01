@@ -72,13 +72,12 @@ export default function useEscolas(filtros) {
         nome,
         telefone,
         logradouro,
-        bairro: bairroId,
-        cidade: cidadeId,
+        bairroId,   // 👈 agora bate com o controller
+        cidadeId,   // 👈 idem
       });
 
       const novaEscola = response.data?.escola || response.data;
 
-      // adiciona no estado local
       setEscolas((prev) => [...prev, novaEscola]);
 
       return novaEscola;
