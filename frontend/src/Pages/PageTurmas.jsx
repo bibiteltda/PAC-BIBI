@@ -13,9 +13,13 @@ export default function Turmas() {
   const [turmas, setTurmas] = useState([]);
   const [turmasFiltradas, setTurmasFiltradas] = useState([]);
   const [turmaSelecionada, setTurmaSelecionada] = useState(null);
-  const [mostrarPopup, setMostrarPopup] = useState(false);
+
+  const [mostrarPopup, setMostrarPopup] = useState(false);           // popup Nova Turma
+  const [mostrarPopupEscola, setMostrarPopupEscola] = useState(false); // popup Criar Escola
+
   const [motoristaId, setMotoristaId] = useState(null);
   const [novaTurma, setNovaTurma] = useState({ name: "", escola: "", turno: "" });
+  const [novaEscolaNome, setNovaEscolaNome] = useState("");
 
   const TURNO_MAP = { matutino: 1, vespertino: 2 };
 
@@ -24,7 +28,15 @@ export default function Turmas() {
     storedUserInfo?.autenticacao?.id ?? storedUserInfo?.autenticacao ?? null;
 
   const { createRoteiro, loading: loadingRoteiro, error: errorRoteiro } = useCreateRoteiro();
-  const { escolas, loading: loadingEscolas } = useEscolas(); // usa nosso hook
+
+  // agora usamos também erro e createEscola
+  const {
+    escolas,
+    loading: loadingEscolas,
+    error: errorEscolas,
+    createEscola,
+    // deleteEscola // vamos IGNORAR por enquanto
+  } = useEscolas();
 
   // Carrega turmas
   useEffect(() => {
@@ -38,7 +50,12 @@ export default function Turmas() {
           id: item.id ?? index + 1,
           name: item.nome ?? "Sem nome",
           escola: item.escola ?? "Não informado",
-          turno: item.turno === 1 ? "Matutino" : item.turno === 2 ? "Vespertino" : "Não informado",
+          turno:
+            item.turno === 1
+              ? "Matutino"
+              : item.turno === 2
+              ? "Vespertino"
+              : "Não informado",
           status: item.status ?? "ativo",
           data: item.data ?? new Date().toISOString().split("T")[0],
         }));
@@ -61,7 +78,9 @@ export default function Turmas() {
         const lista = await resp.json();
         if (!resp.ok) throw new Error(lista.message || "Erro ao buscar motoristas");
 
-        const motorista = lista.find(m => (m.autenticacao?.id ?? m.autenticacao) === autenticacaoId);
+        const motorista = lista.find(
+          (m) => (m.autenticacao?.id ?? m.autenticacao) === autenticacaoId
+        );
         if (!motorista) return;
         setMotoristaId(motorista.id);
       } catch (err) {
@@ -109,9 +128,21 @@ export default function Turmas() {
       data: new Date().toISOString().split("T")[0],
     };
 
-    setTurmas([...turmas, turmaCriada]);
+    setTurmas((prev) => [...prev, turmaCriada]);
+    setTurmasFiltradas((prev) => [...prev, turmaCriada]);
     setNovaTurma({ name: "", escola: "", turno: "" });
     setMostrarPopup(false);
+  };
+
+  // Criar escola (apenas nome por enquanto)
+  const handleCriarEscola = async () => {
+    if (!novaEscolaNome.trim()) return;
+
+    const nova = await createEscola({ nome: novaEscolaNome.trim() });
+    if (nova) {
+      setNovaEscolaNome("");
+      // o hook já atualiza a lista de escolas internamente (setEscolas)
+    }
   };
 
   return (
@@ -125,17 +156,27 @@ export default function Turmas() {
           <main className="flex-1 flex justify-center items-start bg-[#F3F4F6] p-6 lg:p-8">
             <div className="w-full max-w-[800px] flex flex-col space-y-6">
               <h1 className="text-3xl font-bold text-center">Turmas</h1>
-              <div className="flex justify-end">
+
+              {/* BOTÕES NA MESMA LINHA */}
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => setMostrarPopupEscola(true)}
+                  className="w-full max-w-48 bg-white border border-sky-700 text-sky-700 py-1 text-sm font-semibold rounded-lg cursor-pointer hover:bg-sky-50 hover:scale-102 transition-all duration-300 select-none"
+                >
+                  Criar Escola
+                </button>
+
                 <button
                   onClick={() => setMostrarPopup(true)}
-                  className="w-full max-w-50 bg-[rgba(3,105,161,0.9)] py-1 text-white font-semibold rounded-lg cursor-pointer hover:bg-[rgba(3,105,161,1)] hover:scale-102 transition-all duration-300 select-none"
+                  className="w-full max-w-48 bg-[rgba(3,105,161,0.9)] py-1 text-white font-semibold rounded-lg cursor-pointer hover:bg-[rgba(3,105,161,1)] hover:scale-102 transition-all duration-300 select-none"
                 >
                   Adicionar Turma
                 </button>
               </div>
+
               <div className="flex flex-col w-full max-h-[60vh] overflow-y-auto overflow-x-hidden space-y-4 pr-1 pb-2">
                 {turmasFiltradas.length > 0 ? (
-                  turmasFiltradas.map(turma => (
+                  turmasFiltradas.map((turma) => (
                     <div
                       key={turma.id}
                       onClick={() => setTurmaSelecionada(turma)}
@@ -156,6 +197,7 @@ export default function Turmas() {
         </div>
       </div>
 
+      {/* POPUP NOVA TURMA */}
       <AnimatePresence>
         {mostrarPopup && (
           <motion.div
@@ -190,7 +232,9 @@ export default function Turmas() {
                     type="text"
                     placeholder="Ex: 301-A"
                     value={novaTurma.name}
-                    onChange={(e) => setNovaTurma({ ...novaTurma, name: e.target.value })}
+                    onChange={(e) =>
+                      setNovaTurma({ ...novaTurma, name: e.target.value })
+                    }
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
                     disabled={loadingRoteiro}
                   />
@@ -199,7 +243,12 @@ export default function Turmas() {
                   <label className="text-sm text-gray-700 mb-1 block">Escola</label>
                   <select
                     value={novaTurma.escola}
-                    onChange={(e) => setNovaTurma({ ...novaTurma, escola: Number(e.target.value) })}
+                    onChange={(e) =>
+                      setNovaTurma({
+                        ...novaTurma,
+                        escola: Number(e.target.value),
+                      })
+                    }
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
                     disabled={loadingEscolas}
                   >
@@ -215,7 +264,9 @@ export default function Turmas() {
                   <label className="text-sm text-gray-700 mb-1 block">Turno</label>
                   <select
                     value={novaTurma.turno}
-                    onChange={(e) => setNovaTurma({ ...novaTurma, turno: e.target.value })}
+                    onChange={(e) =>
+                      setNovaTurma({ ...novaTurma, turno: e.target.value })
+                    }
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
                     disabled={loadingRoteiro}
                   >
@@ -246,8 +297,107 @@ export default function Turmas() {
         )}
       </AnimatePresence>
 
+      {/* POPUP GERENCIAR / CRIAR ESCOLA */}
       <AnimatePresence>
-        {turmaSelecionada && <LinkConvite turma={turmaSelecionada} onClose={() => setTurmaSelecionada(null)} />}
+        {mostrarPopupEscola && (
+          <motion.div
+            className="fixed inset-0 z-40 flex justify-end"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <div
+              className="absolute inset-0 bg-black/30"
+              onClick={() => setMostrarPopupEscola(false)}
+            />
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+              className="relative z-50 h-full w-full max-w-[400px] bg-white shadow-2xl border-l border-gray-200 flex flex-col p-6"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-gray-900">Gerenciar Escolas</h2>
+              </div>
+
+              {errorEscolas && (
+                <div className="mb-3 rounded-md bg-red-50 border border-red-200 px-3 py-2 text-xs text-red-700">
+                  {errorEscolas}
+                </div>
+              )}
+
+              <div className="space-y-3 mb-4">
+                <label className="text-sm text-gray-700 mb-1 block">
+                  Nome da nova escola
+                </label>
+                <input
+                  type="text"
+                  placeholder="Ex: Escola Municipal Centro"
+                  value={novaEscolaNome}
+                  onChange={(e) => setNovaEscolaNome(e.target.value)}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
+                  disabled={loadingEscolas}
+                />
+                <button
+                  onClick={handleCriarEscola}
+                  className="w-full py-2 rounded-lg bg-[rgba(3,105,161,0.95)] text-white text-sm font-semibold hover:bg-[rgba(3,105,161,1)] transition-colors disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
+                  disabled={loadingEscolas || !novaEscolaNome.trim()}
+                >
+                  {loadingEscolas ? "Salvando..." : "Criar Escola"}
+                </button>
+              </div>
+
+              <hr className="my-2" />
+
+              <div className="flex-1 overflow-y-auto space-y-2">
+                <h3 className="text-sm font-semibold text-gray-700 mb-1">
+                  Escolas cadastradas
+                </h3>
+
+                {escolas.length === 0 ? (
+                  <p className="text-xs text-gray-500">
+                    Nenhuma escola cadastrada ainda.
+                  </p>
+                ) : (
+                  escolas.map((escola) => (
+                    <div
+                      key={escola.id}
+                      className="flex items-center justify-between border border-gray-200 rounded-md px-3 py-2"
+                    >
+                      <span className="text-sm text-gray-800 truncate">
+                        {escola.nome}
+                      </span>
+                      {/* X APENAS VISUAL, sem lógica de delete por enquanto */}
+                      <span className="text-xs font-bold text-red-400 select-none">
+                        X
+                      </span>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              <div className="mt-4">
+                <button
+                  onClick={() => setMostrarPopupEscola(false)}
+                  className="w-full py-2 rounded-lg border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors"
+                >
+                  Fechar
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* LINK CONVITE */}
+      <AnimatePresence>
+        {turmaSelecionada && (
+          <LinkConvite
+            turma={turmaSelecionada}
+            onClose={() => setTurmaSelecionada(null)}
+          />
+        )}
       </AnimatePresence>
     </>
   );
